@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
+    <menu>
+        <add id="Buildateam_Productbuilder::main_menu" 
+        	title="Buildateam" 
+        	module="Buildateam_Productbuilder" 
+        	sortOrder="10" 
+        	resource="Buildateam_Productbuilder::main_menu"/>
+        <add id="Buildateam_Productbuilder::product_builder" 
+        	title="Product Builder" 
+        	module="Buildateam_Productbuilder" 
+        	sortOrder="1" 
+            action="productbuilder/helloworld" 
+        	parent="Buildateam_Productbuilder::main_menu" 
+        	resource="Buildateam_Productbuilder::productbuilder"/>
+    </menu>
+</config>

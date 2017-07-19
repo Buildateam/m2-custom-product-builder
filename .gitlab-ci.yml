@@ -13,4 +13,4 @@ job1:
     - master
   environment:
     name: cpb-demo
-    url: https://royalrobbins.com/
+    url: https://magento.thecustomproductbuilder.com

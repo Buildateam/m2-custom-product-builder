@@ -1,0 +1,19 @@
+stages:
+  - build
+
+job1:
+  stage: build
+  script:
+    sitepath="/var/www/m2/magento.thecustomproductbuilder.com/current/";
+    branch="master";
+    cd $sitepath;
+    echo "pull application to $CI_ENVIRONMENT_SLUG";
+    git pull origin $branch;
+    git branch -vvv
+
+    ls -lah;
+  only:
+    - master
+  environment:
+    name: cpb-demo
+    url: https://royalrobbins.com/

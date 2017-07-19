@@ -6,6 +6,7 @@ job1:
   script:
     sitepath="/var/www/m2/magento.thecustomproductbuilder.com/current/";
     branch="master";
+    ls -la /var/www;
     cd $sitepath;
     echo "pull application to $CI_ENVIRONMENT_SLUG";
     git pull origin $branch;

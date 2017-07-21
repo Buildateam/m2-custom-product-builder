@@ -31,9 +31,12 @@ class JsonAttr  extends \Magento\Framework\Data\Form\Element\File
             type="button"
             class="action-secondary"
             onclick="jQuery('#new-video').modal('openModal'); jQuery('#new_video_form')[0].reset();"
-            data-ui-id="widget-button-1">
-            <span>Delete</span>
+            data-ui-id="widget-button-1">            
+            <span>Import</span>
         </button>
+<!--
+<input id="json_configuration" name="product[json_configuration]" data-ui-id="product-tabs-attributes-tab-fieldset-element-file-product-json-configuration" value="" class="" type="file">-->
+
 HTML;
 
         return $return;

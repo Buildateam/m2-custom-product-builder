@@ -1,3 +1,3 @@
 <config>
-    <preference for="Magento\Catalog\Block\Adminhtml\Form" type="Buildateam\CustomProductBuilder\" />
+    <preference for="Magento\Catalog\Controller\Adminhtml\Product\Save" type="Buildateam\CustomProductBuilder\Controller\Adminhtml\Product\ExtendSave" />
 </config>

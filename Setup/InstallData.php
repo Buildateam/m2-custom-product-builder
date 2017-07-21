@@ -34,11 +34,11 @@ class InstallData implements InstallDataInterface
             \Magento\Catalog\Model\Product::ENTITY,
             'json_configuration',
             [
-                'type' => \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
+                'type' => 'text',
                 'backend' => '',
                 'frontend' => '',
                 'frontend_input' => 'text',
-                'label' => 'Json Configuration',
+                'label' => 'Custom Product Builder',
                 'input_renderer' => 'Buildateam\CustomProductBuilder\Block\Adminhtml\Product\Helper\Form\JsonAttr',
                 'input' => 'text',
                 'class' => '',

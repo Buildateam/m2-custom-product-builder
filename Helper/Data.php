@@ -27,6 +27,24 @@ class Data extends AbstractHelper
     }
 
     /**
+     * Return Custom Builder Product file
+     */
+    public function getJsonBuilderFile()
+    {
+        $params = $this->getRequest()->getParams();
+        $resultJson = $this->resultJsonFactory->create();
+
+        /** get json content from product */
+        echo file_put_contents(Mage::getBaseDir('var').'/test.json',"Hello World. Testing!");
+
+        $handle = fopen("./var/product-builder.json", "w+");
+        header('Access-Control-Allow-Origin: *');
+        header('Content-type: application/json');
+
+        echo json_encode($handle);
+    }
+
+    /**
      * validating json format
      * @param $string
      * @return mixed

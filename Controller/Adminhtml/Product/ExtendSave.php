@@ -30,7 +30,7 @@ class ExtendSave extends \Magento\Catalog\Controller\Adminhtml\Product\Save
                 $this->_jsonProductName = $_FILES['product']['name']['json_configuration'];
 
                 if (isset($this->_jsonProductName) && !empty($this->_jsonProductName)) {
-                    $dataJson =$this->_objectManager->create('Buildateam\CustomProductBuilder\Helper\Data')->getJsonDataFileEnconded($this->_jsonProductName);
+                    $dataJson = $this->_objectManager->create('Buildateam\CustomProductBuilder\Helper\Data')->getJsonDataFileEnconded($this->_jsonProductName);
                     $product->setJsonConfiguration($dataJson);
                 }
 

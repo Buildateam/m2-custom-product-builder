@@ -1,7 +1,7 @@
 <?php
 
 namespace Buildateam\CustomProductBuilder\Controller\Adminhtml\ExportJson;
-
+use Magento\Framework\App\Filesystem\DirectoryList;
 
 class Build extends \Magento\Backend\App\Action
 {
@@ -25,25 +25,30 @@ class Build extends \Magento\Backend\App\Action
 
     public function execute()
     {
-        //$params         = $this->getRequest()->getParams();
-        $fileName       = 'product-builder.json';
-        $product_id     = 2047;
+        $params         = $this->getRequest()->getParams();
+        $paramsUrl      = explode('/',$params['productid']) ;
+        $product_id     = $paramsUrl[6] ;
+        $fileName       = 'product-builder-'.$product_id.'.json';
         $objectManager  = \Magento\Framework\App\ObjectManager::getInstance();
         $fileFactory    = $objectManager->create('\Magento\Framework\App\Response\Http\FileFactory');
+        $ioAdapter      = $objectManager->create('Magento\Framework\Filesystem\Io\File');
         $dir            = $objectManager->get('\Magento\Framework\App\Filesystem\DirectoryList');
+        $request        = $objectManager->create('\Magento\Framework\App\Request\Http');
         $varDir         = $dir->getDefaultConfig();
         $product        = $objectManager->create('Magento\Catalog\Model\Product')->load($product_id);
         $productConfig  = $product->getData('json_configuration');
 
-        $fileFactory    ->create(
-            $fileName,
-            $productConfig,
-            \Magento\Framework\App\Filesystem\DirectoryList::MEDIA,
-            'application/json'
-        );
+        $ioAdapter->open(array('path'=>DirectoryList::VAR_DIR));
+        $ioAdapter->write($fileName, $productConfig, 0777);
 
-        return $fileFactory;
+        header("Cache-Control: public");
+        header("Content-Description: File Transfer");
+        header("Content-Disposition: attachment; filename=".$fileName."");
+        header("Content-Transfer-Encoding: binary");
+        header("Content-Type: application/json");
+        readfile(DirectoryList::VAR_DIR.'/'.$fileName);
 
+        $ioAdapter->rm($fileName);
     }
 
     protected function saveJsonDir($varDir, $productConfig)

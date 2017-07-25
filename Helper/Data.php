@@ -8,14 +8,6 @@ use Magento\Framework\App\Helper\AbstractHelper;
 
 class Data extends AbstractHelper
 {
-    /**
-     * retrieve JsonData encoded
-     */
-    public function getJsonDataFileEnconded($jsonName)
-    {
-        $dataJson = file_get_contents($jsonName);
-        return $dataJson;
-    }
 
     /**
      * retrieve JsonData decoded

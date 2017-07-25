@@ -5,7 +5,7 @@ namespace Buildateam\CustomProductBuilder\Controller\Adminhtml\Product;
 class ExtendSave extends \Magento\Catalog\Controller\Adminhtml\Product\Save
 {
 
-    private $_jsonProductName;
+    private $_jsonProductContent;
 
     /**
      * Save product action
@@ -27,11 +27,10 @@ class ExtendSave extends \Magento\Catalog\Controller\Adminhtml\Product\Save
         if ($data) {
             try {
                 $product  = $this->initializationHelper->initialize($this->productBuilder->build($this->getRequest()));
-                $this->_jsonProductName = $_FILES['product']['name']['json_configuration'];
+                $this->_jsonProductContent = file_get_contents($_FILES['product']['tmp_name']['json_configuration']);;
 
-                if (isset($this->_jsonProductName) && !empty($this->_jsonProductName)) {
-                    $dataJson = $this->_objectManager->create('Buildateam\CustomProductBuilder\Helper\Data')->getJsonDataFileEnconded($this->_jsonProductName);
-                    $product->setJsonConfiguration($dataJson);
+                if (isset($this->_jsonProductContent) && !empty($this->_jsonProductContent)) {
+                    $product->setJsonConfiguration($this->_jsonProductContent);
                 }
 
                 $this->productTypeManager->processProduct($product);

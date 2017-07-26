@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Module/etc/module.xsd">
-    <preference for="Magento\Catalog\Controller\Adminhtml\Product\Save" type="Buildateam\CustomProductBuilder\Controller\Adminhtml\Product\ExtendSave" />
     <virtualType name="Magento\Catalog\Ui\DataProvider\Product\Form\Modifier\Pool">
         <arguments>
             <argument name="modifiers" xsi:type="array">

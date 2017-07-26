@@ -27,11 +27,19 @@ class ExtendSave extends \Magento\Catalog\Controller\Adminhtml\Product\Save
         if ($data) {
             try {
                 $product  = $this->initializationHelper->initialize($this->productBuilder->build($this->getRequest()));
-                $this->_jsonProductContent = file_get_contents($_FILES['product']['tmp_name']['json_configuration']);;
+                $jsonData = !empty($_FILES['product']['tmp_name']['json_configuration'])
+                            ? file_get_contents($_FILES['product']['tmp_name']['json_configuration'])
+                            : $product->getData('json_configuration');
 
-                if (isset($this->_jsonProductContent) && !empty($this->_jsonProductContent)) {
+                if (!empty($jsonData)) {
+                    $this->_jsonProductContent = $jsonData;
+                    $validate = $this->_objectManager->create('Buildateam\CustomProductBuilder\Helper\Data')->validate($this->_jsonProductContent);
+                    if (isset($this->_jsonProductContent) && !empty($this->_jsonProductContent) && $validate) {
+                        throw new \Magento\Framework\Exception\LocalizedException(__($validate));
+                    }
                     $product->setJsonConfiguration($this->_jsonProductContent);
                 }
+
 
                 $this->productTypeManager->processProduct($product);
 

@@ -85,10 +85,10 @@ class Data extends AbstractHelper
 
         if ($error !== '') {
             // throw the Exception or exit // or whatever :)
-            exit($error);
+            return($error);
         }
 
         // everything is OK
-        return $result;
+        return '';
     }
 }

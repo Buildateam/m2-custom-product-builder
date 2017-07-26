@@ -2,23 +2,35 @@
 
 namespace Buildateam\CustomProductBuilder\Block\Adminhtml\Product\Helper\Form;
 
-class JsonAttr  extends \Magento\Framework\Data\Form\Element\File
+class JsonAttr  extends \Magento\Framework\Data\Form\Element\Textarea
 {
-    protected $_template = 'Buildateam_CustomProductBuilder/view/adminhtml/templates/product/edit/attribute/jsonattr.phtml';
 
-    public function getAfterElementHtml()
+    public function getElementHtml()
     {
-        $var = 0;
+
         $return
-            = <<<HTML
+            = '
         <button
+            id="open_model"
             title=""
             type="button"
-            class="action-secondary"
-            onclick="jQuery('#new-video').modal('openModal'); jQuery('#new_video_form')[0].reset();"
+            class="action-secondary"            
             data-ui-id="widget-button-1">
             <span>Edit</span>
         </button>
+            <div id="myModel">                
+                <textarea rows="50" cols="100">
+                    '.$this->getData('value').'
+                </textarea>
+                <div>Json content.....</div>
+            </div>
+            <input style="display:none" id="json_configuration" class="" name="product[json_configuration]" data-ui-id="product-tabs-attributes-tab-fieldset-element-file-product-json-configuration" value="'.$this->getData('value').'" type="file">
+            '.
+
+            <<<HTML
+            
+            
+
         <button
             title=""
             type="button"
@@ -30,41 +42,69 @@ class JsonAttr  extends \Magento\Framework\Data\Form\Element\File
         <button
             title=""
             type="button"
-            class="action-secondary"
-            onclick="jQuery('#new-video').modal('openModal'); jQuery('#new_video_form')[0].reset();"
+            class="action-secondary import-json"            
             data-ui-id="widget-button-1">            
             <span>Import</span>
         </button>       
 
         <script>
-            require(['jquery'], function($){       
-              
-                var url = window.location.pathname;
+        
+        
+        require(['jquery','Magento_Ui/js/modal/modal'], function($, modal){       
                 
-                $( ".export-product-builder" ).click(function() {    
-        
-                    $.ajax({
-                       showLoader: true,
-                       url: '/admin/productbuilder/exportjson/build',
-                       data: 'productid='+url,
-                       type: "POST",
-                       dataType: 'json'
-                         }).done(function (data) {
-                            var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(data, 0,4));
-                            var dlAnchorElem = document.getElementById('downloadAnchorElem');
-                            dlAnchorElem.setAttribute("href", dataStr);
-                            dlAnchorElem.setAttribute("download", "product-builder.json");
-                            dlAnchorElem.click();       
-                        
+                    var options = {
+                        type: 'popup',
+                        responsive: true,
+                        innerScroll: true,
+                        clickableOverlay: true,
+                        title: ' Custom product builder',
+                        buttons: [{
+                            text: $.mage.__('Continue'),
+                            class: '',
+                            click: function () {
+                                this.closeModal();
+                            }
+                        }]
+                    };
+                    
+                    $(".import-json").on('click', function(e){
+                        e.preventDefault();
+                        $("#json_configuration:hidden").trigger('click');
                     });
-                });        
-        
-            });
-    </script>
+                    
+                    var popup = modal(options, $('#myModel'));
+                    $("#open_model").on("click",function(){
+                        $('#myModel').modal('openModal');
+                    });                
+                  
+                    var url = window.location.pathname;
+             
+                    $( ".export-product-builder" ).click(function() {  
+            
+                        $.ajax({
+                           showLoader: true,
+                           url: '/admin/productbuilder/exportjson/build',
+                           data: 'productid='+url,
+                           type: "POST",
+                           dataType: 'json'
+                             }).done(function (data) {
+                                var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(data, 0,4));
+                                var dlAnchorElem = document.getElementById('downloadAnchorElem');
+                                dlAnchorElem.setAttribute("href", dataStr);
+                                dlAnchorElem.setAttribute("download", "product-builder.json");
+                                dlAnchorElem.click();       
+                            
+                        });
+                    });        
+            
+                });
+        </script>
 HTML;
 
 
         return $return;
     }
+
+
 
 }

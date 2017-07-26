@@ -1,4 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Module/etc/module.xsd">
     <preference for="Magento\Catalog\Controller\Adminhtml\Product\Save" type="Buildateam\CustomProductBuilder\Controller\Adminhtml\Product\ExtendSave" />
+    <virtualType name="Magento\Catalog\Ui\DataProvider\Product\Form\Modifier\Pool">
+        <arguments>
+            <argument name="modifiers" xsi:type="array">
+                <item name="custom-options-custom-modal" xsi:type="array">
+                    <item name="class" xsi:type="string">Buildateam\CustomProductBuilder\Ui\DataProvider\Product\Form\Modifier\JsonModal</item>
+                    <item name="sortOrder" xsi:type="number">71</item>
+                    <!-- Because 70 is sort order of the regular custom options -->
+                </item>
+            </argument>
+        </arguments>
+    </virtualType>
 </config>

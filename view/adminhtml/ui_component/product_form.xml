@@ -1,0 +1,28 @@
+<form xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
+    <fieldset name="%fieldset_name%">
+        <argument name="data" xsi:type="array">
+            <item name="config" xsi:type="array">
+                <item name="label" xsi:type="string" translate="true">%field set label as displayed in UI%</item>
+                <item name="sortOrder" xsi:type="number">%order for displaying%</item>
+            </item>
+        </argument>
+        <!--field sets can be nested -->
+        <fieldset name="%nested_fieldset_name%">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="label" xsi:type="string" translate="true">%Nested fieldset Label as displayed in UI%</item>
+                    <item name="collapsible" xsi:type="boolean">true</item>
+                </item>
+            </argument>
+            <field name="%field_name%">
+                <argument name="data" xsi:type="array">
+                    <item name="config" xsi:type="array">
+                        <item name="%field_option1%" xsi:type="%option_type%">%value%</item>
+                        <item name="%field_option2%" xsi:type="%option_type%">%value%</item>
+                    </item>
+                </argument>
+            </field>
+        </fieldset>
+    </fieldset>
+
+</form>

@@ -89,9 +89,7 @@ class CustomProductBuilder extends AbstractModifier
                             'data' => [
                                 'config' => [
                                     'formElement' => 'hidden',
-                                    //'visible' = false;
                                     'componentType' => 'field',
-                                    #'component' => 'Magento_Ui/js/form/components/html',
                                     'filterOptions' => true,
                                     'chipsEnabled' => true,
                                     'disableLabel' => true,
@@ -111,7 +109,7 @@ class CustomProductBuilder extends AbstractModifier
                         'arguments' => [
                             'data' => [
                                 'config' => [
-                                    'title' => __('Customise'),
+                                    'title' => __('Configure'),
                                     'formElement' => 'container',
                                     'additionalClasses' => 'admin__field-small',
                                     'componentType' => 'container',

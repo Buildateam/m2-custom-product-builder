@@ -39,4 +39,26 @@ class CustomProductBuilder extends AbstractDataProvider
         $this->collection = $collectionFactory->create();
         $this->urlBuilder = $urlBuilder;
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getData()
+    {
+        $this->data = array_replace_recursive(
+            $this->data,
+            [
+                'config' => [
+                    'data' => [
+                        'is_active' => 1,
+                        'include_in_menu' => 1,
+                        'return_session_messages_only' => 1,
+                        'use_config' => ['available_sort_by', 'default_sort_by']
+                    ]
+                ]
+            ]
+        );
+
+        return $this->data;
+    }
 }

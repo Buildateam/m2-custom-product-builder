@@ -19,19 +19,32 @@ use Magento\Framework\Stdlib\ArrayManager;
 class CustomProductBuilder extends AbstractModifier
 {
 
+
+    /**
+     * @var LocatorInterface
+     */
+    protected $locator;
+
+    /**
+     * @var UrlInterface
+     */
+    protected $urlBuilder;
+
     /**
      * @var ArrayManager
      */
     protected $arrayManager;
 
-
-
     /**
      * @param ArrayManager $arrayManager
      */
     public function __construct(
+        LocatorInterface $locator,
+        UrlInterface $urlBuilder,
         ArrayManager $arrayManager
     ) {
+        $this->locator = $locator;
+        $this->urlBuilder = $urlBuilder;
         $this->arrayManager = $arrayManager;
     }
 
@@ -40,7 +53,7 @@ class CustomProductBuilder extends AbstractModifier
      */
     public function modifyMeta(array $meta)
     {
-        // $meta = $this->createCustomProductBuilderModal($meta);
+        $meta = $this->createCustomProductBuilderModal($meta);
         $meta = $this->customizeCustomProductBuilderField($meta);
 
         return $meta;
@@ -53,6 +66,100 @@ class CustomProductBuilder extends AbstractModifier
     public function modifyData(array $data)
     {
         return $data;
+    }
+
+
+    /**
+     * Create slide-out panel for modal editor
+     *
+     * @param array $meta
+     * @return array
+     */
+    protected function createCustomProductBuilderModal(array $meta)
+    {
+        return $this->arrayManager->set(
+            'custom_product_builder_modal',
+            $meta,
+            [
+                'arguments' => [
+                    'data' => [
+                        'config' => [
+                            'isTemplate' => false,
+                            'componentType' => 'modal',
+                            'onCancel' => 'actionCancel',
+                            'options' => [
+                                'title' => __('Custom Product Builder'),
+                                /* 'buttons' => [
+                                    [
+                                        'text' => __('Reset'),
+                                        'class' => 'action-secondary',
+                                        'actions' => [
+                                            [
+                                                'targetName' => 'product_form.product_form.custom_product_builder_modal.product_builder',
+                                                'actionName' => 'resetForm'
+                                            ]
+                                        ]
+                                    ],
+                                    [
+                                        'text' => __('Export'),
+                                        'class' => 'action-secondary',
+                                        'actions' => [
+                                            [
+                                                'targetName' => 'product_form.product_form.custom_product_builder_modal.product_builder',
+                                                'actionName' => 'resetForm'
+                                            ]
+                                        ]
+                                    ],
+                                    [
+                                        'text' => __('Reset'),
+                                        'class' => 'action-secondary',
+                                        'actions' => [
+                                            [
+                                                'targetName' => 'product_form.product_form.custom_product_builder_modal.product_builder',
+                                                'actionName' => 'resetForm'
+                                            ]
+                                        ]
+                                    ],
+                                ], */
+                            ],
+                            'imports' => [
+                                'state' => '!index=product_builder_save:responseStatus'
+                            ],
+
+                        ],
+                    ],
+                ],
+                'children' => [
+                    'product_builder' => [
+                        'arguments' => [
+                            'data' => [
+                                'config' => [
+                                    'label' => '',
+                                    'componentType' => 'container',
+                                    'component' => 'Magento_Ui/js/form/components/insert-form',
+                                    'dataScope' => '',
+                                    'update_url' => $this->urlBuilder->getUrl('mui/index/render'),
+                                    'render_url' => $this->urlBuilder->getUrl(
+                                        'mui/index/render_handle',
+                                        [
+                                            'handle' => 'custom_product_builder',
+                                            'store' => $this->locator->getStore()->getId(),
+                                            'product' => $this->locator->getStore()->getId(),
+                                            'buttons' => 1
+                                        ]
+                                    ),
+                                    'autoRender' => false,
+                                    'ns' => 'custom_product_builder_modal',
+                                    'externalProvider' => 'custom_product_builder_modal.builder_form_data_source',
+                                    'toolbarContainer' => '${ $.parentName }',
+                                    'formSubmitType' => 'ajax',
+                                ],
+                            ],
+                        ]
+                    ]
+                ]
+            ]
+        );
     }
 
 
@@ -98,8 +205,7 @@ class CustomProductBuilder extends AbstractModifier
                                     'config' => [
                                         'dataScope' => $fieldCode,
                                         'sortOrder' => 10,
-                                        'visible'=>false
-
+                                        'visible' =>false,
                                     ],
                                 ],
                             ],
@@ -122,12 +228,12 @@ class CustomProductBuilder extends AbstractModifier
                                         ],
                                         [
                                             'targetName' =>
-                                                'product_form.product_form.custom_product_builder_modal.create_category',
+                                                'product_form.product_form.custom_product_builder_modal.product_builder',
                                             'actionName' => 'render'
                                         ],
                                         [
                                             'targetName' =>
-                                                'product_form.product_form.custom_product_builder_modal.create_category',
+                                                'product_form.product_form.custom_product_builder_modal.product_builder',
                                             'actionName' => 'resetForm'
                                         ]
                                     ],
@@ -176,6 +282,8 @@ class CustomProductBuilder extends AbstractModifier
                                     'source' => 'product_details',
                                     'displayArea' => 'insideGroup',
                                     'sortOrder' => 40,
+                                    'actions' => [],
+                                    'on_click' => sprintf("location.href = '%s';", $this->urlBuilder->getUrl('*/*/')),
                                 ],
                             ],
                         ]

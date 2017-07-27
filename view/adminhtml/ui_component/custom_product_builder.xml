@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
+    <argument name="data" xsi:type="array">
+        <item name="js_config" xsi:type="array">
+            <item name="provider" xsi:type="string">custom_product_builder.custom_product_builder_data_source</item>
+            <item name="deps" xsi:type="string">custom_product_builder.custom_product_builder_data_source</item>
+            <item name="namespace" xsi:type="string">custom_product_builder</item>
+        </item>
+        <item name="buttons" xsi:type="array">
+            <item name="save" xsi:type="string">Buildateam\CustomProductBuilder\Block\Adminhtml\Product\Edit\Button\Save</item>
+        </item>
+        <item name="template" xsi:type="string">templates/form/collapsible</item>
+        <item name="config" xsi:type="array">
+            <item name="ajaxSaveType" xsi:type="string">simple</item>
+        </item>
+    </argument>
+    <dataSource name="custom_product_builder_data_source">
+        <argument name="dataProvider" xsi:type="configurableObject">
+            <argument name="class"
+                      xsi:type="string">Buildateam\CustomProductBuilder\Ui\DataProvider\Product\Form\CustomProductBuilder</argument>
+            <argument name="name" xsi:type="string">custom_product_builder_data_source</argument>
+            <argument name="primaryFieldName" xsi:type="string">entity_id</argument>
+            <argument name="requestFieldName" xsi:type="string">id</argument>
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="submit_url" xsi:type="url" path="admin/custom/product_builder_save"/>
+                </item>
+            </argument>
+        </argument>
+        <argument name="data" xsi:type="array">
+            <item name="js_config" xsi:type="array">
+                <item name="component" xsi:type="string">Magento_Ui/js/form/provider</item>
+            </item>
+        </argument>
+    </dataSource>
+    <fieldset name="data">
+        <argument name="data" xsi:type="array">
+            <item name="config" xsi:type="array">
+                <item name="label" xsi:type="string"/>
+                <item name="collapsible" xsi:type="boolean">false</item>
+            </item>
+        </argument>
+        <container name="messages">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="label" xsi:type="string"/>
+                    <item name="component" xsi:type="string">Magento_Catalog/js/components/messages</item>
+                </item>
+            </argument>
+        </container>
+        <htmlContent name="builder">
+            <argument name="block"
+                      xsi:type="object">Buildateam\CustomProductBuilder\Block\Adminhtml\Product\Edit\Builder</argument>
+        </htmlContent>
+    </fieldset>
+
+</form>

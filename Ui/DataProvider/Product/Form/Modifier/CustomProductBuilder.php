@@ -4,22 +4,19 @@ namespace Buildateam\CustomProductBuilder\Ui\DataProvider\Product\Form\Modifier;
 
 use Magento\Catalog\Ui\DataProvider\Product\Form\Modifier\AbstractModifier;
 use Magento\Catalog\Model\Locator\LocatorInterface;
-use Magento\Catalog\Model\ResourceModel\Category\CollectionFactory as CategoryCollectionFactory;
 use Magento\Framework\App\ObjectManager;
 use Magento\Framework\App\CacheInterface;
 use Magento\Framework\DB\Helper as DbHelper;
-use Magento\Catalog\Model\Category as CategoryModel;
 use Magento\Framework\UrlInterface;
 use Magento\Framework\Stdlib\ArrayManager;
+use Magento\Backend\App\Action\Context;
 
 /**
- * Data provider for categories field of product page
+ * Data provider for Custom Product Bulder field of product page
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class CustomProductBuilder extends AbstractModifier
 {
-
-
     /**
      * @var LocatorInterface
      */
@@ -35,18 +32,23 @@ class CustomProductBuilder extends AbstractModifier
      */
     protected $arrayManager;
 
+    /** @var \Magento\Framework\App\RequestInterface  */
+    protected $request;
+
     /**
      * @param ArrayManager $arrayManager
      */
     public function __construct(
         LocatorInterface $locator,
         UrlInterface $urlBuilder,
-        ArrayManager $arrayManager
+        ArrayManager $arrayManager,
+        Context $context
     )
     {
         $this->locator = $locator;
         $this->urlBuilder = $urlBuilder;
         $this->arrayManager = $arrayManager;
+        $this->request = $context->getRequest();
     }
 
     /**
@@ -78,6 +80,13 @@ class CustomProductBuilder extends AbstractModifier
      */
     protected function createCustomProductBuilderModal(array $meta)
     {
+        $params = [
+            'handle'  => 'custom_product_builder',
+            'store'   => $this->locator->getStore()->getId(),
+            'product' => (int)$this->request->getParam('id'),
+            'buttons' => 1
+        ];
+
         return $this->arrayManager->set(
             'custom_product_builder_modal',
             $meta,
@@ -139,19 +148,11 @@ class CustomProductBuilder extends AbstractModifier
                                     'componentType'    => 'container',
                                     'component'        => 'Magento_Ui/js/form/components/insert-form',
                                     'dataScope'        => '',
-                                    'update_url'       => $this->urlBuilder->getUrl('mui/index/render'),
-                                    'render_url'       => $this->urlBuilder->getUrl(
-                                        'mui/index/render_handle',
-                                        [
-                                            'handle'  => 'custom_product_builder',
-                                            'store'   => $this->locator->getStore()->getId(),
-                                            'product' => $this->locator->getStore()->getId(),
-                                            'buttons' => 1
-                                        ]
-                                    ),
+                                    'update_url'       => $this->urlBuilder->getUrl('mui/index/render_handle', $params),
+                                    'render_url'       => $this->urlBuilder->getUrl('mui/index/render_handle', $params),
                                     'autoRender'       => false,
-                                    'ns'               => 'custom_product_builder_modal',
-                                    'externalProvider' => 'custom_product_builder_modal.builder_form_data_source',
+                                    'ns'               => 'custom_product_builder',
+                                    'externalProvider' => 'custom_product_builder.builder_form_data_source',
                                     'toolbarContainer' => '${ $.parentName }',
                                     'formSubmitType'   => 'ajax',
                                 ],
@@ -198,12 +199,12 @@ class CustomProductBuilder extends AbstractModifier
                             'data' => [
                                 'config' => [
                                     'formElement'      => 'hidden',
+                                    'component' => 'Magento_Ui/js/form/element/abstract',
                                     'componentType'    => 'field',
                                     'filterOptions'    => true,
                                     'chipsEnabled'     => true,
                                     'disableLabel'     => true,
-                                    'levelsVisibility' => '1',
-                                    'elementTmpl'      => 'ui/form/components/button/simple',
+                                    'elementTmpl'      => 'ui/form/element/hidden',
                                     'config'           => [
                                         'dataScope' => $fieldCode,
                                         'sortOrder' => 10,

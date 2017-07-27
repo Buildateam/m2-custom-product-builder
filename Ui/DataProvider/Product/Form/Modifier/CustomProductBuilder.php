@@ -99,38 +99,6 @@ class CustomProductBuilder extends AbstractModifier
                             'onCancel'      => 'actionCancel',
                             'options'       => [
                                 'title' => __('Custom Product Builder'),
-                                /* 'buttons' => [
-                                    [
-                                        'text' => __('Reset'),
-                                        'class' => 'action-secondary',
-                                        'actions' => [
-                                            [
-                                                'targetName' => 'product_form.product_form.custom_product_builder_modal.product_builder',
-                                                'actionName' => 'resetForm'
-                                            ]
-                                        ]
-                                    ],
-                                    [
-                                        'text' => __('Export'),
-                                        'class' => 'action-secondary',
-                                        'actions' => [
-                                            [
-                                                'targetName' => 'product_form.product_form.custom_product_builder_modal.product_builder',
-                                                'actionName' => 'resetForm'
-                                            ]
-                                        ]
-                                    ],
-                                    [
-                                        'text' => __('Reset'),
-                                        'class' => 'action-secondary',
-                                        'actions' => [
-                                            [
-                                                'targetName' => 'product_form.product_form.custom_product_builder_modal.product_builder',
-                                                'actionName' => 'resetForm'
-                                            ]
-                                        ]
-                                    ],
-                                ], */
                             ],
                             'imports'       => [
                                 'state' => '!index=product_builder_save:responseStatus'

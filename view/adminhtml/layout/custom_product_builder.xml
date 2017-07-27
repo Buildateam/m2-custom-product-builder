@@ -9,7 +9,7 @@
     <update handle="styles"/>
     <body>
         <referenceContainer name="content">
-            <uiComponent name="new_category_form"/>
+            <uiComponent name="custom_product_builder"/>
         </referenceContainer>
     </body>
 </page>

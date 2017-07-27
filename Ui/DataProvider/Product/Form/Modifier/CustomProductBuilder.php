@@ -42,7 +42,8 @@ class CustomProductBuilder extends AbstractModifier
         LocatorInterface $locator,
         UrlInterface $urlBuilder,
         ArrayManager $arrayManager
-    ) {
+    )
+    {
         $this->locator = $locator;
         $this->urlBuilder = $urlBuilder;
         $this->arrayManager = $arrayManager;
@@ -84,10 +85,10 @@ class CustomProductBuilder extends AbstractModifier
                 'arguments' => [
                     'data' => [
                         'config' => [
-                            'isTemplate' => false,
+                            'isTemplate'    => false,
                             'componentType' => 'modal',
-                            'onCancel' => 'actionCancel',
-                            'options' => [
+                            'onCancel'      => 'actionCancel',
+                            'options'       => [
                                 'title' => __('Custom Product Builder'),
                                 /* 'buttons' => [
                                     [
@@ -122,37 +123,37 @@ class CustomProductBuilder extends AbstractModifier
                                     ],
                                 ], */
                             ],
-                            'imports' => [
+                            'imports'       => [
                                 'state' => '!index=product_builder_save:responseStatus'
                             ],
 
                         ],
                     ],
                 ],
-                'children' => [
+                'children'  => [
                     'product_builder' => [
                         'arguments' => [
                             'data' => [
                                 'config' => [
-                                    'label' => '',
-                                    'componentType' => 'container',
-                                    'component' => 'Magento_Ui/js/form/components/insert-form',
-                                    'dataScope' => '',
-                                    'update_url' => $this->urlBuilder->getUrl('mui/index/render'),
-                                    'render_url' => $this->urlBuilder->getUrl(
+                                    'label'            => '',
+                                    'componentType'    => 'container',
+                                    'component'        => 'Magento_Ui/js/form/components/insert-form',
+                                    'dataScope'        => '',
+                                    'update_url'       => $this->urlBuilder->getUrl('mui/index/render'),
+                                    'render_url'       => $this->urlBuilder->getUrl(
                                         'mui/index/render_handle',
                                         [
-                                            'handle' => 'custom_product_builder',
-                                            'store' => $this->locator->getStore()->getId(),
+                                            'handle'  => 'custom_product_builder',
+                                            'store'   => $this->locator->getStore()->getId(),
                                             'product' => $this->locator->getStore()->getId(),
                                             'buttons' => 1
                                         ]
                                     ),
-                                    'autoRender' => false,
-                                    'ns' => 'custom_product_builder_modal',
+                                    'autoRender'       => false,
+                                    'ns'               => 'custom_product_builder_modal',
                                     'externalProvider' => 'custom_product_builder_modal.builder_form_data_source',
                                     'toolbarContainer' => '${ $.parentName }',
-                                    'formSubmitType' => 'ajax',
+                                    'formSubmitType'   => 'ajax',
                                 ],
                             ],
                         ]
@@ -173,6 +174,7 @@ class CustomProductBuilder extends AbstractModifier
             return $meta;
         }
 
+        //$meta = $this->arrayManager->remove($containerPath.'/children/'.$fieldCode, $meta);
         $meta = $this->arrayManager->merge(
             $containerPath,
             $meta,
@@ -180,32 +182,32 @@ class CustomProductBuilder extends AbstractModifier
                 'arguments' => [
                     'data' => [
                         'config' => [
-                            'label' => __('Custom Product Builder'),
-                            'dataScope' => '',
-                            'breakLine' => false,
-                            'formElement' => 'container',
+                            'label'         => __('Custom Product Builder'),
+                            'dataScope'     => '',
+                            'breakLine'     => false,
+                            'formElement'   => 'container',
                             'componentType' => 'container',
-                            'component' => 'Magento_Ui/js/form/components/group',
-                            'scopeLabel' => __('[GLOBAL]'),
+                            'component'     => 'Magento_Ui/js/form/components/group',
+                            'scopeLabel'    => __('[GLOBAL]'),
                         ],
                     ],
                 ],
-                'children' => [
-                    $fieldCode => [
+                'children'  => [
+                    $fieldCode                      => [
                         'arguments' => [
                             'data' => [
                                 'config' => [
-                                    'formElement' => 'hidden',
-                                    'componentType' => 'field',
-                                    'filterOptions' => true,
-                                    'chipsEnabled' => true,
-                                    'disableLabel' => true,
+                                    'formElement'      => 'hidden',
+                                    'componentType'    => 'field',
+                                    'filterOptions'    => true,
+                                    'chipsEnabled'     => true,
+                                    'disableLabel'     => true,
                                     'levelsVisibility' => '1',
-                                    'elementTmpl' => 'ui/form/components/button/simple',
-                                    'config' => [
+                                    'elementTmpl'      => 'ui/form/components/button/simple',
+                                    'config'           => [
                                         'dataScope' => $fieldCode,
                                         'sortOrder' => 10,
-                                        'visible' =>false,
+                                        'visible'   => false,
                                     ],
                                 ],
                             ],
@@ -215,13 +217,13 @@ class CustomProductBuilder extends AbstractModifier
                         'arguments' => [
                             'data' => [
                                 'config' => [
-                                    'title' => __('Configure'),
-                                    'formElement' => 'container',
-                                    'additionalClasses' => 'admin__field-small',
-                                    'componentType' => 'container',
-                                    'component' => 'Magento_Ui/js/form/components/button',
-                                    'template' => 'ui/form/components/button/container',
-                                    'actions' => [
+                                    'title'              => __('Configure'),
+                                    'formElement'        => 'container',
+                                    'additionalClasses'  => 'admin__field-small',
+                                    'componentType'      => 'container',
+                                    'component'          => 'Magento_Ui/js/form/components/button',
+                                    'template'           => 'ui/form/components/button/container',
+                                    'actions'            => [
                                         [
                                             'targetName' => 'product_form.product_form.custom_product_builder_modal',
                                             'actionName' => 'toggleModal',
@@ -238,10 +240,10 @@ class CustomProductBuilder extends AbstractModifier
                                         ]
                                     ],
                                     'additionalForGroup' => true,
-                                    'provider' => false,
-                                    'source' => 'product_details',
-                                    'displayArea' => 'insideGroup',
-                                    'sortOrder' => 20,
+                                    'provider'           => false,
+                                    'source'             => 'product_details',
+                                    'displayArea'        => 'insideGroup',
+                                    'sortOrder'          => 20,
                                 ],
                             ],
                         ]
@@ -251,17 +253,17 @@ class CustomProductBuilder extends AbstractModifier
                         'arguments' => [
                             'data' => [
                                 'config' => [
-                                    'title' => __('Import'),
-                                    'formElement' => 'container',
-                                    'additionalClasses' => 'admin__field-small',
-                                    'componentType' => 'container',
-                                    'component' => 'Magento_Ui/js/form/components/button',
-                                    'template' => 'ui/form/components/button/container',
+                                    'title'              => __('Import'),
+                                    'formElement'        => 'container',
+                                    'additionalClasses'  => 'admin__field-small',
+                                    'componentType'      => 'container',
+                                    'component'          => 'Magento_Ui/js/form/components/button',
+                                    'template'           => 'ui/form/components/button/container',
                                     'additionalForGroup' => true,
-                                    'provider' => false,
-                                    'source' => 'product_details',
-                                    'displayArea' => 'insideGroup',
-                                    'sortOrder' => 30,
+                                    'provider'           => false,
+                                    'source'             => 'product_details',
+                                    'displayArea'        => 'insideGroup',
+                                    'sortOrder'          => 30,
                                 ],
                             ],
                         ]
@@ -271,19 +273,19 @@ class CustomProductBuilder extends AbstractModifier
                         'arguments' => [
                             'data' => [
                                 'config' => [
-                                    'title' => __('Export'),
-                                    'formElement' => 'container',
-                                    'additionalClasses' => 'admin__field-small',
-                                    'componentType' => 'container',
-                                    'component' => 'Magento_Ui/js/form/components/button',
-                                    'template' => 'ui/form/components/button/container',
+                                    'title'              => __('Export'),
+                                    'formElement'        => 'container',
+                                    'additionalClasses'  => 'admin__field-small',
+                                    'componentType'      => 'container',
+                                    'component'          => 'Magento_Ui/js/form/components/button',
+                                    'template'           => 'ui/form/components/button/container',
                                     'additionalForGroup' => true,
-                                    'provider' => false,
-                                    'source' => 'product_details',
-                                    'displayArea' => 'insideGroup',
-                                    'sortOrder' => 40,
-                                    'actions' => [],
-                                    'on_click' => sprintf("location.href = '%s';", $this->urlBuilder->getUrl('*/*/')),
+                                    'provider'           => false,
+                                    'source'             => 'product_details',
+                                    'displayArea'        => 'insideGroup',
+                                    'sortOrder'          => 40,
+                                    'actions'            => [],
+                                    'on_click'           => sprintf("location.href = '%s';", $this->urlBuilder->getUrl('*/*/')),
                                 ],
                             ],
                         ]

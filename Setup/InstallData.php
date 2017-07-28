@@ -35,11 +35,10 @@ class InstallData implements InstallDataInterface
             'json_configuration',
             [
                 'type' => 'text',
-                'backend' => '',
+                'backend' => '\Buildateam\CustomProductBuilder\Model\Attribute\Backend\JsonAttribute',
                 'frontend' => '',
                 'frontend_input' => 'text',
                 'label' => 'Custom Product Builder',
-                'input_renderer' => 'Buildateam\CustomProductBuilder\Block\Adminhtml\Product\Helper\Form\JsonAttr',
                 'input' => 'text',
                 'class' => '',
                 'source' => '',

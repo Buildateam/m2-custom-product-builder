@@ -1,12 +1,12 @@
 <form xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
-    <fieldset name="%fieldset_name%">
+<!--    <fieldset name="%fieldset_name%">
         <argument name="data" xsi:type="array">
             <item name="config" xsi:type="array">
                 <item name="label" xsi:type="string" translate="true">%field set label as displayed in UI%</item>
                 <item name="sortOrder" xsi:type="number">%order for displaying%</item>
             </item>
         </argument>
-        <!--field sets can be nested -->
+        &lt;!&ndash;field sets can be nested &ndash;&gt;
         <fieldset name="%nested_fieldset_name%">
             <argument name="data" xsi:type="array">
                 <item name="config" xsi:type="array">
@@ -23,6 +23,6 @@
                 </argument>
             </field>
         </fieldset>
-    </fieldset>
+    </fieldset>-->
 
 </form>

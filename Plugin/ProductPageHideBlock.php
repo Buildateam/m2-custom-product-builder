@@ -3,7 +3,7 @@
 namespace Buildateam\CustomProductBuilder\Plugin;
 
 
-class ProductPageMedia
+class ProductPageHideBlock
 {
     /**
      * @param \Magento\ProductVideo\Block\Product\View\Gallery|Magento\Catalog\Block\Product\View\Gallery $subject

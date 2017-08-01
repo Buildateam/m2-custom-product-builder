@@ -11,4 +11,11 @@
             </argument>
         </arguments>
     </virtualType>
+    <type name="Magento\ProductVideo\Block\Product\View\Gallery">
+        <plugin name="cpb_product_media" type="Buildateam\CustomProductBuilder\Plugin\ProductPageMedia" sortOrder="50" />
+    </type>
+    <type name="Magento\Catalog\Block\Product\View\Gallery">
+        <plugin name="cpb_product_media" type="Buildateam\CustomProductBuilder\Plugin\ProductPageMedia" sortOrder="50" />
+    </type>
+
 </config>

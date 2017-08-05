@@ -15,11 +15,15 @@ class Export extends \Magento\Framework\App\Action\Action
         \Magento\Framework\App\Action\Context $context,
         \Magento\Framework\Json\Helper\Data $jsonHelper,
         \Magento\Framework\View\Result\PageFactory $resultFactory,
-        \Magento\Catalog\Model\ProductRepository $productRepository
+        \Magento\Catalog\Model\ProductRepository $productRepository,
+        \Magento\Framework\Controller\Result\RawFactory $resultRawFactory,
+        \Magento\Framework\App\Response\Http\FileFactory $fileFactory
     ) {
         $this->_jsonHelper          = $jsonHelper;
         $this->_resultPageFactory   = $resultFactory;
         $this->_productRepository   = $productRepository;
+        $this->resultRawFactory      = $resultRawFactory;
+        $this->fileFactory           = $fileFactory;
         parent::__construct($context);
     }
 
@@ -30,52 +34,18 @@ class Export extends \Magento\Framework\App\Action\Action
     public function execute()
     {
         $params         = $this->getRequest()->getParams('product_id');
-
-        /** @var \Magento\Framework\View\Result\Page $resultPage */
-        $this->resultFactory->create(ResultFactory::TYPE_PAGE);
-
-        /** @var \Magento\Framework\Controller\Result\Raw $response */
-        $response = $this->resultFactory->create(ResultFactory::TYPE_RAW);
-
-        if (!isset($params['product_id'])) {
-            $response->setContents(
-                $this->_jsonHelper->jsonEncode(
-                    [
-                        'success'       => false,
-                        'configuration' => 'Please, send a product_id param.',
-                    ]
-                )
-            );
-            return $response;
-        }
-
         $product        = $this->_productRepository->getById($params['product_id']);
         $productConfig  = $product->getData('json_configuration');
 
-        $response->setHeader('Content-type', 'text/plain');
-
-        if(!isset($productConfig) || empty($productConfig)) {
-            $response->setContents(
-                $this->_jsonHelper->jsonEncode(
-                    [
-                        'success'       => false,
-                        'configuration' => 'This product has no specific settings',
-                    ]
-                )
-            );
-            return $response;
-        }
-
-        $response->setContents(
-            $this->_jsonHelper->jsonEncode(
-                [
-                    'success'       => true,
-                    'configuration' => $productConfig,
-                ]
-            )
+        $fileName = 'product-builder.json';
+        $this->fileFactory->create(
+            $fileName,
+            $productConfig
         );
 
-        return $response;
+        $resultRaw = $this->resultRawFactory->create();
+
+        return $resultRaw;
 
     }
 

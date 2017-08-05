@@ -15,5 +15,3 @@ job1:
   environment:
     name: cpb-demo
     url: https://magento.thecustomproductbuilder.com
-  tags:
-    - royadevelop

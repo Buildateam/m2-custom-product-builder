@@ -1,3 +1,4 @@
+image: docker:git
 stages:
   - build
 

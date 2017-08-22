@@ -22,8 +22,8 @@ class Export extends \Magento\Framework\App\Action\Action
         $this->_jsonHelper          = $jsonHelper;
         $this->_resultPageFactory   = $resultFactory;
         $this->_productRepository   = $productRepository;
-        $this->resultRawFactory      = $resultRawFactory;
-        $this->fileFactory           = $fileFactory;
+        $this->resultRawFactory     = $resultRawFactory;
+        $this->fileFactory          = $fileFactory;
         parent::__construct($context);
     }
 
@@ -33,20 +33,109 @@ class Export extends \Magento\Framework\App\Action\Action
      */
     public function execute()
     {
-        $params         = $this->getRequest()->getParams('product_id');
-        $product        = $this->_productRepository->getById($params['product_id']);
-        $productConfig  = $product->getData('json_configuration');
+        $productId     = (int)$this->getRequest()->getParam('id', 0);
+        $product       = $this->_productRepository->getById($productId);
+        $productConfig = $product->getData('json_configuration');
 
-        $fileName = 'product-builder.json';
-        $this->fileFactory->create(
-            $fileName,
-            $productConfig
-        );
+        if (!$productConfig) $productConfig = $this->_getBaseConfig($product);
+        //$fileName = 'product-builder.json';
+        //$this->fileFactory->create(
+        //    $fileName,
+        //    $productConfig
+        //);
 
         $resultRaw = $this->resultRawFactory->create();
+        $resultRaw->setContents($productConfig);
 
         return $resultRaw;
 
+    }
+    
+    protected function _getBaseConfig($product)
+    {
+        $name = json_encode($product->getName());
+        $price = json_encode((float)$product->getPrice());
+
+        return <<<JSON
+{
+  "settings": {
+    "isAdmin": true,
+    "theme": {
+      "id": "alpine-white"
+    },
+    "views": {
+      "front": true,
+      "back": false,
+      "left": false,
+      "right": false,
+      "top": false,
+      "bottom": false
+    },
+    "currentView": "front",
+    "defaultView": "front",
+    "viewControls": "arrows",
+    "hasSummary": true,
+    "layout": "col-tabs",
+    "currency": "USD",
+    "cdnPath": `https://[object Object]/dist/`
+  },
+  "data": {
+    "name": null,
+    "base": {
+      "price": null,
+      "image": {}
+    },
+    "panels": [],
+    "layers": [],
+    "price": null,
+    "isFetchingCategories": true
+  }
+}
+JSON;
+
+
+        return <<<JSON
+{
+  "settings": {
+    "isAdmin": true,
+    "theme": {
+      "id": "alpine-white"
+    },
+    "views": {
+      "front": true,
+      "back": true,
+      "left": false,
+      "right": false,
+      "top": false,
+      "bottom": false
+    },
+    "currentView": "front",
+    "currentTab": 0,
+    "defaultView": "front",
+    "viewControls": "arrows",
+    "hasSummary": true,
+    "layout": "col-tabs",
+    "cdnPath": "https://[object Object]/dist/",
+    "currency": "USD"
+  },
+  "data": {
+    "name": {$name},
+    "base": {
+      "price": {$price},
+      "image": {
+        "front": "https://storage.googleapis.com/custom-product-builder/17741587/customproductbuilder-11130041100-fAUnuygKRKLfEXSEoMYS18G_.png",
+        "right": null,
+        "back": "https://storage.googleapis.com/custom-product-builder/17741587/customproductbuilder-11130041100-7orU3gxPCo9y61mFJHSAy0O5.png"
+      }
+    },
+    "panels": [],
+    "layers": [],
+    "customLayers":[],
+    "price": {$price},
+    "isFetchingCategories": true
+  } 
+}
+JSON; 
     }
 
 }

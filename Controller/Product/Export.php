@@ -78,7 +78,7 @@ class Export extends \Magento\Framework\App\Action\Action
     "hasSummary": true,
     "layout": "col-tabs",
     "currency": "USD",
-    "cdnPath": `https://[object Object]/dist/`
+    "cdnPath": `https://magento.thecustomproductbuilder.com/media/`
   },
   "data": {
     "name": null,

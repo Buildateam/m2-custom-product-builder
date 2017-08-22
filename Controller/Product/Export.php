@@ -45,6 +45,7 @@ class Export extends \Magento\Framework\App\Action\Action
         //);
 
         $resultRaw = $this->resultRawFactory->create();
+        $resultRaw->setHeader("Content-Type", 'application/json');
         $resultRaw->setContents($productConfig);
 
         return $resultRaw;

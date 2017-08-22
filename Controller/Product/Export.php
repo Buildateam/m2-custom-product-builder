@@ -92,50 +92,7 @@ class Export extends \Magento\Framework\App\Action\Action
   }
 }
 JSON;
-
-
-        return <<<JSON
-{
-  "settings": {
-    "isAdmin": true,
-    "theme": {
-      "id": "alpine-white"
-    },
-    "views": {
-      "front": true,
-      "back": true,
-      "left": false,
-      "right": false,
-      "top": false,
-      "bottom": false
-    },
-    "currentView": "front",
-    "currentTab": 0,
-    "defaultView": "front",
-    "viewControls": "arrows",
-    "hasSummary": true,
-    "layout": "col-tabs",
-    "cdnPath": "https://[object Object]/dist/",
-    "currency": "USD"
-  },
-  "data": {
-    "name": {$name},
-    "base": {
-      "price": {$price},
-      "image": {
-        "front": "https://storage.googleapis.com/custom-product-builder/17741587/customproductbuilder-11130041100-fAUnuygKRKLfEXSEoMYS18G_.png",
-        "right": null,
-        "back": "https://storage.googleapis.com/custom-product-builder/17741587/customproductbuilder-11130041100-7orU3gxPCo9y61mFJHSAy0O5.png"
-      }
-    },
-    "panels": [],
-    "layers": [],
-    "customLayers":[],
-    "price": {$price},
-    "isFetchingCategories": true
-  } 
-}
-JSON; 
+        
     }
 
 }

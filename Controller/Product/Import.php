@@ -3,6 +3,7 @@
 namespace Buildateam\CustomProductBuilder\Controller\Product;
 
 use Magento\Framework\Controller\ResultFactory;
+use \Magento\Backend\App as AdminApp;
 
 
 class Import extends \Magento\Framework\App\Action\Action
@@ -12,14 +13,17 @@ class Import extends \Magento\Framework\App\Action\Action
     protected $_jsonHelper;
     protected $_helper;
     protected $_jsonProductContent;
+    protected $_auth;
 
     public function __construct(
         \Magento\Framework\App\Action\Context $context,
         \Magento\Framework\Json\Helper\Data $jsonHelper,
         \Magento\Framework\View\Result\PageFactory $resultFactory,
         \Magento\Catalog\Model\ProductRepository $productRepository,
-        \Buildateam\CustomProductBuilder\Helper\Data $helper
+        \Buildateam\CustomProductBuilder\Helper\Data $helper,
+        AdminApp\Action\Context $adminContext
     ) {
+        $this->_auth       = $adminContext->getBackendUrl();
         $this->_jsonHelper          = $jsonHelper;
         $this->_resultPageFactory   = $resultFactory;
         $this->_productRepository   = $productRepository;
@@ -29,37 +33,35 @@ class Import extends \Magento\Framework\App\Action\Action
 
     public function execute()
     {
-        $params         = $this->getRequest()->getParams('product_id');
+        $productId         = (int)$this->getRequest()->getParam('id',0);
         $this->resultFactory->create(ResultFactory::TYPE_PAGE);
-        $response       = $this->resultFactory->create(ResultFactory::TYPE_RAW);
-        $response->setHeader('Content-type', 'text/plain');
 
-        if (!isset($params['product_id'])) {
+        //$secureCall     = 'XXX';
+        //if (!$this->_auth->isLoggedIn())
+        //{
+        //    echo "ok";
+        //}
+
+        $response       = $this->resultFactory->create(ResultFactory::TYPE_RAW);
+        $response->setHeader('Content-type', 'application/json');
+
+        if (!$productId) {
             $this->setSendValidProductidResponse($response);
             return $response;
         }
 
-        $product        = $this->_productRepository->getById($params['product_id']);
-        $jsonData       = !empty($_FILES['product']['tmp_name']['json_configuration'])
-            ? file_get_contents($_FILES['product']['tmp_name']['json_configuration'])
-            : $product->getData('json_configuration');
+        $product        = $this->_productRepository->getById($productId);
+        $jsonData       = file_get_contents('php://input');
 
-        if (!empty($jsonData)) {
-            $this->_jsonProductContent = $jsonData;
-            $validate = $this->_helper->validate($this->_jsonProductContent);
-
-            if (isset($this->_jsonProductContent) && !empty($this->_jsonProductContent) && $validate) {
-                $this->setErrorResponse($response, $validate);
-                return $response;
-            }
-
-            $product->setJsonConfiguration($this->_jsonProductContent);
+        if (!empty($jsonData) && $this->_helper->validate($jsonData)=="") {
+            $product->setJsonConfiguration($jsonData);
             $product->save();
             $this->setSuccessResponse($response);
-
-            return $response;
-
+        } else {
+            $this->setErrorResponse($response, $validate);
         }
+
+        return $response;
 
     }
 
@@ -89,11 +91,12 @@ class Import extends \Magento\Framework\App\Action\Action
 
     protected function setSendValidProductidResponse($response)
     {
+        $response->setStatusHeader(404);
         $response->setContents(
             $this->_jsonHelper->jsonEncode(
                 [
                     'success'       => true,
-                    'message'       => 'Please, send a product_id param.',
+                    'message'       => 'Please, send a id param.',
                 ]
             )
         );

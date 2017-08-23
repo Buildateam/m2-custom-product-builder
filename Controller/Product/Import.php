@@ -58,7 +58,7 @@ class Import extends \Magento\Framework\App\Action\Action
             $product->save();
             $this->setSuccessResponse($response);
         } else {
-            $this->setErrorResponse($response, $validate);
+            $this->setErrorResponse($response, $this->_helper->validate($jsonData));
         }
 
         return $response;

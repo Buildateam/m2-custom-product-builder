@@ -3,7 +3,7 @@
 namespace Buildateam\CustomProductBuilder\Plugin;
 
 
-class ProductPageHideBlock
+class AddToCartValidator
 {
     /**
      * @param \Magento\ProductVideo\Block\Product\View\Gallery|Magento\Catalog\Block\Product\View\Gallery $subject

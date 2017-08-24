@@ -11,7 +11,6 @@ class Uploadimage extends \Magento\Framework\App\Action\Action
 
     protected $_resultPageFactory;
     protected $_productRepository;
-    protected $_jsonHelper;
     protected $_jsonProductContent;
     protected $_auth;
     protected $_fileSystem;
@@ -20,7 +19,6 @@ class Uploadimage extends \Magento\Framework\App\Action\Action
 
     public function __construct(
         \Magento\Framework\App\Action\Context $context,
-        \Magento\Framework\Json\Helper\Data $jsonHelper,
         \Magento\Framework\View\Result\PageFactory $resultFactory,
         \Magento\Catalog\Model\ProductRepository $productRepository,
         \Magento\Framework\Filesystem $fileSystem,
@@ -29,7 +27,6 @@ class Uploadimage extends \Magento\Framework\App\Action\Action
         \Buildateam\CustomProductBuilder\Helper\Data $helper
     ) {
         $this->_auth                = $adminContext->getBackendUrl();
-        $this->_jsonHelper          = $jsonHelper;
         $this->_resultPageFactory   = $resultFactory;
         $this->_productRepository   = $productRepository;
         $this->_fileSystem          = $fileSystem;
@@ -41,16 +38,21 @@ class Uploadimage extends \Magento\Framework\App\Action\Action
     public function execute()
     {
         $i=1;
-        //$imageUrl= "http://i.imgur.com/fHyEMsl.jpg";
-        //$fileName = rand() . $this->_helper->getDataByKey($_FILES['image'], 'name');
-        $imageUrl   =  $this->_storeInterface->getStore()->getBaseUrl();
-        $mediaPath  = $this->_fileSystem->getDirectoryRead(\Magento\Framework\App\Filesystem\DirectoryList::MEDIA)->getAbsolutePath();
-        $media      = $mediaPath . 'custom/';
-        $fileName   = $this->_helper->getDataByKey($_FILES['image'], 'name');
-        $fileTmp    = $this->_helper->getDataByKey($_FILES['image'], 'tmp_name');
 
-        $this->_helper->createFolder($media);
-        $imageBaseUrl   =  $this->_moveUploadedFile($fileTmp, $media, $fileName, $imageUrl);
+        $imageUrl   =  $this->_storeInterface->getStore()->getBaseUrl();
+        $mediaPath  = $this->_fileSystem
+            ->getDirectoryRead(\Magento\Framework\App\Filesystem\DirectoryList::MEDIA)
+            ->getAbsolutePath('customproductbuilder');
+
+
+        if (!file_exists($mediaPath)) {
+            mkdir($mediaPath, 0777, true);
+        }
+        $media      = $mediaPath . 'custom/';
+        $fileName = (time()+microtime(true)).'.'.$this->_request->getParam('type');
+        file_put_contents("$mediaPath/$fileName",base64_decode(file_get_contents('php://input')));
+
+        $imageBaseUrl = $this->_storeInterface->getStore()->getBaseUrl('media')."customproductbuilder/$fileName";
         $body           = json_encode($imageBaseUrl);
         $result         = $this->resultFactory->create('raw');
         $result->setHeader("Content-Type", 'application/json');
@@ -58,13 +60,6 @@ class Uploadimage extends \Magento\Framework\App\Action\Action
 
         return $result;
         
-    }
-
-    protected function _moveUploadedFile($fileTmp, $media, $fileName, $imageUrl)
-    {
-        if (move_uploaded_file($fileTmp, $media . $fileName)) {
-            return $imageUrl . 'pub/media/custom/' . $fileName;
-        }
     }
 
 }

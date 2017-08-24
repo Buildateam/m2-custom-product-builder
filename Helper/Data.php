@@ -91,4 +91,20 @@ class Data extends AbstractHelper
         // everything is OK
         return '';
     }
+
+    /**
+     * creating folder if does not exist yet
+     * @param $media path to folder
+     */
+    public function createFolder($media)
+    {
+        if (!file_exists($media)) {
+            mkdir($media, 0777, true);
+        }
+    }
+
+    public function getDataByKey($data, $key)
+    {
+        return !empty($data[$key]) ? $data[$key] : '';
+    }
 }

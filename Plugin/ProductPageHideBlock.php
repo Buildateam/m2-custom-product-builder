@@ -13,12 +13,10 @@ class ProductPageHideBlock
     public function aroundToHtml($subject, callable $proceed)
     {
         $attribute = $subject->getProduct()->getData('json_config');
-        $result = "";
-        /* if (empty($attribute)) {
-              $result= $proceed();
-        }
-          */
-        return $result;
+        $hasConfig = (bool)$block->getProduct()->getData('json_configuration');
+        if ($hasConfig) return "";
+        
+        return $proceed();
     }
 
 }

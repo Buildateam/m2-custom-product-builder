@@ -4,15 +4,20 @@
 
 $productId = (int)$block->getProduct()->getId();
 $baseUrl = $block->getBaseUrl();
+
+$hasConfig = (bool)$block->getProduct()->getData('json_configuration');
+if (!$hasConfig) return;
 ?>
 
 <style>
-    .product-info-main, .product.media {display: none;}
+    .product-info-main, .product.media {display: none;}      
 </style>
+
+
 
 <div id="product-builder" engine="magento" shop-name="<?php echo $baseUrl; ?>" product-id="<?php echo $productId; ?>" styles-path="//cdn.shopify.com/s/files/1/1520/2864/t/16/assets/customproductbuilder.css?622266423132693063"></div>
 
-<script type="text/javascript" src="https://customproductbuilder.buildateam.io/dist/custom-product-builder.js" />
+<script type="text/javascript" src="http://localhost:8082/dist/custom-product-builder.js" />
 
 
 

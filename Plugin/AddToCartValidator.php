@@ -27,7 +27,7 @@ class AddToCartValidator
         if ($request->getHeader('X_CUSTOM_PRODUCT_BUILDER')) {
             
             $payload = json_decode(file_get_contents('php://input'),1);
-            $request->setParam('qty', $payload['qty']);
+            $request->setParam('qty', $payload['quantity']);
 
             $this->_checkoutSession->setNoCartRedirect(true);
             return true;

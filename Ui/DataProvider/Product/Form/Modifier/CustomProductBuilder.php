@@ -7,7 +7,6 @@ use Magento\Catalog\Model\Locator\LocatorInterface;
 use Magento\Framework\App\ObjectManager;
 use Magento\Framework\App\CacheInterface;
 use Magento\Framework\DB\Helper as DbHelper;
-use Magento\Framework\UrlInterface;
 use Magento\Framework\Stdlib\ArrayManager;
 use Magento\Backend\App\Action\Context;
 
@@ -23,9 +22,9 @@ class CustomProductBuilder extends AbstractModifier
     protected $locator;
 
     /**
-     * @var UrlInterface
+     * @var Context
      */
-    protected $urlBuilder;
+    protected $context;
 
     /**
      * @var ArrayManager
@@ -40,15 +39,14 @@ class CustomProductBuilder extends AbstractModifier
      */
     public function __construct(
         LocatorInterface $locator,
-        UrlInterface $urlBuilder,
         ArrayManager $arrayManager,
         Context $context
     )
     {
         $this->locator = $locator;
-        $this->urlBuilder = $urlBuilder;
         $this->arrayManager = $arrayManager;
         $this->request = $context->getRequest();
+        $this->context = $context;
     }
 
     /**
@@ -116,8 +114,8 @@ class CustomProductBuilder extends AbstractModifier
                                     'componentType'    => 'container',
                                     'component'        => 'Magento_Ui/js/form/components/insert-form',
                                     'dataScope'        => '',
-                                    'update_url'       => $this->urlBuilder->getUrl('mui/index/render_handle', $params),
-                                    'render_url'       => $this->urlBuilder->getUrl('mui/index/render_handle', $params),
+                                    'update_url'       => $this->context->getUrl()->getUrl('mui/index/render_handle', $params),
+                                    'render_url'       => $this->context->getUrl()->getUrl('mui/index/render_handle', $params),
                                     'autoRender'       => false,
                                     'ns'               => 'custom_product_builder',
                                     'externalProvider' => 'custom_product_builder.builder_form_data_source',
@@ -254,7 +252,7 @@ class CustomProductBuilder extends AbstractModifier
                                     'displayArea'        => 'insideGroup',
                                     'sortOrder'          => 40,
                                     'actions'            => [],
-                                    'on_click'           => sprintf("location.href = '%s';", $this->urlBuilder->getUrl('*/*/')),
+                                    'on_click'           => sprintf("location.href = '%s';", $this->context->getUrl()->getUrl('*/*/')),
                                 ],
                             ],
                         ]

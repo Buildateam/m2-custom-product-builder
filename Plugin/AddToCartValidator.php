@@ -2,16 +2,17 @@
 
 namespace Buildateam\CustomProductBuilder\Plugin;
 
+use \Magento\Checkout\Model\Session;
 
 class AddToCartValidator
 {
     /**
-     * @var \Magento\Checkout\Model\Session
+     * @var Session
      */
     protected $_checkoutSession;
 
     public function __construct(
-        \Magento\Checkout\Model\Session $checkoutSession
+        Session $checkoutSession
     )
     {
         $this->_checkoutSession = $checkoutSession;
@@ -28,6 +29,7 @@ class AddToCartValidator
             
             $payload = json_decode(file_get_contents('php://input'),1);
             $request->setParam('qty', $payload['quantity']);
+            $request->setParam('technicalData', $payload['technicalData']);
 
             $this->_checkoutSession->setNoCartRedirect(true);
             return true;

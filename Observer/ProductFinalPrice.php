@@ -24,31 +24,46 @@
  */
 namespace Buildateam\CustomProductBuilder\Observer;
 
-use Magento\Framework\Event\ObserverInterface;
+use \Magento\Framework\App\RequestInterface;
+use \Magento\Checkout\Model\Session;
+use \Magento\Catalog\Model\ProductRepository;
+use \Magento\Framework\Event\ObserverInterface;
 use \Magento\Framework\Event\Observer as EventObserver;
 
 class ProductFinalPrice implements ObserverInterface
 {
-    protected $_productRepository;
     protected $_request;
+    protected $_checkoutSession;
+    protected $_productRepository;
     protected $_jsonData;
     const JSON_ATTRIBUTE = 'json_configuration';
 
     public function __construct(
-        \Magento\Framework\App\RequestInterface $request,
-        \Magento\Catalog\Model\ProductRepository $productRepository
+        RequestInterface $request,
+        ProductRepository $productRepository,
+        Session $checkoutSession
     )
     {
         $this->_request = $request;
+        $this->_checkoutSession = $checkoutSession;
         $this->_productRepository = $productRepository;
     }
 
     /**
      * @param EventObserver $observer
      */
-    public function execute(\Magento\Framework\Event\Observer $observer)
+    public function execute(EventObserver $observer)
     {
         $params = $this->_request->getParams();
+
+        if (isset($params['update_cart_action']) && $params['update_cart_action'] == 'update_qty') {
+            //$qty = $observer->getEvent()->getQty();
+            $item = $this->_checkoutSession->getQuote()->getItemById(key($params['cart']));
+            $finalPricerice = $item->getPrice();
+
+            $item->getProduct()->setFinalPrice($finalPricerice);
+        }
+
         if (!isset($params['technicalData'])) {
             return;
         }

@@ -22,6 +22,7 @@
  * @copyright  Copyright (c) 2016 Profit Soft (http://profit-soft.pro/)
  * @license    http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0 (Apache-2.0)
  */
+
 namespace Buildateam\CustomProductBuilder\Observer;
 
 use \Magento\Framework\App\RequestInterface;
@@ -55,49 +56,43 @@ class ProductFinalPrice implements ObserverInterface
     public function execute(EventObserver $observer)
     {
         $params = $this->_request->getParams();
-
-        if (isset($params['update_cart_action']) && $params['update_cart_action'] == 'update_qty') {
-            //$qty = $observer->getEvent()->getQty();
-            $item = $this->_checkoutSession->getQuote()->getItemById(key($params['cart']));
-            $finalPricerice = $item->getPrice();
-
-            $item->getProduct()->setFinalPrice($finalPricerice);
-        }
-
-        if (!isset($params['technicalData'])) {
-            return;
-        }
-
         /** @var \Magento\Catalog\Model\Product $product */
         $product = $observer->getEvent()->getProduct();
-
-        $productRepo = $this->_productRepository->getById($product->getId());
-        $this->_jsonData = json_decode($productRepo->getData(self::JSON_ATTRIBUTE));
-
-        if (is_null($this->_jsonData)) {
+        $productInfo = null;
+        if (isset($product->getCustomOptions()['info_buyRequest'])) {
+            $productInfo = $product->getCustomOptions()['info_buyRequest']->getData();
+        } else {
             return;
         }
-
-        $panels = $this->_jsonData->data->panels;
-
         $finalPrice = $product->getPrice();
+        if ($itemId = $productInfo['item_id']) {
+            $item = $this->_checkoutSession->getQuote()->getItemById($itemId);
+            $finalPrice = $item->getPrice();
+            $product->setFinalPrice($finalPrice);
+        } else {
+            $productRepo = $this->_productRepository->getById($product->getId());
+            $this->_jsonData = json_decode($productRepo->getData(self::JSON_ATTRIBUTE));
 
-        foreach ($panels as $panel) {
-            foreach ($params['technicalData'] as $techData) {
-                if ($panel->id == $techData['panel']) {
-                    foreach ($panel->categories as $category) {
-                        if ($category->id == $techData['category']) {
-                            foreach ($category->options as $option) {
-                                if ($option->id == $techData['option']) {
-                                    $finalPrice += $option->price;
+            if (is_null($this->_jsonData)) {
+                return;
+            }
+            $panels = $this->_jsonData->data->panels;
+            foreach ($panels as $panel) {
+                foreach ($params['technicalData'] as $techData) {
+                    if ($panel->id == $techData['panel']) {
+                        foreach ($panel->categories as $category) {
+                            if ($category->id == $techData['category']) {
+                                foreach ($category->options as $option) {
+                                    if ($option->id == $techData['option']) {
+                                        $finalPrice += $option->price;
+                                    }
                                 }
                             }
                         }
                     }
                 }
             }
+            $product->setFinalPrice($finalPrice);
         }
-
-        $product->setFinalPrice($finalPrice);
     }
 }

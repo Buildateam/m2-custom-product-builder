@@ -31,11 +31,10 @@ class CustomProductBuilder extends AbstractModifier
      */
     protected $arrayManager;
 
-    /** @var \Magento\Framework\App\RequestInterface  */
-    protected $request;
-
     /**
+     * @param LocatorInterface $locator
      * @param ArrayManager $arrayManager
+     * @param Context $context
      */
     public function __construct(
         LocatorInterface $locator,
@@ -45,7 +44,6 @@ class CustomProductBuilder extends AbstractModifier
     {
         $this->locator = $locator;
         $this->arrayManager = $arrayManager;
-        $this->request = $context->getRequest();
         $this->context = $context;
     }
 
@@ -81,7 +79,7 @@ class CustomProductBuilder extends AbstractModifier
         $params = [
             'handle'  => 'custom_product_builder',
             'store'   => $this->locator->getStore()->getId(),
-            'product' => (int)$this->request->getParam('id'),
+            'product' => (int)$this->context->getRequest()->getParam('id'),
             'buttons' => 1
         ];
 

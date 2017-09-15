@@ -8,6 +8,7 @@ use Magento\Framework\App\Helper\AbstractHelper;
 
 class Data extends AbstractHelper
 {
+    const JSON_ATTRIBUTE = 'json_configuration';
 
     /**
      * retrieve JsonData decoded
@@ -27,7 +28,7 @@ class Data extends AbstractHelper
         $resultJson = $this->resultJsonFactory->create();
 
         /** get json content from product */
-        echo file_put_contents(Mage::getBaseDir('var').'/test.json',"Hello World. Testing!");
+        echo file_put_contents(Mage::getBaseDir('var') . '/test.json', "Hello World. Testing!");
 
         $handle = fopen("./var/product-builder.json", "w+");
         header('Access-Control-Allow-Origin: *');
@@ -85,7 +86,7 @@ class Data extends AbstractHelper
 
         if ($error !== '') {
             // throw the Exception or exit // or whatever :)
-            return($error);
+            return ($error);
         }
 
         // everything is OK

@@ -25,6 +25,7 @@
 
 namespace Buildateam\CustomProductBuilder\Observer;
 
+use \Buildateam\CustomProductBuilder\Helper\Data as Helper;
 use \Magento\Framework\App\RequestInterface;
 use \Magento\Checkout\Model\Session;
 use \Magento\Catalog\Model\ProductRepository;
@@ -36,8 +37,7 @@ class ProductFinalPrice implements ObserverInterface
     protected $_request;
     protected $_checkoutSession;
     protected $_productRepository;
-    protected $_jsonData;
-    const JSON_ATTRIBUTE = 'json_configuration';
+    protected $_jsonConfig = [];
 
     public function __construct(
         RequestInterface $request,
@@ -55,44 +55,43 @@ class ProductFinalPrice implements ObserverInterface
      */
     public function execute(EventObserver $observer)
     {
-        $params = $this->_request->getParams();
         /** @var \Magento\Catalog\Model\Product $product */
         $product = $observer->getEvent()->getProduct();
         $productInfo = null;
-        if (isset($product->getCustomOptions()['info_buyRequest'])) {
-            $productInfo = $product->getCustomOptions()['info_buyRequest']->getData();
-        } else {
+        if (is_null($product->getCustomOption('info_buyRequest'))) {
             return;
         }
-        $finalPrice = $product->getPrice();
-        if ($itemId = $productInfo['item_id']) {
-            $item = $this->_checkoutSession->getQuote()->getItemById($itemId);
-            $finalPrice = $item->getPrice();
-            $product->setFinalPrice($finalPrice);
-        } else {
-            $productRepo = $this->_productRepository->getById($product->getId());
-            $this->_jsonData = json_decode($productRepo->getData(self::JSON_ATTRIBUTE));
 
-            if (is_null($this->_jsonData)) {
-                return;
-            }
-            $panels = $this->_jsonData->data->panels;
-            foreach ($panels as $panel) {
-                foreach ($params['technicalData'] as $techData) {
-                    if ($panel->id == $techData['panel']) {
-                        foreach ($panel->categories as $category) {
-                            if ($category->id == $techData['category']) {
-                                foreach ($category->options as $option) {
-                                    if ($option->id == $techData['option']) {
-                                        $finalPrice += $option->price;
-                                    }
+        $finalPrice = $product->getPrice();
+
+        /* Retrieve technical data of product that was added to cart */
+        $productInfo = unserialize($product->getCustomOption('info_buyRequest')->getData('value'));
+        $technicalData = $productInfo['technicalData'];
+
+        if (!isset($this->_jsonConfig[$product->getId()])) {
+            $this->_jsonConfig[$product->getId()] = json_decode($product->getData(Helper::JSON_ATTRIBUTE));
+        }
+        $jsonConfig = $this->_jsonConfig[$product->getId()];
+        if (is_null($jsonConfig)) {
+            return;
+        }
+
+        foreach ($jsonConfig->data->panels as $panel) {
+            foreach ($technicalData as $techData) {
+                if ($panel->id == $techData['panel']) {
+                    foreach ($panel->categories as $category) {
+                        if ($category->id == $techData['category']) {
+                            foreach ($category->options as $option) {
+                                if ($option->id == $techData['option']) {
+                                    $finalPrice += $option->price;
                                 }
                             }
                         }
                     }
                 }
             }
-            $product->setFinalPrice($finalPrice);
         }
+
+        $product->setFinalPrice($finalPrice);
     }
 }

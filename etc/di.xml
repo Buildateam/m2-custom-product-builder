@@ -22,4 +22,8 @@
     <type name="Magento\Framework\Data\Form\FormKey\Validator">
         <plugin name="cpb_form_key" type="Buildateam\CustomProductBuilder\Plugin\AddToCartValidator" sortOrder="50" />
     </type>
+
+    <type name="Magento\Quote\Model\Quote\Item">
+        <plugin name="cpb_compare_options" type="Buildateam\CustomProductBuilder\Plugin\QuoteItemCompareOptions" sortOrder="50" />
+    </type>
 </config>

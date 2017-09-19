@@ -30,6 +30,7 @@ class AddToCartValidator
             $payload = json_decode(file_get_contents('php://input'),1);
             $request->setParam('qty', $payload['quantity']);
             $request->setParam('technicalData', $payload['technicalData']);
+            $request->setParam('properties', $payload['properties']);
 
             $this->_checkoutSession->setNoCartRedirect(true);
             return true;

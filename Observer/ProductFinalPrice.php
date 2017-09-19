@@ -57,7 +57,6 @@ class ProductFinalPrice implements ObserverInterface
     {
         /** @var \Magento\Catalog\Model\Product $product */
         $product = $observer->getEvent()->getProduct();
-        $productInfo = null;
         if (is_null($product->getCustomOption('info_buyRequest'))) {
             return;
         }
@@ -66,6 +65,9 @@ class ProductFinalPrice implements ObserverInterface
 
         /* Retrieve technical data of product that was added to cart */
         $productInfo = unserialize($product->getCustomOption('info_buyRequest')->getData('value'));
+        if (!isset($productInfo['technicalData'])) {
+            return;
+        }
         $technicalData = $productInfo['technicalData'];
 
         if (!isset($this->_jsonConfig[$product->getId()])) {

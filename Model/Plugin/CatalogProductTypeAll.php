@@ -3,6 +3,7 @@
 namespace Buildateam\CustomProductBuilder\Model\Plugin;
 
 use \Magento\Catalog\Model\Product;
+use \Magento\Framework\DataObject;
 
 class CatalogProductTypeAll
 {
@@ -13,6 +14,47 @@ class CatalogProductTypeAll
      */
     public function afterPrepareForCartAdvanced($subject, array $result)
     {
+        $this->addOptions($result);
+
+        return $result;
+    }
+
+    /**
+     * @param $subject
+     * @param callable $proceed
+     * @param Product $product
+     * @return mixed
+     */
+    public function aroundGetOrderOptions($subject, callable $proceed, Product $product)
+    {
+        $optionArr = $proceed($product);
+        if ($additionalOptions = $product->getCustomOption('additional_options')) {
+            $optionArr['additional_options'] = unserialize($additionalOptions->getValue());
+        }
+
+        return $optionArr;
+    }
+
+    /**
+     * @param $subject
+     * @param callable $proceed
+     * @param DataObject $buyRequest
+     * @param $product
+     * @param $processMode
+     * @return mixed
+     */
+    public function aroundProcessConfiguration($subject, callable $proceed, DataObject $buyRequest, $product)
+    {
+        $products = $proceed($buyRequest, $product);
+        $this->addOptions($products);
+
+        return $products;
+    }
+
+    /**
+     * @param array $result
+     */
+    public function addOptions($result) {
         /** @var Product $product */
         foreach ($result as &$product) {
             if (is_null($product->getCustomOption('info_buyRequest'))) {
@@ -43,22 +85,5 @@ class CatalogProductTypeAll
             };
             $product->addCustomOption('additional_options', serialize($addOptions));
         }
-        return $result;
-    }
-
-    /**
-     * @param $subject
-     * @param callable $proceed
-     * @param Product $product
-     * @return mixed
-     */
-    public function aroundGetOrderOptions($subject, callable $proceed, Product $product)
-    {
-        $optionArr = $proceed($product);
-        if ($additionalOptions = $product->getCustomOption('additional_options')) {
-            $optionArr['additional_options'] = unserialize($additionalOptions->getValue());
-        }
-
-        return $optionArr;
     }
 }

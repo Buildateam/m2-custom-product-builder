@@ -63,15 +63,11 @@ class CatalogProductTypeAll
 
             /* Retrieve technical data of product that was added to cart */
             $productInfo = unserialize($product->getCustomOption('info_buyRequest')->getData('value'));
-            if (!isset($productInfo['properties'])) {
+            if (!isset($productInfo['properties']) || $product->getCustomOption('additional_options')) {
                 continue;
             }
 
-            $addOptions = $product->getCustomOption('additional_options') ?? [];
-            if (is_string($addOptions)) {
-                $addOptions = unserialize($addOptions);
-            }
-
+            $addOptions = [];
             foreach ($productInfo['properties'] as $propertyName => $propertyValue) {
                 $propertyValue = preg_replace('/(.*)(\s+\(.*\))/', '$1', $propertyValue);
                 $addOptions[] = [

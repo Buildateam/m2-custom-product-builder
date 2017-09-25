@@ -30,4 +30,8 @@
     <type name="Magento\Catalog\Model\Product\Type\Simple">
         <plugin name="cpb_after_prepare_for_cart_advanced" type="Buildateam\CustomProductBuilder\Model\Plugin\CatalogProductTypeAll" sortOrder="50" />
     </type>
+
+    <type name="Magento\Catalog\Pricing\Price\ConfiguredPrice">
+        <plugin name="cpb_configured_price" type="Buildateam\CustomProductBuilder\Pricing\Plugin\ConfiguredPrice" sortOrder="50" />
+    </type>
 </config>

@@ -20,6 +20,10 @@ class UpgradeSchema implements UpgradeSchemaInterface
             $this->_changeAttributeColumnType($setup);
         }
 
+        if (version_compare($context->getVersion(), '0.1.4', '<')) {
+            $this->_createCpbProductConfigTable($setup);
+        }
+
         $setup->endSetup();
     }
 
@@ -41,5 +45,34 @@ class UpgradeSchema implements UpgradeSchemaInterface
                 'comment' => 'Value'
             ]
         );
+    }
+
+    private function _createCpbProductConfigTable(SchemaSetupInterface $setup)
+    {
+        $table = $setup->getConnection()
+            ->newTable($setup->getTable('cpb_product_config'))
+            ->addColumn(
+                'entity_id',
+                \Magento\Framework\DB\Ddl\Table::TYPE_INTEGER,
+                null,
+                ['identity' => true, 'unsigned' => true, 'nullable' => false, 'primary' => true],
+                'Entity ID'
+            )
+            ->addColumn(
+                'config_id',
+                \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
+                20,
+                ['nullable' => false],
+                'Config ID'
+            )
+            ->addColumn(
+                'technical_data',
+                \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
+                '16M',
+                ['nullable' => true],
+                'Technical data'
+            )
+            ->setComment('Custom Product Builder Product Config Table');
+        $setup->getConnection()->createTable($table);
     }
 }

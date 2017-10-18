@@ -34,4 +34,8 @@
     <type name="Magento\Catalog\Pricing\Price\ConfiguredPrice">
         <plugin name="cpb_configured_price" type="Buildateam\CustomProductBuilder\Pricing\Plugin\ConfiguredPrice" sortOrder="50" />
     </type>
+
+    <type name="Magento\Checkout\Block\Cart\Item\Renderer\Actions\Edit">
+        <plugin name="cpb_configure_url" type="Buildateam\CustomProductBuilder\Block\Plugin\CartItemEdit" sortOrder="50" />
+    </type>
 </config>

@@ -26,24 +26,27 @@
 namespace Buildateam\CustomProductBuilder\Observer;
 
 use \Buildateam\CustomProductBuilder\Helper\Data as Helper;
-use \Magento\Framework\App\RequestInterface;
 use \Magento\Catalog\Model\ProductRepository;
 use \Magento\Framework\Event\ObserverInterface;
 use \Magento\Framework\Event\Observer as EventObserver;
 
 class ProductFinalPrice implements ObserverInterface
 {
-    protected $_request;
-    protected $_checkoutSession;
+    /**
+     * @var ProductRepository
+     */
     protected $_productRepository;
+
+    /**
+     * @var array
+     */
     protected $_jsonConfig = [];
 
-    public function __construct(
-        RequestInterface $request,
-        ProductRepository $productRepository
-    )
+    /**
+     * @param ProductRepository $productRepository
+     */
+    public function __construct(ProductRepository $productRepository)
     {
-        $this->_request = $request;
         $this->_productRepository = $productRepository;
     }
 

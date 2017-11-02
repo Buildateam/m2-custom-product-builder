@@ -11,6 +11,7 @@
         <referenceContainer name="content">
             <block class="Magento\Catalog\Block\Product\View\Description" name="custom.product.builder.view"
                    template="Buildateam_CustomProductBuilder::customproductbuilder/view.phtml" before="product.info.details">
+
             </block>
         </referenceContainer>
     </body>

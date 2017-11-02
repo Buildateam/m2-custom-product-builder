@@ -1,0 +1,52 @@
+<?php
+/**
+ * cpb
+ *
+ * NOTICE OF LICENSE
+ *
+ * Copyright 2016 Profit Soft (http://profit-soft.pro/)
+ *
+ * Licensed under the Apache License, Version 2.0 (the “License”);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an “AS IS” BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and limitations under the License.
+ *
+ * @package    cpb
+ * @author     Denis Kopylov <dv.kopylov@profit-soft.pro>
+ * @copyright  Copyright (c) 2016 Profit Soft (http://profit-soft.pro/)
+ * @license    http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0 (Apache-2.0)
+ */
+namespace Buildateam\CustomProductBuilder\Model;
+
+class ShareableLinks extends \Magento\Framework\Model\AbstractModel implements ShareableLinksInterface, \Magento\Framework\DataObject\IdentityInterface
+{
+    const CACHE_TAG = 'buildateam_customproductbuilder_shareable_links';
+
+    protected function _construct()
+    {
+        $this->_init('Buildateam\CustomProductBuilder\Model\ResourceModel\ShareableLinks');
+    }
+
+    public function getIdentities()
+    {
+        return [self::CACHE_TAG . '_' . $this->getId()];
+    }
+
+    /**
+     * Load country by config id
+     *
+     * @param string $configId
+     * @return $this
+     */
+    public function loadByConfigId($configId)
+    {
+        $this->_getResource()->loadByConfigId($this, $configId);
+        return $this;
+    }
+}

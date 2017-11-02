@@ -22,28 +22,28 @@
  * @copyright  Copyright (c) 2016 Profit Soft (http://profit-soft.pro/)
  * @license    http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0 (Apache-2.0)
  */
-namespace Buildateam\CustomProductBuilder\Plugin;
 
-class QuoteItemCompareOptions
+namespace Buildateam\CustomProductBuilder\Model\ResourceModel;
+
+class ShareableLinks extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
 {
-    /**
-     * Removed check if $code is in $this->notRepresentOptions
-     * so if $byRequest options are different, we will have a new quote item
-     *
-     * @param \Magento\Quote\Model\Quote\Item $subject
-     * @param callable $proceed
-     * @param $options1
-     * @param $options2
-     * @return bool|callable
-     */
-    public function aroundCompareOptions(\Magento\Quote\Model\Quote\Item $subject, callable $proceed, $options1, $options2)
+    public function _construct()
     {
-        foreach ($options1 as $option) {
-            $code = $option->getCode();
-            if (!isset($options2[$code]) || $options2[$code]->getValue() != $option->getValue()) {
-                return false;
-            }
-        }
-        return $proceed($options1, $options2);
+        $this->_init('cpb_product_config', 'entity_id');
+    }
+
+    /**
+     * Load country by ISO code
+     *
+     * @param ShareableLinks $links
+     * @param string $code
+     * @return ShareableLinks
+     * @throws \Magento\Framework\Exception\LocalizedException
+     */
+    public function loadByConfigId(\Buildateam\CustomProductBuilder\Model\ShareableLinks $links, $code)
+    {
+        $field = 'config_id';
+
+        return $this->load($links, $code, $field);
     }
 }

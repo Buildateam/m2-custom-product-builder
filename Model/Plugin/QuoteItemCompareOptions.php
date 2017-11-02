@@ -40,6 +40,11 @@ class QuoteItemCompareOptions
     {
         foreach ($options1 as $option) {
             $code = $option->getCode();
+            $value = unserialize($option->getValue());
+            if (($code == 'info_buyRequest') && !isset($value['technicalData'])) {
+                continue;
+            }
+
             if (!isset($options2[$code]) || $options2[$code]->getValue() != $option->getValue()) {
                 return false;
             }

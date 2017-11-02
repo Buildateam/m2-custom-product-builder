@@ -26,12 +26,12 @@ class AddToCartValidator
     public function aroundValidate($subject, callable $proceed, $request)
     {
         if ($request->getHeader('X_CUSTOM_PRODUCT_BUILDER')) {
-
             $payload = json_decode(file_get_contents('php://input'), 1);
-            $request->setParam('qty', $payload['quantity']);
-            $request->setParam('technicalData', $payload['technicalData']);
-            $request->setParam('properties', $payload['properties']);
-            $request->setParam('configId', $payload['configId']);
+            foreach (['qty', 'technicalData', 'properties', 'configid'] as $paramKey) {
+                if(isset($payload[$paramKey])) {
+                    $request->setParam($paramKey, $payload[$paramKey]);
+                }
+            }
 
             $this->_checkoutSession->setNoCartRedirect(true);
             return true;

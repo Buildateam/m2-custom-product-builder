@@ -38,11 +38,6 @@ class Export extends \Magento\Framework\App\Action\Action
         $productConfig = $product->getData('json_configuration');
 
         if (!$productConfig) $productConfig = $this->_getBaseConfig($product);
-        //$fileName = 'product-builder.json';
-        //$this->fileFactory->create(
-        //    $fileName,
-        //    $productConfig
-        //);
 
         $resultRaw = $this->resultRawFactory->create();
         $resultRaw->setHeader("Content-Type", 'application/json');

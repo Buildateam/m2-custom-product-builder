@@ -28,6 +28,8 @@ namespace Buildateam\CustomProductBuilder\Controller\Product;
 use \Magento\Framework\App\Action\Action;
 use \Magento\Framework\App\Action\Context;
 use \Buildateam\CustomProductBuilder\Model\ShareableLinksFactory;
+use Magento\Framework\Controller\ResultFactory;
+use \Magento\Framework\Json\Helper\Data as JsonHelper;
 
 class Get extends Action
 {
@@ -36,21 +38,54 @@ class Get extends Action
      */
     protected $_factory;
 
+    /**
+     * @var ResultFactory
+     */
+    protected $_resultFactory;
+    protected $_jsonHelper;
+
+    /**
+     * Get constructor.
+     *
+     * @param Context $context
+     * @param ShareableLinksFactory $factory
+     */
     public function __construct(
         Context $context,
-        ShareableLinksFactory $factory
+        ShareableLinksFactory $factory,
+        JsonHelper $jsonHelper
     )
     {
         $this->_factory = $factory;
+        $this->_resultFactory = $context->getResultFactory();
+        $this->_jsonHelper = $jsonHelper;
         parent::__construct($context);
     }
 
+    /**
+     * @return \Magento\Framework\Controller\ResultInterface
+     */
     public function execute()
     {
-        $config_id = $this->getRequest()->getParam('configid');
-        $sharebleLink = $this->_factory->create()->loadByConfigId($config_id);
-        $techData = $sharebleLink->getData('technical_data');
+        $configId = $this->getRequest()->getParam('configid');
+        $sharableLink = $this->_factory->create()->loadByConfigId($configId);
 
-        $this->getResponse()->setBody($techData);
+        $response = $this->_resultFactory->create(ResultFactory::TYPE_JSON);
+        if ($sharableLink->getId()) {
+            $linkData = [
+                'configid' => $sharableLink->getConfigId(),
+                'technicalData' => $this->_jsonHelper->jsonDecode($sharableLink->getTechnicalData())
+            ];
+            $response->setData($linkData);
+        } else {
+            $response->setData(
+                [
+                    'success' => false,
+                    'message' => __('Couldn\'t load share configuration')
+                ]
+            );
+        }
+
+        return $response;
     }
 }

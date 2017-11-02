@@ -28,43 +28,105 @@ namespace Buildateam\CustomProductBuilder\Controller\Product;
 use \Magento\Framework\App\Action\Action;
 use \Magento\Framework\App\Action\Context;
 use \Magento\Framework\Controller\ResultFactory;
+use \Magento\Framework\Json\Helper\Data as JsonHelper;
 use \Buildateam\CustomProductBuilder\Model\ShareableLinksFactory;
+use Magento\Framework\Data\Form\FormKey\Validator;
 
 class Share extends Action
 {
     /**
      * @var ShareableLinksFactory
      */
-    protected $shareLinksFactory;
+    protected $_shareLinksFactory;
+
+    /**
+     * @var Validator
+     */
+    protected $_formKeyValidator;
 
     /**
      * @var ResultFactory
      */
-    protected $resultFactory;
+    protected $_resultFactory;
 
+    /**
+     * @var
+     */
+    protected $_jsonHelper;
+
+    /**
+     * Share constructor.
+     *
+     * @param Context $context
+     * @param ShareableLinksFactory $factory
+     * @param Validator $validator
+     * @param JsonHelper $jsonHelper
+     */
     public function __construct(
         Context $context,
-        ShareableLinksFactory $factory)
+        ShareableLinksFactory $factory,
+        Validator $validator,
+        JsonHelper $jsonHelper)
     {
-        $this->shareLinksFactory = $factory;
-        $this->resultFactory = $context->getResultFactory();
+        $this->_formKeyValidator = $validator;
+        $this->_shareLinksFactory = $factory;
+        $this->_resultFactory = $context->getResultFactory();
+        $this->_jsonHelper = $jsonHelper;
         parent::__construct($context);
     }
 
+    /**
+     * @return $this|\Magento\Framework\Controller\ResultInterface
+     */
     public function execute()
     {
+        if ($this->_validateRequest() !== true) {
+            return $this->resultRedirectFactory->create()->setPath('*/*/');
+        }
+
         $request = $this->getRequest()->getParams();
         $productId = $request['product'];
 
         $techData = $request['technicalData'];
-        $configModel = $this->shareLinksFactory->create();
+        $configModel = $this->_shareLinksFactory->create();
 
         $configModel->setData(array(
             'product_id' => $productId,
-            'technical_data' => json_encode($techData),
+            'technical_data' => $this->_jsonHelper->jsonEncode($techData),
             'config_id' => $request['configid']
         ));
 
         $configModel->save();
+        $response = $this->_resultFactory->create(ResultFactory::TYPE_JSON);
+        $response->setJsonData(
+            $this->_jsonHelper->jsonEncode(
+                [
+                    'success' => true,
+                    'message' => __('Product configuration successfully saved.'),
+                ]
+            )
+        );
+
+        return $response;
     }
+
+    /**
+     * @return mixed
+     */
+    protected function _validateRequest()
+    {
+        if (!$this->_formKeyValidator->validate($this->getRequest())) {
+            return false;
+        }
+
+        $requestParams = $this->getRequest()->getParams();
+        foreach (['product', 'configid'] as $keyParam) {
+            if (!isset($requestParams[$keyParam])) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
 }

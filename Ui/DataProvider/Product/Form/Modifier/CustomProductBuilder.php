@@ -2,13 +2,13 @@
 
 namespace Buildateam\CustomProductBuilder\Ui\DataProvider\Product\Form\Modifier;
 
-use Magento\Catalog\Ui\DataProvider\Product\Form\Modifier\AbstractModifier;
-use Magento\Catalog\Model\Locator\LocatorInterface;
-use Magento\Framework\App\ObjectManager;
-use Magento\Framework\App\CacheInterface;
-use Magento\Framework\DB\Helper as DbHelper;
-use Magento\Framework\Stdlib\ArrayManager;
-use Magento\Backend\App\Action\Context;
+use \Magento\Catalog\Ui\DataProvider\Product\Form\Modifier\AbstractModifier;
+use \Magento\Catalog\Model\Locator\LocatorInterface;
+use \Magento\Framework\App\ObjectManager;
+use \Magento\Framework\App\CacheInterface;
+use \Magento\Framework\DB\Helper as DbHelper;
+use \Magento\Framework\Stdlib\ArrayManager;
+use \Magento\Backend\App\Action\Context;
 
 /**
  * Data provider for Custom Product Bulder field of product page

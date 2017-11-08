@@ -2,7 +2,7 @@
 
 namespace Buildateam\CustomProductBuilder\Block\Adminhtml\Product\Edit\Button;
 
-use Magento\Catalog\Block\Adminhtml\Product\Edit\Button\Generic;
+use \Magento\Catalog\Block\Adminhtml\Product\Edit\Button\Generic;
 /**
  * Button "Create Category" in "New Category" slide-out panel of a product page
  */

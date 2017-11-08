@@ -28,7 +28,7 @@ namespace Buildateam\CustomProductBuilder\Controller\Product;
 use \Magento\Framework\App\Action\Action;
 use \Magento\Framework\App\Action\Context;
 use \Buildateam\CustomProductBuilder\Model\ShareableLinksFactory;
-use Magento\Framework\Controller\ResultFactory;
+use \Magento\Framework\Controller\ResultFactory;
 use \Magento\Framework\Json\Helper\Data as JsonHelper;
 
 class Get extends Action

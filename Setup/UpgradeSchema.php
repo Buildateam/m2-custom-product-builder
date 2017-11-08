@@ -2,9 +2,9 @@
 
 namespace Buildateam\CustomProductBuilder\Setup;
 
-use Magento\Framework\Setup\UpgradeSchemaInterface;
-use Magento\Framework\Setup\ModuleContextInterface;
-use Magento\Framework\Setup\SchemaSetupInterface;
+use \Magento\Framework\Setup\UpgradeSchemaInterface;
+use \Magento\Framework\Setup\ModuleContextInterface;
+use \Magento\Framework\Setup\SchemaSetupInterface;
 
 class UpgradeSchema implements UpgradeSchemaInterface
 {
@@ -22,6 +22,10 @@ class UpgradeSchema implements UpgradeSchemaInterface
 
         if (version_compare($context->getVersion(), '0.1.4', '<')) {
             $this->_createCpbProductConfigTable($setup);
+        }
+
+        if (version_compare($context->getVersion(), '0.1.5', '<')) {
+            $this->_addImagePathToProductConfigTable($setup);
         }
 
         $setup->endSetup();
@@ -74,5 +78,36 @@ class UpgradeSchema implements UpgradeSchemaInterface
             )
             ->setComment('Custom Product Builder Product Config Table');
         $setup->getConnection()->createTable($table);
+    }
+
+    /**
+     * Add image path column
+     *
+     * @param SchemaSetupInterface $setup
+     */
+    private function _addImagePathToProductConfigTable($setup)
+    {
+        $setup->getConnection()->dropColumn($setup->getTable('cpb_product_config'), 'image');
+        $setup->getConnection()->addColumn(
+            $setup->getTable('cpb_product_config'),
+            'image',
+            [
+                'type' => \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
+                'nullable' => true,
+                'comment' => 'Image path'
+            ]
+        );
+
+        $setup->getConnection()->changeColumn(
+            $setup->getTable('cpb_product_config'),
+            'config_id',
+            'config_id',
+            [
+                'type' => \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
+                'length' => 255,
+                'nullable' => false,
+                'comment' => 'Config ID'
+            ]
+        );
     }
 }

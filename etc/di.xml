@@ -13,29 +13,29 @@
     </virtualType>
 
     <type name="Magento\ProductVideo\Block\Product\View\Gallery">
-        <plugin name="cpb_product_media" type="Buildateam\CustomProductBuilder\Plugin\ProductPageHideBlock" sortOrder="50" />
+        <plugin name="cpb_product_media" type="Buildateam\CustomProductBuilder\Plugin\ProductPageHideBlock" sortOrder="50"/>
     </type>
     <type name="Magento\Catalog\Block\Product\View\Gallery">
-        <plugin name="cpb_product_media" type="Buildateam\CustomProductBuilder\Plugin\ProductPageHideBlock" sortOrder="50" />
+        <plugin name="cpb_product_media" type="Buildateam\CustomProductBuilder\Plugin\ProductPageHideBlock" sortOrder="50"/>
     </type>
 
     <type name="Magento\Framework\Data\Form\FormKey\Validator">
-        <plugin name="cpb_form_key" type="Buildateam\CustomProductBuilder\Plugin\AddToCartValidator" sortOrder="50" />
+        <plugin name="cpb_form_key" type="Buildateam\CustomProductBuilder\Plugin\AddToCartValidator" sortOrder="50"/>
     </type>
 
     <type name="Magento\Quote\Model\Quote\Item">
-        <plugin name="cpb_compare_options" type="Buildateam\CustomProductBuilder\Model\Plugin\QuoteItemCompareOptions" sortOrder="50" />
+        <plugin name="cpb_configure_quote_item" type="Buildateam\CustomProductBuilder\Model\Plugin\QuoteItem" sortOrder="50"/>
     </type>
 
     <type name="Magento\Catalog\Model\Product\Type\Simple">
-        <plugin name="cpb_after_prepare_for_cart_advanced" type="Buildateam\CustomProductBuilder\Model\Plugin\CatalogProductTypeAll" sortOrder="50" />
+        <plugin name="cpb_after_prepare_for_cart_advanced" type="Buildateam\CustomProductBuilder\Model\Plugin\CatalogProductTypeAll" sortOrder="50"/>
     </type>
 
     <type name="Magento\Catalog\Pricing\Price\ConfiguredPrice">
-        <plugin name="cpb_configured_price" type="Buildateam\CustomProductBuilder\Pricing\Plugin\ConfiguredPrice" sortOrder="50" />
+        <plugin name="cpb_configured_price" type="Buildateam\CustomProductBuilder\Pricing\Plugin\ConfiguredPrice" sortOrder="50"/>
     </type>
 
     <type name="Magento\Checkout\Block\Cart\Item\Renderer\Actions\Edit">
-        <plugin name="cpb_configure_url" type="Buildateam\CustomProductBuilder\Block\Plugin\CartItemEdit" sortOrder="50" />
+        <plugin name="cpb_configure_url" type="Buildateam\CustomProductBuilder\Block\Plugin\CartItemEdit" sortOrder="50"/>
     </type>
 </config>

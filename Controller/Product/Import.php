@@ -2,7 +2,7 @@
 
 namespace Buildateam\CustomProductBuilder\Controller\Product;
 
-use Magento\Framework\Controller\ResultFactory;
+use \Magento\Framework\Controller\ResultFactory;
 use \Magento\Backend\App as AdminApp;
 
 

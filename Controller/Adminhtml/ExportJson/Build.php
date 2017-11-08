@@ -1,7 +1,7 @@
 <?php
 
 namespace Buildateam\CustomProductBuilder\Controller\Adminhtml\ExportJson;
-use Magento\Framework\App\Filesystem\DirectoryList;
+use \Magento\Framework\App\Filesystem\DirectoryList;
 
 class Build extends \Magento\Backend\App\Action
 {

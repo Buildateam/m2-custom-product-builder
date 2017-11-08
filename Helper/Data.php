@@ -4,11 +4,30 @@
 namespace Buildateam\CustomProductBuilder\Helper;
 
 
-use Magento\Framework\App\Helper\AbstractHelper;
+use \Magento\Framework\App\Helper\Context;
+use \Magento\Framework\App\Helper\AbstractHelper;
+use \Magento\Framework\Filesystem;
+use \Magento\Store\Model\StoreManagerInterface;
 
 class Data extends AbstractHelper
 {
     const JSON_ATTRIBUTE = 'json_configuration';
+
+    /**
+     * @var \Magento\Framework\Filesystem
+     */
+    protected $_fileSystem;
+    protected $_storeManager;
+
+    public function __construct(
+        Context $context,
+        Filesystem $fileSystem,
+        StoreManagerInterface $storeManager)
+    {
+        parent::__construct($context);
+        $this->_fileSystem = $fileSystem;
+        $this->_storeManager = $storeManager;
+    }
 
     /**
      * retrieve JsonData decoded
@@ -93,4 +112,22 @@ class Data extends AbstractHelper
         return '';
     }
 
+    /**
+     * @param $base64Image
+     * @return string
+     */
+    public function uploadImage($base64Image)
+    {
+        $mediaPath = $this->_fileSystem
+            ->getDirectoryRead(\Magento\Framework\App\Filesystem\DirectoryList::MEDIA)
+            ->getAbsolutePath('catalog/product/customproductbuilder');
+
+        if (!file_exists($mediaPath)) {
+            mkdir($mediaPath, 0777, true);
+        }
+        $fileName = $this->_request->getParam('configid') . '.' . $this->_request->getParam('type');
+        file_put_contents("$mediaPath/$fileName", base64_decode($base64Image));
+
+        return "customproductbuilder/$fileName";
+    }
 }

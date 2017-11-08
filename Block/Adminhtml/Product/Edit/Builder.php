@@ -2,7 +2,7 @@
 
 namespace Buildateam\CustomProductBuilder\Block\Adminhtml\Product\Edit;
 
-use Magento\Framework\View\Element\Template;
+use \Magento\Framework\View\Element\Template;
 
 
 class Builder extends Template

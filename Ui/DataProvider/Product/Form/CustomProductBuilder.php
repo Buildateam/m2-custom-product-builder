@@ -2,9 +2,9 @@
 
 namespace Buildateam\CustomProductBuilder\Ui\DataProvider\Product\Form;
 
-use Magento\Ui\DataProvider\AbstractDataProvider;
-use Magento\Catalog\Model\ResourceModel\Product\CollectionFactory;
-use Magento\Framework\UrlInterface;
+use \Magento\Ui\DataProvider\AbstractDataProvider;
+use \Magento\Catalog\Model\ResourceModel\Product\CollectionFactory;
+use \Magento\Framework\UrlInterface;
 
 /**
  * DataProvider for new category form

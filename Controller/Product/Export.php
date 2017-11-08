@@ -2,7 +2,7 @@
 
 namespace Buildateam\CustomProductBuilder\Controller\Product;
 
-use Magento\Framework\Controller\ResultFactory;
+use \Magento\Framework\Controller\ResultFactory;
 
 class Export extends \Magento\Framework\App\Action\Action
 {

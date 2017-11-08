@@ -37,8 +37,8 @@ class CartItemEdit
     public function afterGetConfigureUrl(Edit $subject, $result)
     {
         $productInfo = unserialize($subject->getItem()->getProduct()->getCustomOption('info_buyRequest')->getValue());
-        if (isset($productInfo['configId'])) {
-            return $result . '#configid=' . $productInfo['configId'];
+        if (isset($productInfo['configid'])) {
+            return $result . '#configid=' . $productInfo['configid'];
         }
 
         return $result;

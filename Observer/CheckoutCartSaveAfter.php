@@ -37,11 +37,18 @@ class CheckoutCartSaveAfter implements ObserverInterface
     protected $_factory;
 
     /**
+     * @var \Magento\Framework\Serialize\Serializer\Json
+     */
+    protected $_serializer;
+
+    /**
      * @param ShareableLinksFactory $factory
      */
-    public function __construct(ShareableLinksFactory $factory)
+    public function __construct(ShareableLinksFactory $factory, \Magento\Framework\Serialize\Serializer\Json $serializer)
     {
         $this->_factory = $factory;
+        $this->_serializer = $serializer ?: \Magento\Framework\App\ObjectManager::getInstance()
+            ->get(\Magento\Framework\Serialize\Serializer\Json::class);
     }
 
     /**
@@ -53,8 +60,12 @@ class CheckoutCartSaveAfter implements ObserverInterface
         $items = $quote->getAllItems();
         $lastAddedItem = array_slice($items, -1, 1);
 
-        $buyRequest = $lastAddedItem[0]->getProduct()->getCustomOption('info_buyRequest');
-        $value = unserialize($buyRequest['value']);
+        $buyRequest = $lastAddedItem[0]->getProduct()->getCustomOption('info_buyRequest')->getValue();
+        $value = @unserialize($buyRequest);
+        if ($buyRequest !== 'b:0;' && $value === false) {
+            $value = $this->_serializer->unserialize($buyRequest);
+        }
+
         $techData = json_encode($value['technicalData']);
 
         $configModel = $this->_factory->create();

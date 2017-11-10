@@ -58,7 +58,7 @@ class CheckoutCartSaveAfter implements ObserverInterface
         $techData = json_encode($value['technicalData']);
 
         $configModel = $this->_factory->create();
-        if (empty($configModel->loadByConfigId($value['configId'])->getData())) {
+        if (isset($value['configid']) && empty($configModel->loadByConfigId($value['configid'])->getData())) {
             $configModel->setData(array(
                 'technical_data' => $techData,
                 'config_id' => $value['configId']

@@ -3,7 +3,4 @@
     <event name="catalog_product_get_final_price">
         <observer name="catalog_product_get_final_price" instance="Buildateam\CustomProductBuilder\Observer\ProductFinalPrice" shared="true"/>
     </event>
-    <event name="checkout_cart_save_after">
-        <observer name="checkout_cart_save_after" instance="Buildateam\CustomProductBuilder\Observer\CheckoutCartSaveAfter" shared="true" />
-    </event>
 </config>

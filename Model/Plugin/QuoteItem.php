@@ -32,14 +32,16 @@ class QuoteItem
     public function aroundCompareOptions(\Magento\Quote\Model\Quote\Item $subject, callable $proceed, $options1, $options2)
     {
         foreach ($options1 as $option) {
-            $code = $option->getCode();
-            $value = unserialize($option->getValue());
-            if (($code == 'info_buyRequest') && !isset($value['technicalData'])) {
-                continue;
-            }
+            if ($option->getCode() == 'info_buyRequest') {
+                $code = $option->getCode();
+                $value = unserialize($option->getValue());
+                if (!isset($value['technicalData'])) {
+                    continue;
+                }
 
-            if (!isset($options2[$code]) || $options2[$code]->getValue() != $option->getValue()) {
-                return false;
+                if (!isset($options2[$code]) || unserialize($options2[$code]->getValue())['technicalData'] != $value['technicalData']) {
+                    return false;
+                }
             }
         }
         return $proceed($options1, $options2);

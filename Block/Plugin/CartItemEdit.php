@@ -26,18 +26,20 @@
 namespace Buildateam\CustomProductBuilder\Block\Plugin;
 
 use \Magento\Checkout\Block\Cart\Item\Renderer\Actions\Edit;
+use \Magento\Framework\App\ProductMetadataInterface;
 
 class CartItemEdit
 {
     /**
-     * @var \Magento\Framework\Serialize\Serializer\Json
+     * @var bool
      */
-    protected $_serializer;
+    protected $_isJsonInfoByRequest = true;
 
-    public function __construct(\Magento\Framework\Serialize\Serializer\Json $serializer)
+    public function __construct(ProductMetadataInterface $productMetadata)
     {
-        $this->_serializer = $serializer ?: \Magento\Framework\App\ObjectManager::getInstance()
-            ->get(\Magento\Framework\Serialize\Serializer\Json::class);
+        if (version_compare($productMetadata->getVersion(), '2.2.0', '<')) {
+            $this->_isJsonInfoByRequest = false;
+        }
     }
 
     /**
@@ -48,9 +50,11 @@ class CartItemEdit
     public function afterGetConfigureUrl(Edit $subject, $result)
     {
         $buyRequest = $subject->getItem()->getProduct()->getCustomOption('info_buyRequest')->getValue();
-        $productInfo = @unserialize($buyRequest);
-        if ($buyRequest !== 'b:0;' && $productInfo === false) {
-            $productInfo = $this->_serializer->unserialize($buyRequest);
+
+        if ($this->_isJsonInfoByRequest) {
+            $productInfo = json_decode($buyRequest);
+        } else {
+            $productInfo = @unserialize($buyRequest);
         }
 
         if (isset($productInfo['configid'])) {

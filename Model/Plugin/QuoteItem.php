@@ -2,6 +2,7 @@
 
 namespace Buildateam\CustomProductBuilder\Model\Plugin;
 
+use \Magento\Framework\App\ProductMetadataInterface;
 use \Magento\Quote\Model\Quote\Item;
 use \Buildateam\CustomProductBuilder\Model\ShareableLinksFactory;
 
@@ -17,14 +18,20 @@ class QuoteItem
      */
     protected $_serializer;
 
+    /**
+     * @var bool
+     */
+    protected $_isJsonInfoByRequest = true;
+
     public function __construct(
         ShareableLinksFactory $factory,
-        \Magento\Framework\Serialize\Serializer\Json $serializer
+        ProductMetadataInterface $productMetadata
     )
     {
         $this->_shareLinksFactory = $factory;
-        $this->_serializer = $serializer ?: \Magento\Framework\App\ObjectManager::getInstance()
-            ->get(\Magento\Framework\Serialize\Serializer\Json::class);
+        if (version_compare($productMetadata->getVersion(), '2.2.0', '<')) {
+            $this->_isJsonInfoByRequest = false;
+        }
     }
 
     /**
@@ -42,18 +49,21 @@ class QuoteItem
         foreach ($options1 as $option) {
             if ($option->getCode() == 'info_buyRequest') {
                 $code = $option->getCode();
-                $value = @unserialize($option->getValue());
-                if ($option->getValue() !== 'b:0;' && $value === false) {
-                    $value = $this->_serializer->unserialize($option->getValue());
+                if ($this->_isJsonInfoByRequest) {
+                    $value = json_decode($option->getValue());
+                } else {
+                    $value = @unserialize($option->getValue());
                 }
 
                 if (!isset($value['technicalData'])) {
                     continue;
                 }
 
-                $value2 = @unserialize($options2[$code]->getValue())['technicalData'];
-                if ($options2[$code]->getValue() !== 'b:0;' && $value2 === false)
-                $value2 = $this->_serializer->unserialize($options2[$code]->getValue());
+                if ($this->_isJsonInfoByRequest) {
+                    $value2 = json_decode($options2[$code]->getValue())['technicalData'];
+                } else {
+                    $value2 = @unserialize($options2[$code]->getValue())['technicalData'];
+                }
 
                 if (!isset($options2[$code]) || $value2['technicalData'] != $value['technicalData']) {
                     return false;

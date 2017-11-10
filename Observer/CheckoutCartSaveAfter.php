@@ -25,6 +25,7 @@
 
 namespace Buildateam\CustomProductBuilder\Observer;
 
+use \Magento\Framework\App\ProductMetadataInterface;
 use \Magento\Framework\Event\ObserverInterface;
 use \Magento\Framework\Event\Observer as EventObserver;
 use \Buildateam\CustomProductBuilder\Model\ShareableLinksFactory;
@@ -37,18 +38,20 @@ class CheckoutCartSaveAfter implements ObserverInterface
     protected $_factory;
 
     /**
-     * @var \Magento\Framework\Serialize\Serializer\Json
+     * @var bool
      */
-    protected $_serializer;
+    protected $_isJsonInfoByRequest = true;
 
     /**
      * @param ShareableLinksFactory $factory
+     * @param ProductMetadataInterface $productMetadata
      */
-    public function __construct(ShareableLinksFactory $factory, \Magento\Framework\Serialize\Serializer\Json $serializer)
+    public function __construct(ShareableLinksFactory $factory, ProductMetadataInterface $productMetadata)
     {
         $this->_factory = $factory;
-        $this->_serializer = $serializer ?: \Magento\Framework\App\ObjectManager::getInstance()
-            ->get(\Magento\Framework\Serialize\Serializer\Json::class);
+        if (version_compare($productMetadata->getVersion(), '2.2.0', '<')) {
+            $this->_isJsonInfoByRequest = false;
+        }
     }
 
     /**
@@ -61,9 +64,10 @@ class CheckoutCartSaveAfter implements ObserverInterface
         $lastAddedItem = array_slice($items, -1, 1);
 
         $buyRequest = $lastAddedItem[0]->getProduct()->getCustomOption('info_buyRequest')->getValue();
-        $value = @unserialize($buyRequest);
-        if ($buyRequest !== 'b:0;' && $value === false) {
-            $value = $this->_serializer->unserialize($buyRequest);
+        if ($this->_isJsonInfoByRequest) {
+            $value = json_decode($buyRequest);
+        } else {
+            $value = @unserialize($buyRequest);
         }
 
         $techData = json_encode($value['technicalData']);

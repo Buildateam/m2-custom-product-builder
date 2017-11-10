@@ -27,6 +27,7 @@ namespace Buildateam\CustomProductBuilder\Observer;
 
 use \Buildateam\CustomProductBuilder\Helper\Data as Helper;
 use \Magento\Catalog\Model\ProductRepository;
+use \Magento\Framework\App\ProductMetadataInterface;
 use \Magento\Framework\Event\ObserverInterface;
 use \Magento\Framework\Event\Observer as EventObserver;
 
@@ -43,20 +44,21 @@ class ProductFinalPrice implements ObserverInterface
     protected $_jsonConfig = [];
 
     /**
-     * @var \Magento\Framework\Serialize\Serializer\Json
+     * @var bool
      */
-    protected $_serializer;
+    protected $_isJsonInfoByRequest = true;
 
     /**
      * ProductFinalPrice constructor.
      * @param ProductRepository $productRepository
-     * @param \Magento\Framework\Serialize\Serializer\Json $serializer
+     * @param ProductMetadataInterface $productMetadata
      */
-    public function __construct(ProductRepository $productRepository, \Magento\Framework\Serialize\Serializer\Json $serializer)
+    public function __construct(ProductRepository $productRepository, ProductMetadataInterface $productMetadata)
     {
         $this->_productRepository = $productRepository;
-        $this->_serializer = $serializer ?: \Magento\Framework\App\ObjectManager::getInstance()
-            ->get(\Magento\Framework\Serialize\Serializer\Json::class);
+        if (version_compare($productMetadata->getVersion(), '2.2.0', '<')) {
+            $this->_isJsonInfoByRequest = false;
+        }
     }
 
     /**
@@ -74,9 +76,10 @@ class ProductFinalPrice implements ObserverInterface
 
         /* Retrieve technical data of product that was added to cart */
         $buyRequest = $product->getCustomOption('info_buyRequest')->getData('value');
-        $productInfo = @unserialize($buyRequest);
-        if ($buyRequest !== 'b:0;' && $productInfo === false) {
-            $productInfo = $this->_serializer->unserialize($buyRequest);
+        if ($this->_isJsonInfoByRequest) {
+            $productInfo = json_decode($buyRequest);
+        } else {
+            $productInfo = @unserialize($buyRequest);
         }
 
         if (!isset($productInfo['technicalData'])) {

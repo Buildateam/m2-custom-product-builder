@@ -14,11 +14,6 @@ class QuoteItem
     protected $_shareLinksFactory;
 
     /**
-     * @var \Magento\Framework\Serialize\Serializer\Json
-     */
-    protected $_serializer;
-
-    /**
      * @var bool
      */
     protected $_isJsonInfoByRequest = true;

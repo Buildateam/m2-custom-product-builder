@@ -28,6 +28,17 @@ namespace Buildateam\CustomProductBuilder\Model\Plugin;
 class WishlistItem
 {
     /**
+     * @var \Magento\Framework\Serialize\Serializer\Json
+     */
+    protected $_serializer;
+
+    public function __construct(\Magento\Framework\Serialize\Serializer\Json $serializer)
+    {
+        $this->_serializer = $serializer ?: \Magento\Framework\App\ObjectManager::getInstance()
+            ->get(\Magento\Framework\Serialize\Serializer\Json::class);
+    }
+
+    /**
      * @param \Magento\Quote\Model\Quote\Item $subject
      * @param callable $proceed
      * @param array $options1
@@ -39,12 +50,20 @@ class WishlistItem
         foreach ($options1 as $option) {
             if ($option->getCode() == 'info_buyRequest') {
                 $code = $option->getCode();
-                $value = unserialize($option->getValue());
+                $value = @unserialize($option->getValue());
+                if ($option->getValue() !== 'b:0;' && $value === false) {
+                    $value = $this->_serializer->unserialize($option->getValue());
+                }
+
                 if (!isset($value['technicalData'])) {
                     continue;
                 }
 
-                if (!isset($options2[$code]) || unserialize($options2[$code]->getValue())['technicalData'] != $value['technicalData']) {
+                $value2 = @unserialize($options2[$code]->getValue())['technicalData'];
+                if ($options2[$code]->getValue() !== 'b:0;' && $value2 === false) {
+                    $value2 = $this->_serializer->unserialize($options2[$code]->getValue());
+                }
+                if (!isset($options2[$code]) || $value2['technicalData'] != $value['technicalData']) {
                     return false;
                 }
             }

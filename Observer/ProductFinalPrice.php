@@ -43,11 +43,20 @@ class ProductFinalPrice implements ObserverInterface
     protected $_jsonConfig = [];
 
     /**
-     * @param ProductRepository $productRepository
+     * @var \Magento\Framework\Serialize\Serializer\Json
      */
-    public function __construct(ProductRepository $productRepository)
+    protected $_serializer;
+
+    /**
+     * ProductFinalPrice constructor.
+     * @param ProductRepository $productRepository
+     * @param \Magento\Framework\Serialize\Serializer\Json $serializer
+     */
+    public function __construct(ProductRepository $productRepository, \Magento\Framework\Serialize\Serializer\Json $serializer)
     {
         $this->_productRepository = $productRepository;
+        $this->_serializer = $serializer ?: \Magento\Framework\App\ObjectManager::getInstance()
+            ->get(\Magento\Framework\Serialize\Serializer\Json::class);
     }
 
     /**
@@ -64,7 +73,12 @@ class ProductFinalPrice implements ObserverInterface
         $finalPrice = $product->getPrice();
 
         /* Retrieve technical data of product that was added to cart */
-        $productInfo = unserialize($product->getCustomOption('info_buyRequest')->getData('value'));
+        $buyRequest = $product->getCustomOption('info_buyRequest')->getData('value');
+        $productInfo = @unserialize($buyRequest);
+        if ($buyRequest !== 'b:0;' && $productInfo === false) {
+            $productInfo = $this->_serializer->unserialize($buyRequest);
+        }
+
         if (!isset($productInfo['technicalData'])) {
             return;
         }

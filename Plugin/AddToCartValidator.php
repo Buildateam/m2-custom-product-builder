@@ -70,7 +70,7 @@ class AddToCartValidator
     {
         if ($request->getHeader('X_CUSTOM_PRODUCT_BUILDER')) {
             $payload = json_decode(file_get_contents('php://input'), 1);
-            foreach (['qty', 'technicalData', 'properties', 'configid', 'type'] as $paramKey) {
+            foreach (['quantity', 'technicalData', 'properties', 'configid', 'type'] as $paramKey) {
                 if (isset($payload[$paramKey])) {
                     $request->setParam($paramKey, $payload[$paramKey]);
                 }

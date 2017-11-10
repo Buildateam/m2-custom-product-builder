@@ -30,13 +30,29 @@ use \Magento\Checkout\Block\Cart\Item\Renderer\Actions\Edit;
 class CartItemEdit
 {
     /**
+     * @var \Magento\Framework\Serialize\Serializer\Json
+     */
+    protected $_serializer;
+
+    public function __construct(\Magento\Framework\Serialize\Serializer\Json $serializer)
+    {
+        $this->_serializer = $serializer ?: \Magento\Framework\App\ObjectManager::getInstance()
+            ->get(\Magento\Framework\Serialize\Serializer\Json::class);
+    }
+
+    /**
      * @param Edit $subject
      * @param $result
      * @return string
      */
     public function afterGetConfigureUrl(Edit $subject, $result)
     {
-        $productInfo = unserialize($subject->getItem()->getProduct()->getCustomOption('info_buyRequest')->getValue());
+        $buyRequest = $subject->getItem()->getProduct()->getCustomOption('info_buyRequest')->getValue();
+        $productInfo = @unserialize($buyRequest);
+        if ($buyRequest !== 'b:0;' && $productInfo === false) {
+            $productInfo = $this->_serializer->unserialize($buyRequest);
+        }
+
         if (isset($productInfo['configid'])) {
             return $result . '#configid=' . $productInfo['configid'];
         }

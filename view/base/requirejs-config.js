@@ -1,5 +1,4 @@
-<?php
-/**
+/*
  * Copyright (c) 2017 Indigo Geeks, Inc. All rights reserved.
  *
  * General.
@@ -37,95 +36,10 @@
  * THE SOFTWARE COULD LEAD TO DEATH, PERSONAL INJURY, OR SEVERE PHYSICAL OR ENVIRONMENTAL DAMAGE.
  */
 
-namespace Buildateam\CustomProductBuilder\Controller\Product;
-
-use \Magento\Framework\App\Action\Action;
-use \Magento\Framework\App\Action\Context;
-use \Magento\Framework\Controller\ResultFactory;
-use \Buildateam\CustomProductBuilder\Model\ShareableLinksFactory;
-use \Magento\Framework\Data\Form\FormKey\Validator;
-
-class Share extends Action
-{
-    /**
-     * @var ShareableLinksFactory
-     */
-    protected $_shareLinksFactory;
-
-    /**
-     * @var Validator
-     */
-    protected $_formKeyValidator;
-
-    /**
-     * @var ResultFactory
-     */
-    protected $_resultFactory;
-
-    /**
-     * Share constructor.
-     *
-     * @param Context $context
-     * @param ShareableLinksFactory $factory
-     * @param Validator $validator
-     */
-    public function __construct(
-        Context $context,
-        ShareableLinksFactory $factory,
-        Validator $validator)
-    {
-        $this->_formKeyValidator = $validator;
-        $this->_shareLinksFactory = $factory;
-        $this->_resultFactory = $context->getResultFactory();
-        parent::__construct($context);
+var config = {
+    map: {
+        '*': {
+            customproductbuilder: 'Buildateam_CustomProductBuilder/js/dist/custom-product-builder'
+        }
     }
-
-    /**
-     * @return $this|\Magento\Framework\Controller\ResultInterface
-     */
-    public function execute()
-    {
-        if ($this->_validateRequest() !== true) {
-            return $this->resultRedirectFactory->create()->setPath('*/*/');
-        }
-
-        $configModel = $this->_shareLinksFactory->create()->loadByConfigId($this->getRequest()->getParam('configid'));
-        if ($configModel->getId()) {
-            $result = [
-                'success' => true,
-                'message' => __('Product configuration successfully saved.'),
-                'configid' => $configModel->getConfigId()
-            ];
-        } else {
-            $result = [
-                'success' => false,
-                'message' => __('Config didn\'t save. Please, try again later.'),
-            ];
-        }
-
-        $response = $this->_resultFactory->create(ResultFactory::TYPE_JSON);
-        $response->setData($result);
-
-        return $response;
-    }
-
-    /**
-     * @return mixed
-     */
-    protected function _validateRequest()
-    {
-        if (!$this->_formKeyValidator->validate($this->getRequest())) {
-            return false;
-        }
-
-        $requestParams = $this->getRequest()->getParams();
-        foreach (['product', 'configid'] as $keyParam) {
-            if (!isset($requestParams[$keyParam])) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-}
+};

@@ -2,7 +2,7 @@
 /**
  * Copyright (c) 2017 Indigo Geeks, Inc. All rights reserved.
  *
- * General. 
+ * General.
  * The custom product builder software and documentation accompanying this License
  * whether on disk, in read only memory, on any other media or in any other form (collectively
  * the “Software”) are licensed, not sold, to you by copyright holder, Indigo Geeks, Inc.
@@ -13,8 +13,8 @@
  * recorded but Buildateam and/or Buildateam’s licensor(s) retain ownership of the Software
  * itself.
  *
- * Permitted License Uses and Restrictions. 
- * This License allows you to install and use one (1) copy of the Software. 
+ * Permitted License Uses and Restrictions.
+ * This License allows you to install and use one (1) copy of the Software.
  * This License does not allow the Software to exist on more than one production domain.
  * Except as and only to the extent expressly permitted in this License or by applicable
  * law, you may not copy, decompile, reverse engineer, disassemble, attempt to derive
@@ -23,10 +23,10 @@
  * the Software. If you breach this restriction, you may be subject to prosecution and
  * damages.
  *
- * Transfer. 
+ * Transfer.
  * You may not rent, lease, lend or sublicense the Software.
  *
- * Termination. 
+ * Termination.
  * This License is effective until terminated. Your rights under this
  * License will terminate automatically without notice from Buildateam if you fail to comply
  * with any term(s) of this License. Upon the termination of this License, you shall cease
@@ -39,65 +39,95 @@
 
 namespace Buildateam\CustomProductBuilder\Controller\Adminhtml\Product;
 
+use \Magento\Framework\App\Response\Http\FileFactory;
+use \Magento\Catalog\Model\ProductRepository;
+use \Magento\Backend\App\Action\Context;
+use \Magento\Framework\View\Result\PageFactory;
 
-class Import extends \Magento\Backend\App\Action
+class ExportFile extends \Magento\Backend\App\Action
 {
+    /**
+     * @var \Magento\Catalog\Model\ProductRepository
+     */
+    protected $_productRepository;
 
-    protected $_jsonProductContent;
+    /**
+     * @var \Magento\Framework\App\Response\Http\FileFactory
+     */
+    protected $fileFactory;
+    protected $_resultPageFactory;
 
-    public function execute()
+    public function __construct(
+        Context $context,
+        PageFactory $resultFactory,
+        ProductRepository $productRepository,
+        FileFactory $fileFactory
+    )
     {
-        $objectManager  = \Magento\Framework\App\ObjectManager::getInstance();
-        $productId      = $this->getRequest()->getParam('id');
-        $product        = $objectManager->create('Magento\Catalog\Model\Product')->load($productId);
-
-        $jsonData = !empty($_FILES['product']['tmp_name']['json_configuration'])
-            ? file_get_contents($_FILES['product']['tmp_name']['json_configuration'])
-            : $product->getData('json_configuration');
-
-        if (!empty($jsonData)) {
-            $this->_jsonProductContent = $jsonData;
-            $validate = $this->_objectManager->create('Buildateam\CustomProductBuilder\Helper\Data')->validate($this->_jsonProductContent);
-
-            if (isset($this->_jsonProductContent) && !empty($this->_jsonProductContent) && $validate) {
-
-                $result = [
-                    'status'    => 'error',
-                    'msg'       => $validate
-                ];
-
-                $this->sendJsonResponse($result, 200);
-            }
-
-            $product->setJsonConfiguration($this->_jsonProductContent);
-            $product->save();
-
-            $result = [
-                'status'    => 'success',
-                'msg'       => 'Custom Product Builder imported with success!'
-            ];
-
-            $this->sendJsonResponse($result, 200);
-        }
-
+        $this->_resultPageFactory = $resultFactory;
+        $this->_productRepository = $productRepository;
+        $this->fileFactory = $fileFactory;
+        parent::__construct($context);
     }
 
-    protected function sendJsonResponse($data = [], $code = 200, Exception $exception = null)
+    /**
+     * @return \Magento\Framework\App\ResponseInterface
+     */
+    public function execute()
     {
-        $jsonData = Zend_Json_Encoder::encode($data);
+        $productId = (int)$this->getRequest()->getParam('id', 0);
+        $product = $this->_productRepository->getById($productId);
+        $productConfig = $product->getData('json_configuration');
 
-        /** @var Mage_Core_Controller_Response_Http $response */
-        $response = Mage::app()->getResponse();
-        $response->setHeader('Content-type', 'application/json', true)
-            ->setHttpResponseCode($code)
-            ->setBody($jsonData);
+        if (!$productConfig) $productConfig = $this->_getBaseConfig();
+        return $this->fileFactory->create(
+            sprintf('product_%s.json', $productId),
+            $productConfig
+        );
+    }
 
-        if ($exception) {
-            $response->setException($exception);
-        }
+    /**
+     * @return string
+     */
+    protected function _getBaseConfig()
+    {
+        return <<<JSON
+{
+  "settings": {
+    "isAdmin": true,
+    "theme": {
+      "id": "alpine-white"
+    },
+    "views": {
+      "front": true,
+      "back": false,
+      "left": false,
+      "right": false,
+      "top": false,
+      "bottom": false
+    },
+    "currentView": "front",
+    "defaultView": "front",
+    "viewControls": "arrows",
+    "hasSummary": true,
+    "layout": "col-tabs",
+    "currency": "USD",
+    "cdnPath": "https://magento.thecustomproductbuilder.com/media/"
+  },
+  "data": {
+    "name": null,
+    "base": {
+      "price": null,
+      "image": {}
+    },
+    "panels": [],
+    "layers": [],
+    "price": null,
+    "isFetchingCategories": true
+  }
+}
+JSON;
 
-        $response->sendResponse();
-        die();
     }
 
 }

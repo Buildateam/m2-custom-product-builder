@@ -1,4 +1,5 @@
-/*
+<?php
+/**
  * Copyright (c) 2017 Indigo Geeks, Inc. All rights reserved.
  *
  * General.
@@ -36,13 +37,83 @@
  * THE SOFTWARE COULD LEAD TO DEATH, PERSONAL INJURY, OR SEVERE PHYSICAL OR ENVIRONMENTAL DAMAGE.
  */
 
-var config = {
-    paths: {
-        'custom-product-builder/template': 'Buildateam_CustomProductBuilder/templates'
-    },
-    map: {
-        '*': {
-            customproductbuilder: 'Buildateam_CustomProductBuilder/js/dist/custom-product-builder'
-        }
+namespace Buildateam\CustomProductBuilder\Controller\Adminhtml\Product;
+
+use Magento\Backend\App\Action\Context;
+use Magento\Framework\Controller\ResultFactory;
+use \Magento\Framework\Logger\Monolog;
+use Exception;
+
+class ImportFile extends \Magento\Backend\App\Action
+{
+
+    protected $_jsonProductContent;
+
+    /**
+     * @var ResultFactory
+     */
+    protected $_resultFactory;
+
+    /**
+     * @var Monolog
+     */
+    protected $_logger;
+
+    /**
+     * Share constructor.
+     *
+     * @param Context $context
+     */
+    public function __construct(
+        Context $context,
+        Monolog $logger
+    )
+    {
+        $this->_resultFactory = $context->getResultFactory();
+        parent::__construct($context);
     }
-};
+
+    public function execute()
+    {
+        $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+        $productId = $this->getRequest()->getParam('id');
+        $product = $objectManager->create('Magento\Catalog\Model\Product')->load($productId);
+
+        $jsonData = !empty($_FILES['product']['tmp_name']['json_configuration'])
+            ? file_get_contents($_FILES['product']['tmp_name']['json_configuration'])
+            : $product->getData('json_configuration');
+
+        $response = $this->_resultFactory->create(ResultFactory::TYPE_JSON);
+        if (!empty($jsonData)) {
+            $this->_jsonProductContent = $jsonData;
+            $validate = $this->_objectManager->create('Buildateam\CustomProductBuilder\Helper\Data')->validate($this->_jsonProductContent);
+
+            if (isset($this->_jsonProductContent) && !empty($this->_jsonProductContent) && $validate) {
+                $result = [
+                    'status' => 'error',
+                    'msg' => $validate
+                ];
+
+                $response->setData($result);
+                return $response;
+            }
+
+            $product->setJsonConfiguration($this->_jsonProductContent);
+
+            try {
+                $product->save();
+            } catch (Exception $e) {
+                $this->_logger->critical($e->getMessage());
+            }
+
+            $result = [
+                'status' => 'success',
+                'msg' => 'Custom Product Builder imported with success!'
+            ];
+
+            $response->setData($result);
+        }
+
+        return $response;
+    }
+}

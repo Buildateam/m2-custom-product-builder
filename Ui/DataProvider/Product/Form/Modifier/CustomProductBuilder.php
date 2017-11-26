@@ -41,9 +41,6 @@ namespace Buildateam\CustomProductBuilder\Ui\DataProvider\Product\Form\Modifier;
 
 use \Magento\Catalog\Ui\DataProvider\Product\Form\Modifier\AbstractModifier;
 use \Magento\Catalog\Model\Locator\LocatorInterface;
-use \Magento\Framework\App\ObjectManager;
-use \Magento\Framework\App\CacheInterface;
-use \Magento\Framework\DB\Helper as DbHelper;
 use \Magento\Framework\Stdlib\ArrayManager;
 use \Magento\Backend\App\Action\Context;
 
@@ -250,28 +247,6 @@ class CustomProductBuilder extends AbstractModifier
                         ]
                     ],
 
-                    'custom_product_builder_import' => [
-                        'arguments' => [
-                            'data' => [
-                                'config' => [
-                                    'title' => __('Import'),
-                                    'formElement' => 'container',
-                                    'additionalClasses' => 'admin__field-small',
-                                    'componentType' => 'container',
-                                    'component' => 'Magento_Ui/js/form/components/button',
-                                    'template' => 'ui/form/components/button/container',
-                                    'additionalForGroup' => true,
-                                    'provider' => false,
-                                    'source' => 'product_details',
-                                    'displayArea' => 'insideGroup',
-                                    'sortOrder' => 30,
-                                    'actions' => [],
-                                    'on_click' => 'alert(1);'
-                                ],
-                            ],
-                        ]
-                    ],
-
                     'custom_product_builder_export' => [
                         'arguments' => [
                             'data' => [
@@ -280,22 +255,51 @@ class CustomProductBuilder extends AbstractModifier
                                     'formElement' => 'container',
                                     'additionalClasses' => 'admin__field-small',
                                     'componentType' => 'container',
-                                    'component' => 'Magento_Ui/js/form/components/button',
+                                    'component' => 'Buildateam_CustomProductBuilder/js/iebutton',
                                     'template' => 'ui/form/components/button/container',
                                     'additionalForGroup' => true,
                                     'provider' => false,
                                     'source' => 'product_details',
                                     'displayArea' => 'insideGroup',
-                                    'sortOrder' => 40,
+                                    'sortOrder' => 30,
                                     'actions' => [
                                         [
-                                            'on_click' => sprintf("setLocation('%s');", $this->context->getUrl()->getUrl('*/*/'))
+                                            'onclick' => sprintf("setLocation('%s');", $this->context->getUrl()->getUrl('customproductbuilder/product/exportFile', [
+                                                'id' => $this->context->getRequest()->getParam('id')
+                                            ]))
                                         ]
                                     ],
                                 ],
                             ],
                         ]
-                    ]
+                    ],
+
+                    'custom_product_builder_import' => [
+                        'arguments' => [
+                            'data' => [
+                                'config' => [
+                                    'title' => __('Import'),
+                                    'formElement' => 'fileUploader',
+                                    'componentType' => 'fileUploader',
+                                    'component' => 'Magento_Ui/js/form/element/file-uploader',
+                                    'template' => 'custom-product-builder/form/element/uploader/uploader',
+                                    'dataScope' => 'file',
+                                    'fileInputName' => 'json_configuration',
+                                    'additionalForGroup' => true,
+                                    'provider' => false,
+                                    'source' => 'product_details',
+                                    'displayArea' => 'insideGroup',
+                                    'sortOrder' => 40,
+                                    'allowedExtensions' => 'json',
+                                    'uploaderConfig' => [
+                                        'url' => $this->context->getUrl()->getUrl('customproductbuilder/product/importFile', [
+                                            'id' => $this->context->getRequest()->getParam('id')
+                                        ])
+                                    ]
+                                ],
+                            ],
+                        ]
+                    ],
                 ]
             ]
         );

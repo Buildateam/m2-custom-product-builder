@@ -44,12 +44,8 @@
                 <item name="custom-product-builder-modal" xsi:type="array">
                     <item name="class" xsi:type="string">Buildateam\CustomProductBuilder\Ui\DataProvider\Product\Form\Modifier\CustomProductBuilder</item>
                     <item name="sortOrder" xsi:type="number">1000</item>
-                    <!-- Because 70 is sort order of the regular custom options -->
                 </item>
             </argument>
         </arguments>
     </virtualType>
-<!--    <type name="Magento\Framework\Model\ResourceModel\Db\AbstractDb">
-        <plugin name="pluginSaveProduct" type="Buildateam\CustomProductBuilder\Plugin\InterceptorPlugin" sortOrder="10" disabled="false"/>
-    </type>    -->
 </config>

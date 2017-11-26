@@ -36,13 +36,17 @@
  * THE SOFTWARE COULD LEAD TO DEATH, PERSONAL INJURY, OR SEVERE PHYSICAL OR ENVIRONMENTAL DAMAGE.
  */
 
-var config = {
-    paths: {
-        'custom-product-builder/template': 'Buildateam_CustomProductBuilder/templates'
-    },
-    map: {
-        '*': {
-            customproductbuilder: 'Buildateam_CustomProductBuilder/js/dist/custom-product-builder'
+define([
+    'Magento_Ui/js/form/components/button'
+], function (mageButton) {
+    'use strict';
+
+    return mageButton.extend({
+        applyAction: function (action) {
+            if(typeof action.onclick !== 'undefined') {
+                eval(action.onclick);
+                return null;
+            }
         }
-    }
-};
+    });
+});

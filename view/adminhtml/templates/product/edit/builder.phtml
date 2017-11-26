@@ -42,7 +42,23 @@ $baseUrl = $block->getBaseUrl();
 ?>
 
 
-<div id="product-builder" shop-name="<?php echo $baseUrl; ?>" product-id="<?php echo $productId; ?>" styles-path="//cdn.shopify.com/s/files/1/1520/2864/t/16/assets/customproductbuilder.css?622266423132693063" admin="true" engine="magento">
+<div id="product-builder"
+     shop-name="<?php echo $baseUrl; ?>"
+     product-id="<?php echo $productId; ?>"
+     styles-path="//cdn.shopify.com/s/files/1/1520/2864/t/16/assets/customproductbuilder.css?622266423132693063"
+     admin="true"
+     engine="magento">
     Loading ...
 </div>
-<script>jQuery.getScript('<?php echo $this->getViewFileUrl('Buildateam_CustomProductBuilder/js/dist/custom-product-builder.js') ?>');</script>
+
+<script type="text/x-magento-init">
+    {
+        "#product-builder":
+         {
+            "Buildateam_CustomProductBuilder/js/dist/custom-product-builder":{}
+         }
+     }
+</script>
+<script>
+    jQuery('#product-builder').trigger('contentUpdated');
+</script>

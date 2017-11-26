@@ -37,12 +37,9 @@
  */
 
 var config = {
-    paths: {
-        'custom-product-builder/template': 'Buildateam_CustomProductBuilder/templates'
-    },
     map: {
         '*': {
-            customproductbuilder: 'Buildateam_CustomProductBuilder/js/dist/custom-product-builder'
+            iebutton: 'js/iebutton'
         }
     }
 };

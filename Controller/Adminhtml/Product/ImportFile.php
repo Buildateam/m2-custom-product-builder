@@ -79,8 +79,8 @@ class ImportFile extends \Magento\Backend\App\Action
         $productId = $this->getRequest()->getParam('id');
         $product = $objectManager->create('Magento\Catalog\Model\Product')->load($productId);
 
-        $jsonData = !empty($_FILES['product']['tmp_name']['json_configuration'])
-            ? file_get_contents($_FILES['product']['tmp_name']['json_configuration'])
+        $jsonData = !empty($_FILES['product']['tmp_name']['file'])
+            ? file_get_contents($_FILES['product']['tmp_name']['file'])
             : $product->getData('json_configuration');
 
         $response = $this->_resultFactory->create(ResultFactory::TYPE_JSON);

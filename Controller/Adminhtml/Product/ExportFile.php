@@ -57,6 +57,13 @@ class ExportFile extends \Magento\Backend\App\Action
     protected $fileFactory;
     protected $_resultPageFactory;
 
+    /**
+     * ExportFile constructor.
+     * @param Context $context
+     * @param PageFactory $resultFactory
+     * @param ProductRepository $productRepository
+     * @param FileFactory $fileFactory
+     */
     public function __construct(
         Context $context,
         PageFactory $resultFactory,
@@ -71,7 +78,9 @@ class ExportFile extends \Magento\Backend\App\Action
     }
 
     /**
-     * @return \Magento\Framework\App\ResponseInterface
+     * @return \Magento\Framework\App\ResponseInterface|\Magento\Framework\Controller\ResultInterface
+     * @throws \Exception
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
     public function execute()
     {

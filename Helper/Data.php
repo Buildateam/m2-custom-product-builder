@@ -164,6 +164,6 @@ class Data extends AbstractHelper
         $fileName = $this->_request->getParam('configid') . '.' . $this->_request->getParam('type');
         file_put_contents("$mediaPath/$fileName", base64_decode($base64Image));
 
-        return "customproductbuilder/$fileName";
+        return "catalog/product/customproductbuilder/$fileName";
     }
 }

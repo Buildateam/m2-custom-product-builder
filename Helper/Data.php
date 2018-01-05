@@ -161,7 +161,11 @@ class Data extends AbstractHelper
         if (!file_exists($mediaPath)) {
             mkdir($mediaPath, 0777, true);
         }
-        $fileName = $this->_request->getParam('configid') . '.' . $this->_request->getParam('type');
+        //// Param('configid') is not defined
+        
+        // $fileName = $this->_request->getParam('configid') . '.' . $this->_request->getParam('type');
+        $fileName = uniqid('img_') . '.' . $this->_request->getParam('type');
+        
         file_put_contents("$mediaPath/$fileName", base64_decode($base64Image));
 
         return "catalog/product/customproductbuilder/$fileName";

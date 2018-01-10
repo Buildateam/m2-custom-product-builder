@@ -255,7 +255,7 @@ class CustomProductBuilder extends AbstractModifier
                                     'formElement' => 'container',
                                     'additionalClasses' => 'admin__field-small',
                                     'componentType' => 'container',
-                                    'component' => 'Buildateam_CustomProductBuilder/js/iebutton',
+                                    'component' => 'custom-product-builder/iebutton',
                                     'template' => 'ui/form/components/button/container',
                                     'additionalForGroup' => true,
                                     'provider' => false,

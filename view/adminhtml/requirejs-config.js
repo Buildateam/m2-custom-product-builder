@@ -1,5 +1,4 @@
-<?php
-/**
+/*
  * Copyright (c) 2017 Indigo Geeks, Inc. All rights reserved.
  *
  * General.
@@ -37,63 +36,9 @@
  * THE SOFTWARE COULD LEAD TO DEATH, PERSONAL INJURY, OR SEVERE PHYSICAL OR ENVIRONMENTAL DAMAGE.
  */
 
-namespace Buildateam\CustomProductBuilder\Setup;
-
-use \Magento\Eav\Setup\EavSetup;
-use \Magento\Eav\Setup\EavSetupFactory;
-use \Magento\Framework\Setup\InstallDataInterface;
-use \Magento\Framework\Setup\ModuleContextInterface;
-use \Magento\Framework\Setup\ModuleDataSetupInterface;
-
-class InstallData implements InstallDataInterface
-{
-    /**
-     * EAV setup factory
-     *
-     * @var EavSetupFactory
-     */
-    private $eavSetupFactory;
-
-    /**
-     * Init
-     *
-     * @param EavSetupFactory $eavSetupFactory
-     */
-    public function __construct(EavSetupFactory $eavSetupFactory)
-    {
-        $this->eavSetupFactory = $eavSetupFactory;
+var config = {
+    paths: {
+        'custom-product-builder/template': 'Buildateam_CustomProductBuilder/templates',
+        'custom-product-builder/iebutton': 'Buildateam_CustomProductBuilder/js/iebutton'
     }
-
-    public function install(ModuleDataSetupInterface $setup, ModuleContextInterface $context)
-    {
-        $eavSetup = $this->eavSetupFactory->create(['setup' => $setup]);
-        $eavSetup->removeAttribute(\Magento\Catalog\Model\Product::ENTITY, 'json_configuration');
-        $eavSetup->addAttribute(
-            \Magento\Catalog\Model\Product::ENTITY,
-            'json_configuration',
-            [
-                'type' => 'text',
-                'backend' => '\Buildateam\CustomProductBuilder\Model\Attribute\Backend\JsonAttribute',
-                'frontend' => '',
-                'frontend_input' => 'text',
-                'label' => 'CPB Configuration',
-                'input' => 'text',
-                'class' => '',
-                'source' => '',
-                'global' => \Magento\Eav\Model\Entity\Attribute\ScopedAttributeInterface::SCOPE_GLOBAL,
-                'visible' => true,
-                'required' => false,
-                'user_defined' => false,
-                'default' => '',
-                'searchable' => false,
-                'filterable' => false,
-                'comparable' => false,
-                'visible_on_front' => false,
-                'used_in_product_listing' => false,
-                'unique' => false,
-                'apply_to' => ''
-            ]
-        );
-    }
-
-}
+};

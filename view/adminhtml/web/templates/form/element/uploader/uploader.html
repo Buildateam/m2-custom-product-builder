@@ -35,7 +35,7 @@
   ~ THIS SOFTWARE IS PROVIDED BY COPYRIGHT HOLDER "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL COPYRIGHT HOLDER BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. THE SOFTWARE IS NOT INTENDED FOR USE IN WHICH THE FAILURE OF
   ~ THE SOFTWARE COULD LEAD TO DEATH, PERSONAL INJURY, OR SEVERE PHYSICAL OR ENVIRONMENTAL DAMAGE.
   -->
-<div class="admin__field" visible="visible" css="$data.additionalClasses">
+<div class="admin__field admin__field-group-additional admin__field-small" visible="visible" css="$data.additionalClasses">
     <label class="admin__field-label" if="$data.label" attr="for: uid">
         <span text="label" attr="'data-config-scope': $data.scopeLabel"/>
     </label>
@@ -44,7 +44,7 @@
         <div class="file-uploader" data-role="drop-zone" css="_loading: isLoading">
             <div class="file-uploader-area">
                 <input type="file" afterRender="onElementRender" attr="id: uid, name: inputName, multiple: isMultipleFiles" disable="disabled" />
-                <label class="file-uploader-button action-default" attr="for: uid" translate="'Upload'"/>
+                <label class="file-uploader-button action-secondary" attr="for: uid" translate="'Import'"/>
 
                 <span class="file-uploader-spinner"/>
                 <render args="fallbackResetTpl" if="$data.showFallbackReset && $data.isDifferedFromDefault"/>

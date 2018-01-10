@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!--
+<?xml version="1.0" encoding="UTF-8"?><!--
   ~ Copyright (c) 2017 Indigo Geeks, Inc. All rights reserved.
   ~
   ~ General.
@@ -37,8 +36,7 @@
   ~ THE SOFTWARE COULD LEAD TO DEATH, PERSONAL INJURY, OR SEVERE PHYSICAL OR ENVIRONMENTAL DAMAGE.
   -->
 
-<form xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-      xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
+<form xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
     <argument name="data" xsi:type="array">
         <item name="js_config" xsi:type="array">
             <item name="provider" xsi:type="string">custom_product_builder.custom_product_builder_data_source</item>
@@ -55,8 +53,7 @@
     </argument>
     <dataSource name="custom_product_builder_data_source">
         <argument name="dataProvider" xsi:type="configurableObject">
-            <argument name="class"
-                      xsi:type="string">Buildateam\CustomProductBuilder\Ui\DataProvider\Product\Form\CustomProductBuilder</argument>
+            <argument name="class" xsi:type="string">Buildateam\CustomProductBuilder\Ui\DataProvider\Product\Form\CustomProductBuilder</argument>
             <argument name="name" xsi:type="string">custom_product_builder_data_source</argument>
             <argument name="primaryFieldName" xsi:type="string">entity_id</argument>
             <argument name="requestFieldName" xsi:type="string">id</argument>
@@ -87,9 +84,15 @@
                 </item>
             </argument>
         </container>
-        <htmlContent name="builder">
-            <argument name="block"
-                      xsi:type="object">Buildateam\CustomProductBuilder\Block\Adminhtml\Product\Edit\Builder</argument>
-        </htmlContent>
+        <container name="builder_container">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="sortOrder" xsi:type="number">10</item>
+                </item>
+            </argument>
+            <htmlContent name="builder_content">
+                <argument name="block" xsi:type="object">Buildateam\CustomProductBuilder\Block\Adminhtml\Product\Edit\Builder</argument>
+            </htmlContent>
+        </container>
     </fieldset>
 </form>

@@ -39,30 +39,44 @@
 
 namespace Buildateam\CustomProductBuilder\Helper;
 
-
-use \Magento\Framework\App\Helper\Context;
-use \Magento\Framework\App\Helper\AbstractHelper;
-use \Magento\Framework\Filesystem;
-use \Magento\Store\Model\StoreManagerInterface;
+use Magento\Framework\App\Helper\Context;
+use Magento\Framework\App\Helper\AbstractHelper;
+use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\Filesystem;
+use Magento\Framework\Math\Random;
+use Magento\Store\Model\ScopeInterface;
+use Magento\Store\Model\StoreManagerInterface;
 
 class Data extends AbstractHelper
 {
     const JSON_ATTRIBUTE = 'json_configuration';
+    const XPATH_BUILDER_MODE = 'cpb/development/mode';
 
     /**
      * @var \Magento\Framework\Filesystem
      */
     protected $_fileSystem;
     protected $_storeManager;
+    protected $_mathRandom;
 
+    /**
+     * Data constructor.
+     * @param Context $context
+     * @param Filesystem $fileSystem
+     * @param StoreManagerInterface $storeManager
+     * @param Random $random
+     */
     public function __construct(
         Context $context,
         Filesystem $fileSystem,
-        StoreManagerInterface $storeManager)
+        StoreManagerInterface $storeManager,
+        Random $random
+    )
     {
-        parent::__construct($context);
         $this->_fileSystem = $fileSystem;
         $this->_storeManager = $storeManager;
+        $this->_mathRandom = $random;
+        parent::__construct($context);
     }
 
     /**
@@ -72,24 +86,6 @@ class Data extends AbstractHelper
     {
         $dataJson = json_decode($data);
         return $dataJson;
-    }
-
-    /**
-     * Return Custom Builder Product file
-     */
-    public function getJsonBuilderFile()
-    {
-        $params = $this->getRequest()->getParams();
-        $resultJson = $this->resultJsonFactory->create();
-
-        /** get json content from product */
-        echo file_put_contents(Mage::getBaseDir('var') . '/test.json', "Hello World. Testing!");
-
-        $handle = fopen("./var/product-builder.json", "w+");
-        header('Access-Control-Allow-Origin: *');
-        header('Content-type: application/json');
-
-        echo json_encode($handle);
     }
 
     /**
@@ -150,24 +146,47 @@ class Data extends AbstractHelper
 
     /**
      * @param $base64Image
+     * @param bool $frontImage
      * @return string
      */
-    public function uploadImage($base64Image)
+    public function uploadImage($base64Image, $frontImage = false)
     {
         $mediaPath = $this->_fileSystem
             ->getDirectoryRead(\Magento\Framework\App\Filesystem\DirectoryList::MEDIA)
-            ->getAbsolutePath('catalog/product/customproductbuilder');
+            ->getAbsolutePath('catalog/product/customproductbuilder/' . ($frontImage ? 'variation' : 'configuration'));
 
         if (!file_exists($mediaPath)) {
             mkdir($mediaPath, 0777, true);
         }
-        //// Param('configid') is not defined
-        
-        // $fileName = $this->_request->getParam('configid') . '.' . $this->_request->getParam('type');
-        $fileName = uniqid('img_') . '.' . $this->_request->getParam('type');
-        
-        file_put_contents("$mediaPath/$fileName", base64_decode($base64Image));
+        try {
+            $variationId = $this->_request->getParam('configid') ? $this->_request->getParam('configid') : $this->_mathRandom->getRandomString(18);
+        } catch (LocalizedException $e) {
+            $this->_logger->critical($e->getMessage());
+            return false;
+        }
 
-        return "catalog/product/customproductbuilder/$fileName";
+        $fileName = $variationId . '.' . $this->_request->getParam('type');
+        @file_put_contents("$mediaPath/$fileName", base64_decode($base64Image));
+
+        return ($frontImage ? '' : 'catalog/product/') . 'customproductbuilder/' . ($frontImage ? 'variation/' : 'configuration/') . $fileName;
+    }
+
+
+    /**
+     * @param $path
+     * @return string
+     */
+    public function getConfigValue($path)
+    {
+        $value = $this->scopeConfig->getValue($path, ScopeInterface::SCOPE_STORE);
+        return $value;
+    }
+
+    /**
+     * @return string
+     */
+    public function getBuilderMode()
+    {
+        return $this->getConfigValue(self::XPATH_BUILDER_MODE);
     }
 }

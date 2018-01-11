@@ -1,4 +1,5 @@
-/*
+<?php
+/**
  * Copyright (c) 2017 Indigo Geeks, Inc. All rights reserved.
  *
  * General.
@@ -36,9 +37,22 @@
  * THE SOFTWARE COULD LEAD TO DEATH, PERSONAL INJURY, OR SEVERE PHYSICAL OR ENVIRONMENTAL DAMAGE.
  */
 
-var config = {
-    paths: {
-        'production-cpb': '//customproductbuilder.buildateam.io/dist/custom-product-builder',
-        'development-cpb': '//dev-customproductbuilder.buildateam.io/dist/custom-product-builder'
+namespace Buildateam\CustomProductBuilder\Model\Source;
+
+use Magento\Framework\Option\ArrayInterface;
+
+class Mode implements ArrayInterface
+{
+    /**
+     * Options getter
+     *
+     * @return array
+     */
+    public function toOptionArray()
+    {
+        return [
+            ['value' => 'production', 'label' => __('Production')],
+            ['value' => 'development', 'label' => __('Development')]
+        ];
     }
-};
+}

@@ -82,12 +82,12 @@ class Get extends Action
     public function execute()
     {
         $configId = $this->getRequest()->getParam('configid');
-        $sharableLink = $this->_factory->create()->loadByConfigId($configId);
+        $sharableLink = $this->_factory->create()->loadByVariationId($configId);
 
         $response = $this->_resultFactory->create(ResultFactory::TYPE_JSON);
         if ($sharableLink->getId()) {
             $linkData = [
-                'configid' => $sharableLink->getConfigId(),
+                'configid' => $sharableLink->getVariationId(),
                 'technicalData' => $this->_jsonHelper->jsonDecode($sharableLink->getTechnicalData())
             ];
             $response->setData($linkData);

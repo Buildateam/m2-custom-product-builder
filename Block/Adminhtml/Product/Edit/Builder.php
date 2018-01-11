@@ -39,15 +39,35 @@
 
 namespace Buildateam\CustomProductBuilder\Block\Adminhtml\Product\Edit;
 
-use \Magento\Framework\View\Element\Template;
-
+use Buildateam\CustomProductBuilder\Helper\Data;
+use Magento\Framework\View\Element\Template;
+use Magento\Framework\View\Element\Template\Context;
 
 class Builder extends Template
 {
-    public function __construct(Template\Context $context, array $data = [])
+    protected $_helper;
+
+    /**
+     * Builder constructor.
+     * @param Context $context
+     * @param array $data
+     */
+    public function __construct(
+        Context $context,
+        Data $helper,
+        array $data = []
+    )
     {
         $this->setTemplate('product/edit/builder.phtml');
-
+        $this->_helper = $helper;
         parent::__construct($context, $data);
+    }
+
+    /**
+     * @return string
+     */
+    public function getBuilderMode()
+    {
+        return $this->_helper->getBuilderMode();
     }
 }

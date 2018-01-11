@@ -115,13 +115,14 @@ class QuoteItem
     public function afterSetProduct(Item $subject, $result)
     {
         $buyRequest = $subject->getProduct()->getCustomOption('info_buyRequest')->getValue();
-        $productInfo = @unserialize($buyRequest);
-        if ($buyRequest !== 'b:0;' && $productInfo === false) {
-            $productInfo = $this->_serializer->unserialize($buyRequest);
+        if ($this->_isJsonInfoByRequest) {
+            $productInfo = json_decode($buyRequest);
+        } else {
+            $productInfo = @unserialize($buyRequest);
         }
 
         if (isset($productInfo['configid'])) {
-            $configModel = $this->_shareLinksFactory->create()->loadByConfigId($productInfo['configid']);
+            $configModel = $this->_shareLinksFactory->create()->loadByVariationId($productInfo['configid']);
             if ($configModel->getId()) {
                 $result->getProduct()
                     ->setImage($configModel->getImage())

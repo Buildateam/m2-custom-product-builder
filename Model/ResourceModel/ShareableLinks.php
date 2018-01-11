@@ -2,7 +2,7 @@
 /**
  * Copyright (c) 2017 Indigo Geeks, Inc. All rights reserved.
  *
- * General. 
+ * General.
  * The custom product builder software and documentation accompanying this License
  * whether on disk, in read only memory, on any other media or in any other form (collectively
  * the “Software”) are licensed, not sold, to you by copyright holder, Indigo Geeks, Inc.
@@ -13,8 +13,8 @@
  * recorded but Buildateam and/or Buildateam’s licensor(s) retain ownership of the Software
  * itself.
  *
- * Permitted License Uses and Restrictions. 
- * This License allows you to install and use one (1) copy of the Software. 
+ * Permitted License Uses and Restrictions.
+ * This License allows you to install and use one (1) copy of the Software.
  * This License does not allow the Software to exist on more than one production domain.
  * Except as and only to the extent expressly permitted in this License or by applicable
  * law, you may not copy, decompile, reverse engineer, disassemble, attempt to derive
@@ -23,10 +23,10 @@
  * the Software. If you breach this restriction, you may be subject to prosecution and
  * damages.
  *
- * Transfer. 
+ * Transfer.
  * You may not rent, lease, lend or sublicense the Software.
  *
- * Termination. 
+ * Termination.
  * This License is effective until terminated. Your rights under this
  * License will terminate automatically without notice from Buildateam if you fail to comply
  * with any term(s) of this License. Upon the termination of this License, you shall cease
@@ -39,7 +39,9 @@
 
 namespace Buildateam\CustomProductBuilder\Model\ResourceModel;
 
-class ShareableLinks extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
+use Magento\Framework\Model\ResourceModel\Db\AbstractDb;
+
+class ShareableLinks extends AbstractDb
 {
     public function _construct()
     {
@@ -47,17 +49,14 @@ class ShareableLinks extends \Magento\Framework\Model\ResourceModel\Db\AbstractD
     }
 
     /**
-     * Load country by ISO code
+     * Load by config id
      *
-     * @param ShareableLinks $links
-     * @param string $code
+     * @param \Buildateam\CustomProductBuilder\Model\ShareableLinks $links
+     * @param string $variationId
      * @return ShareableLinks
-     * @throws \Magento\Framework\Exception\LocalizedException
      */
-    public function loadByConfigId(\Buildateam\CustomProductBuilder\Model\ShareableLinks $links, $code)
+    public function loadByVariationId(\Buildateam\CustomProductBuilder\Model\ShareableLinks $links, $variationId)
     {
-        $field = 'config_id';
-
-        return $this->load($links, $code, $field);
+        return $this->load($links, $variationId, 'variation_id');
     }
 }

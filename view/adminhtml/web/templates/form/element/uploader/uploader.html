@@ -44,7 +44,7 @@
         <div class="file-uploader" data-role="drop-zone" css="_loading: isLoading">
             <div class="file-uploader-area">
                 <input type="file" afterRender="onElementRender" attr="id: uid, name: inputName, multiple: isMultipleFiles" disable="disabled" />
-                <label class="file-uploader-button action-secondary" attr="for: uid" translate="'Import'"/>
+                <label class="file-uploader-button action-basic" attr="for: uid" translate="'Import'"/>
 
                 <span class="file-uploader-spinner"/>
                 <render args="fallbackResetTpl" if="$data.showFallbackReset && $data.isDifferedFromDefault"/>

@@ -38,10 +38,10 @@
 
 define([
     'Magento_Ui/js/form/components/button'
-], function (mageButton) {
+], function (button) {
     'use strict';
 
-    return mageButton.extend({
+    return button.extend({
         applyAction: function (action) {
             if(typeof action.onclick !== 'undefined') {
                 eval(action.onclick);

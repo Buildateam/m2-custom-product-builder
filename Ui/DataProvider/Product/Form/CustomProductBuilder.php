@@ -44,7 +44,7 @@ use \Magento\Catalog\Model\ResourceModel\Product\CollectionFactory;
 use \Magento\Framework\UrlInterface;
 
 /**
- * DataProvider for new category form
+ * DataProvider for product builder form
  */
 class CustomProductBuilder extends AbstractDataProvider
 {

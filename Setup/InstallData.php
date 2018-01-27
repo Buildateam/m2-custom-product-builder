@@ -76,7 +76,7 @@ class InstallData implements InstallDataInterface
                 'backend' => '\Buildateam\CustomProductBuilder\Model\Attribute\Backend\JsonAttribute',
                 'frontend' => '',
                 'frontend_input' => 'text',
-                'label' => 'CPB Configuration',
+                'label' => 'Custom Product Configuration',
                 'input' => 'text',
                 'class' => '',
                 'source' => '',

@@ -1,5 +1,4 @@
-<?php
-/**
+/*
  * Copyright (c) 2017 Indigo Geeks, Inc. All rights reserved.
  *
  * General.
@@ -37,59 +36,15 @@
  * THE SOFTWARE COULD LEAD TO DEATH, PERSONAL INJURY, OR SEVERE PHYSICAL OR ENVIRONMENTAL DAMAGE.
  */
 
-namespace Buildateam\CustomProductBuilder\Block\Adminhtml\Product\Edit\Button;
+define([
+    'uiComponent'
+], function (Component) {
+    'use strict';
 
-use Magento\Catalog\Block\Adminhtml\Product\Edit\Button\Generic;
-/**
- * Button "Save Configuration"
- */
-class Save extends Generic
-{
-    /**
-     * @return array
-     */
-    public function getButtonData()
-    {
-        return [
-            'label' => __('Save Configuration'),
-            'class' => 'save primary',
-            'data_attribute' => [
-                'mage-init' => [
-                    'Magento_Ui/js/form/button-adapter' => [
-                        'actions' => [
-                            [
-                                'targetName' => $this->getSaveTarget(),
-                                'actionName' => $this->getSaveAction(),
-                                'params' => [
-                                    'SAVE_PRODUCT_DATA'
-                                ]
-                            ]
-                        ]
-                    ]
-                ]
-            ],
-            'on_click' => '',
-            'sort_order' => 10
-        ];
-    }
+    return Component.extend({
 
-    /**
-     * Retrieve target for button
-     * @return string
-     */
-    protected function getSaveTarget()
-    {
-        $target = 'customProductBuilderActions';
-        return $target;
-    }
-
-    /**
-     * Retrieve action for button
-     * @return string
-     */
-    protected function getSaveAction()
-    {
-        $action = 'saveCustomProductBuilderConfiguration';
-        return $action;
-    }
-}
+        saveCustomProductBuilderConfiguration: function (eventName) {
+            document.body.dispatchEvent(new CustomEvent(eventName));
+        }
+    });
+});

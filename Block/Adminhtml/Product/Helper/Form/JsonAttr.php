@@ -37,6 +37,10 @@
  * THE SOFTWARE COULD LEAD TO DEATH, PERSONAL INJURY, OR SEVERE PHYSICAL OR ENVIRONMENTAL DAMAGE.
  */
 
+/**
+ * @deprecated
+ * TODO: Remove after review
+ */
 namespace Buildateam\CustomProductBuilder\Block\Adminhtml\Product\Helper\Form;
 
 class JsonAttr  extends \Magento\Framework\Data\Form\Element\Textarea

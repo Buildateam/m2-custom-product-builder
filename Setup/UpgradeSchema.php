@@ -65,6 +65,10 @@ class UpgradeSchema implements UpgradeSchemaInterface
             $this->_addImagePathToProductConfigTable($setup);
         }
 
+        if (version_compare($context->getVersion(), '0.1.6', '<')) {
+            $this->_changeVariationColumnName($setup);
+        }
+
         $setup->endSetup();
     }
 
@@ -139,6 +143,26 @@ class UpgradeSchema implements UpgradeSchemaInterface
             $setup->getTable('cpb_product_config'),
             'config_id',
             'config_id',
+            [
+                'type' => \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
+                'length' => 255,
+                'nullable' => false,
+                'comment' => 'Config ID'
+            ]
+        );
+    }
+
+    /**
+     * Change variation column name
+     *
+     * @param SchemaSetupInterface $setup
+     */
+    private function _changeVariationColumnName($setup)
+    {
+        $setup->getConnection()->changeColumn(
+            $setup->getTable('cpb_product_config'),
+            'config_id',
+            'variation_id',
             [
                 'type' => \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
                 'length' => 255,

@@ -89,7 +89,7 @@ class Share extends Action
             return $this->resultRedirectFactory->create()->setPath('*/*/');
         }
 
-        $configModel = $this->_shareLinksFactory->create()->loadByConfigId($this->getRequest()->getParam('configid'));
+        $configModel = $this->_shareLinksFactory->create()->loadByVariationId($this->getRequest()->getParam('configid'));
         if ($configModel->getId()) {
             $result = [
                 'success' => true,

@@ -36,8 +36,23 @@
   ~ THE SOFTWARE COULD LEAD TO DEATH, PERSONAL INJURY, OR SEVERE PHYSICAL OR ENVIRONMENTAL DAMAGE.
   -->
 
-<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
-    <event name="catalog_product_save_after">
-        <observer name="save_jsonbuilder_data" instance="Buildateam\CustomProductBuilder\Observer\ProductSaveAfter"/>
-    </event>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <tab id="buildateam" translate="label" sortOrder="100">
+            <label><![CDATA[Buildateam]]></label>
+        </tab>
+        <section id="cpb" translate="label" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+            <class>separator-top</class>
+            <label><![CDATA[Custom Product Builder]]></label>
+            <tab>buildateam</tab>
+            <resource>Buildateam_CustomProductBuilder::cpb_config</resource>
+            <group id="development" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label><![CDATA[Development Configuration]]></label>
+                <field id="mode" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Mode</label>
+                    <source_model>Buildateam\CustomProductBuilder\Model\Source\Mode</source_model>
+                </field>
+            </group>
+        </section>
+    </system>
 </config>

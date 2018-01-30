@@ -41,6 +41,7 @@ namespace Buildateam\CustomProductBuilder\Plugin;
 
 use Exception;
 use \Magento\Checkout\Model\Session;
+use Magento\Framework\Exception\LocalizedException;
 use \Magento\Framework\Math\Random;
 use \Magento\Framework\Logger\Monolog;
 use \Magento\Framework\Json\Helper\Data as JsonHelper;
@@ -115,18 +116,22 @@ class AddToCartValidator
 
             if (isset($payload['buffer'])) {
                 if (!isset($payload['configid'])) {
-                    $request->setParam('configid', $this->_mathRandom->getRandomString(20));
+                    try {
+                        $request->setParam('configid', $this->_mathRandom->getRandomString(18));
+                    } catch (LocalizedException $e) {
+                        $this->_logger->critical($e->getMessage());
+                    }
                 }
                 if (!isset($payload['type'])) {
                     $request->setParam('type', 'png');
                 }
 
-                $imagePath = $this->_helper->uploadImage($payload['buffer']);
+                $imagePath = $this->_helper->uploadImage($payload['buffer'], true);
                 $configModel = $this->_shareLinksFactory->create();
                 $configModel->setData(array(
                     'product_id' => $request->getParam('product'),
                     'technical_data' => $this->_jsonHelper->jsonEncode($request->getParam('technicalData')),
-                    'config_id' => $request->getParam('configid'),
+                    'variation_id' => $request->getParam('configid'),
                     'image' => $imagePath
                 ));
 

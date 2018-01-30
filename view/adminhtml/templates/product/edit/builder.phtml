@@ -37,13 +37,15 @@
  * THE SOFTWARE COULD LEAD TO DEATH, PERSONAL INJURY, OR SEVERE PHYSICAL OR ENVIRONMENTAL DAMAGE.
  */
 
+/** @var Buildateam\CustomProductBuilder\Block\Adminhtml\Product\Edit\Builder $block */
+/** @var Magento\Framework\View\TemplateEngine\Php $this */
+
 $productId = (int)$block->getRequest()->getParam('product', 0);
-$baseUrl = $block->getBaseUrl();
 ?>
 
 
 <div id="product-builder"
-     shop-name="<?php echo $baseUrl; ?>"
+     shop-name="<?php echo $baseUrl = $block->getBaseUrl(); ?>"
      product-id="<?php echo $productId; ?>"
      styles-path="//cdn.shopify.com/s/files/1/1520/2864/t/16/assets/customproductbuilder.css?622266423132693063"
      admin="true"
@@ -65,7 +67,7 @@ $baseUrl = $block->getBaseUrl();
         },
         "#product-builder":
          {
-            "custom-product-builder":{}
+            "<?php echo $block->getBuilderMode() ?>-cpb":{}
          }
      }
 </script>

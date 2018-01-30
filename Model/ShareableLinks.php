@@ -39,6 +39,8 @@
 
 namespace Buildateam\CustomProductBuilder\Model;
 
+use Magento\Framework\Exception\LocalizedException;
+
 class ShareableLinks extends \Magento\Framework\Model\AbstractModel implements ShareableLinksInterface, \Magento\Framework\DataObject\IdentityInterface
 {
     const CACHE_TAG = 'buildateam_customproductbuilder_shareable_links';
@@ -54,19 +56,18 @@ class ShareableLinks extends \Magento\Framework\Model\AbstractModel implements S
     }
 
     /**
-     * Load country by config id
+     * Load by variation id
      *
-     *
-     *
-     *
-     *
-     *
-     * @param string $configId
+     * @param string $variationId
      * @return $this
      */
-    public function loadByConfigId($configId)
+    public function loadByVariationId($variationId)
     {
-        $this->_getResource()->loadByConfigId($this, $configId);
+        try {
+            $this->_getResource()->loadByVariationId($this, $variationId);
+        } catch (LocalizedException $e) {
+            $this->_logger->critical($e->getMessage());
+        }
         return $this;
     }
 }

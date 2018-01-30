@@ -1,4 +1,5 @@
-/*
+<?php
+/**
  * Copyright (c) 2017 Indigo Geeks, Inc. All rights reserved.
  *
  * General.
@@ -36,9 +37,51 @@
  * THE SOFTWARE COULD LEAD TO DEATH, PERSONAL INJURY, OR SEVERE PHYSICAL OR ENVIRONMENTAL DAMAGE.
  */
 
-var config = {
-    paths: {
-        'production-cpb': '//customproductbuilder.buildateam.io/dist/custom-product-builder',
-        'development-cpb': '//dev-customproductbuilder.buildateam.io/dist/custom-product-builder'
+namespace Buildateam\CustomProductBuilder\Block\Catalog\Product;
+
+use Buildateam\CustomProductBuilder\Helper\Data;
+use Magento\Catalog\Block\Product\Context;
+use Magento\Framework\Registry;
+use Magento\Framework\View\Element\Template;
+
+class View extends Template
+{
+    protected $_helper;
+    protected $_coreRegistry;
+
+    /**
+     * View constructor.
+     * @param Context $context
+     * @param Registry $coreRegistry
+     * @param Data $helper
+     * @param array $data
+     */
+    public function __construct(
+        Context $context,
+        Data $helper,
+        array $data = []
+    )
+    {
+        $this->_helper = $helper;
+        $this->_coreRegistry = $context->getRegistry();
+        parent::__construct($context, $data);
     }
-};
+
+    /**
+     * Retrieve current product model
+     *
+     * @return \Magento\Catalog\Model\Product
+     */
+    public function getProduct()
+    {
+        return $this->_coreRegistry->registry('product');
+    }
+
+    /**
+     * @return string
+     */
+    public function getBuilderMode()
+    {
+        return $this->_helper->getBuilderMode();
+    }
+}

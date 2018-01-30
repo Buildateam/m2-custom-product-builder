@@ -37,25 +37,25 @@
  * THE SOFTWARE COULD LEAD TO DEATH, PERSONAL INJURY, OR SEVERE PHYSICAL OR ENVIRONMENTAL DAMAGE.
  */
 
-/** @var Magento\Catalog\Block\Product\View\Description $block */
+/** @var Buildateam\CustomProductBuilder\Catalog\Product\View $block */
+/** @var Magento\Framework\View\TemplateEngine\Php $this */
 
-$productId = (int)$block->getProduct()->getId();
-$baseUrl = $block->getBaseUrl();
+$product = $block->getProduct();
+if (!$product) return;
 
-$hasConfig = (bool)$block->getProduct()->getData('json_configuration');
-if (!$hasConfig) return;
+if (!(bool)$product->getData('json_configuration')) return;
 ?>
 
 <style>
     .product-info-main, .product.media{ display:none; }
 </style>
 
-<div id="product-builder" engine="magento" shop-name="<?php echo $baseUrl; ?>" product-id="<?php echo $productId; ?>" styles-path="//cdn.shopify.com/s/files/1/1520/2864/t/16/assets/customproductbuilder.css?622266423132693063"></div>
+<div id="product-builder" engine="magento" shop-name="<?php echo $block->getBaseUrl(); ?>" product-id="<?php echo $block->getProduct()->getId(); ?>" styles-path="//cdn.shopify.com/s/files/1/1520/2864/t/16/assets/customproductbuilder.css?622266423132693063"></div>
 
 <script type="text/x-magento-init">
     {
         "*": {
-            "custom-product-builder":{}
+            "<?php echo $block->getBuilderMode() ?>-cpb":{}
         }
     }
 </script>

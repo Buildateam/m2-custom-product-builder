@@ -1,5 +1,4 @@
-<?xml version="1.0"?>
-<!--
+<?xml version="1.0"?><!--
   ~ Copyright (c) 2017 Indigo Geeks, Inc. All rights reserved.
   ~
   ~ General.
@@ -37,15 +36,11 @@
   ~ THE SOFTWARE COULD LEAD TO DEATH, PERSONAL INJURY, OR SEVERE PHYSICAL OR ENVIRONMENTAL DAMAGE.
   -->
 
-<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-      xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
 
     <body>
         <referenceContainer name="content">
-            <block class="Magento\Catalog\Block\Product\View\Description" name="custom.product.builder.view"
-                   template="Buildateam_CustomProductBuilder::customproductbuilder/view.phtml" before="product.info.details">
-
-            </block>
+            <block class="Buildateam\CustomProductBuilder\Block\Catalog\Product\View" name="custom.product.builder.view" template="Buildateam_CustomProductBuilder::customproductbuilder/view.phtml" before="product.info.details"/>
         </referenceContainer>
     </body>
 </page>

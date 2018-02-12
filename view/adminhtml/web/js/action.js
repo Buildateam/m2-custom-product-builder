@@ -43,8 +43,10 @@ define([
 
     return Component.extend({
 
-        saveCustomProductBuilderConfiguration: function (eventName) {
-            document.body.dispatchEvent(new CustomEvent(eventName));
+        triggerCustomEvent: function (eventName) {
+            if (eventName !== false) {
+                document.body.dispatchEvent(new CustomEvent(eventName));
+            }
         }
     });
 });

@@ -39,11 +39,9 @@
 
 namespace Buildateam\CustomProductBuilder\Block\Adminhtml\Product\Edit\Button;
 
-use Magento\Catalog\Block\Adminhtml\Product\Edit\Button\Generic;
-/**
- * Button "Save Configuration"
- */
-class Save extends Generic
+use Magento\Ui\Component\Control\Container;
+
+class Actions extends Save
 {
     /**
      * @return array
@@ -51,8 +49,8 @@ class Save extends Generic
     public function getButtonData()
     {
         return [
-            'label' => __('Save Configuration'),
-            'class' => 'save primary',
+            'label' => __('Actions'),
+            'class' => 'primary',
             'data_attribute' => [
                 'mage-init' => [
                     'buttonAdapter' => [
@@ -61,34 +59,84 @@ class Save extends Generic
                                 'targetName' => $this->getTargetName(),
                                 'actionName' => $this->getActionName(),
                                 'params' => [
-                                    'SAVE_PRODUCT_DATA'
+                                    false
                                 ]
                             ]
                         ]
                     ]
                 ]
             ],
-            'on_click' => ''
+            'on_click' => '',
+            'class_name' => Container::SPLIT_BUTTON,
+            'options' => $this->getOptions(),
         ];
     }
 
     /**
-     * Retrieve target for button
-     * @return string
+     * Retrieve options
+     *
+     * @return array
      */
-    protected function getTargetName()
+    protected function getOptions()
     {
-        $target = 'customProductBuilderActions';
-        return $target;
-    }
-
-    /**
-     * Retrieve action for button
-     * @return string
-     */
-    protected function getActionName()
-    {
-        $action = 'triggerCustomEvent';
-        return $action;
+        return [
+            [
+                'label' => __('Edit or Preview Product'),
+                'data_attribute' => [
+                    'mage-init' => [
+                        'buttonAdapter' => [
+                            'actions' => [
+                                [
+                                    'targetName' => $this->getTargetName(),
+                                    'actionName' => $this->getActionName(),
+                                    'params' => [
+                                        'TOGGLE_PREVIEW'
+                                    ]
+                                ]
+                            ]
+                        ]
+                    ],
+                    'on_click' => '',
+                ],
+            ],
+            [
+                'label' => __('Select Theme'),
+                'data_attribute' => [
+                    'mage-init' => [
+                        'buttonAdapter' => [
+                            'actions' => [
+                                [
+                                    'targetName' => $this->getTargetName(),
+                                    'actionName' => $this->getActionName(),
+                                    'params' => [
+                                        'CHOOSE_THEME'
+                                    ]
+                                ]
+                            ]
+                        ]
+                    ],
+                    'on_click' => '',
+                ],
+            ],
+            [
+                'label' => __('General Settings'),
+                'data_attribute' => [
+                    'mage-init' => [
+                        'buttonAdapter' => [
+                            'actions' => [
+                                [
+                                    'targetName' => $this->getTargetName(),
+                                    'actionName' => $this->getActionName(),
+                                    'params' => [
+                                        'TOGGLE_SETTINGS'
+                                    ]
+                                ]
+                            ]
+                        ]
+                    ],
+                    'on_click' => '',
+                ],
+            ],
+        ];
     }
 }

@@ -43,15 +43,13 @@
             <item name="deps" xsi:type="string">custom_product_builder.custom_product_builder_data_source</item>
             <item name="namespace" xsi:type="string">custom_product_builder</item>
         </item>
+        <item name="buttons" xsi:type="array">
+            <item name="save-configuration" xsi:type="string">Buildateam\CustomProductBuilder\Block\Adminhtml\Product\Edit\Button\Save</item>
+            <item name="actions" xsi:type="string">Buildateam\CustomProductBuilder\Block\Adminhtml\Product\Edit\Button\Actions</item>
+            <item name="help" xsi:type="string">Buildateam\CustomProductBuilder\Block\Adminhtml\Product\Edit\Button\Help</item>
+        </item>
         <item name="template" xsi:type="string">templates/form/collapsible</item>
     </argument>
-    <settings>
-        <buttons>
-            <button name="save" class="Buildateam\CustomProductBuilder\Block\Adminhtml\Product\Edit\Button\Save"/>
-            <button name="actions" class="Buildateam\CustomProductBuilder\Block\Adminhtml\Product\Edit\Button\Actions"/>
-            <button name="help" class="Buildateam\CustomProductBuilder\Block\Adminhtml\Product\Edit\Button\Help"/>
-        </buttons>
-    </settings>
     <dataSource name="custom_product_builder_data_source">
         <argument name="dataProvider" xsi:type="configurableObject">
             <argument name="class" xsi:type="string">Buildateam\CustomProductBuilder\Ui\DataProvider\Product\Form\CustomProductBuilder</argument>

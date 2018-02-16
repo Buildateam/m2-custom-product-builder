@@ -45,6 +45,8 @@
         </item>
         <item name="buttons" xsi:type="array">
             <item name="save-configuration" xsi:type="string">Buildateam\CustomProductBuilder\Block\Adminhtml\Product\Edit\Button\Save</item>
+            <item name="actions" xsi:type="string">Buildateam\CustomProductBuilder\Block\Adminhtml\Product\Edit\Button\Actions</item>
+            <item name="help" xsi:type="string">Buildateam\CustomProductBuilder\Block\Adminhtml\Product\Edit\Button\Help</item>
         </item>
         <item name="template" xsi:type="string">templates/form/collapsible</item>
     </argument>

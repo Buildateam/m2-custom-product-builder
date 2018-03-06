@@ -72,7 +72,7 @@ class WishlistItem
             if ($option->getCode() == 'info_buyRequest') {
                 $code = $option->getCode();
                 if ($this->_isJsonInfoByRequest) {
-                    $value = json_decode($option->getValue());
+                    $value = json_decode($option->getValue(), true);
                 } else {
                     $value = @unserialize($option->getValue());
                 }
@@ -82,7 +82,7 @@ class WishlistItem
                 }
 
                 if ($this->_isJsonInfoByRequest) {
-                    $value2 = json_decode($options2[$code]->getValue())['technicalData'];
+                    $value2 = json_decode($options2[$code]->getValue(), true)['technicalData'];
                 } else {
                     $value2 = @unserialize($options2[$code]->getValue())['technicalData'];
                 }

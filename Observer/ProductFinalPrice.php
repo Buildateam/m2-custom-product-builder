@@ -91,7 +91,7 @@ class ProductFinalPrice implements ObserverInterface
         /* Retrieve technical data of product that was added to cart */
         $buyRequest = $product->getCustomOption('info_buyRequest')->getData('value');
         if ($this->_isJsonInfoByRequest) {
-            $productInfo = json_decode($buyRequest);
+            $productInfo = json_decode($buyRequest, true);
         } else {
             $productInfo = @unserialize($buyRequest);
         }
@@ -103,21 +103,21 @@ class ProductFinalPrice implements ObserverInterface
 
         if (!isset($this->_jsonConfig[$product->getId()])) {
             $productRepo = $this->_productRepository->getById($product->getId());
-            $this->_jsonConfig[$product->getId()] = json_decode($productRepo->getData(Helper::JSON_ATTRIBUTE));
+            $this->_jsonConfig[$product->getId()] = json_decode($productRepo->getData(Helper::JSON_ATTRIBUTE), true);
         }
         $jsonConfig = $this->_jsonConfig[$product->getId()];
         if (is_null($jsonConfig)) {
             return;
         }
 
-        foreach ($jsonConfig->data->panels as $panel) {
+        foreach ($jsonConfig['data']['panels'] as $panel) {
             foreach ($technicalData as $techData) {
-                if ($panel->id == $techData['panel']) {
-                    foreach ($panel->categories as $category) {
-                        if ($category->id == $techData['category']) {
-                            foreach ($category->options as $option) {
-                                if ($option->id == $techData['option']) {
-                                    $finalPrice += $option->price;
+                if ($panel['id'] == $techData['panel']) {
+                    foreach ($panel['categories'] as $category) {
+                        if ($category['id'] == $techData['category']) {
+                            foreach ($category['options'] as $option) {
+                                if ($option['id'] == $techData['option']) {
+                                    $finalPrice += $option['price'];
                                 }
                             }
                         }

@@ -66,7 +66,7 @@ class CartItemEdit
         $buyRequest = $subject->getItem()->getProduct()->getCustomOption('info_buyRequest')->getValue();
 
         if ($this->_isJsonInfoByRequest) {
-            $productInfo = json_decode($buyRequest);
+            $productInfo = json_decode($buyRequest, true);
         } else {
             $productInfo = @unserialize($buyRequest);
         }

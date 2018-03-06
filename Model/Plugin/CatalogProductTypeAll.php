@@ -116,7 +116,7 @@ class CatalogProductTypeAll
             /* Retrieve technical data of product that was added to cart */
             $buyRequest = $product->getCustomOption('info_buyRequest')->getData('value');
             if ($this->_isJsonInfoByRequest) {
-                $productInfo = json_decode($buyRequest);
+                $productInfo = json_decode($buyRequest, true);
             } else {
                 $productInfo = @unserialize($buyRequest);
             }

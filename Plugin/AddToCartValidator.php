@@ -110,6 +110,10 @@ class AddToCartValidator
             $payload = json_decode(file_get_contents('php://input'), true);
             foreach (['quantity', 'technicalData', 'properties', 'configid', 'type'] as $paramKey) {
                 if (isset($payload[$paramKey])) {
+                    if($paramKey == 'properties' && isset($payload[$paramKey]['_image'])) {
+                        unset($payload[$paramKey]['_image']);
+                    }
+
                     $request->setParam($paramKey, $payload[$paramKey]);
                 }
             }

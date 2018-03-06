@@ -79,7 +79,7 @@ class CheckoutCartSaveAfter implements ObserverInterface
 
         $buyRequest = $lastAddedItem[0]->getProduct()->getCustomOption('info_buyRequest')->getValue();
         if ($this->_isJsonInfoByRequest) {
-            $value = json_decode($buyRequest);
+            $value = json_decode($buyRequest, true);
         } else {
             $value = @unserialize($buyRequest);
         }

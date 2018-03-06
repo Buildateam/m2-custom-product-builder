@@ -82,7 +82,7 @@ class QuoteItem
             if ($option->getCode() == 'info_buyRequest') {
                 $code = $option->getCode();
                 if ($this->_isJsonInfoByRequest) {
-                    $value = json_decode($option->getValue());
+                    $value = json_decode($option->getValue(), true);
                 } else {
                     $value = @unserialize($option->getValue());
                 }
@@ -92,7 +92,7 @@ class QuoteItem
                 }
 
                 if ($this->_isJsonInfoByRequest) {
-                    $value2 = json_decode($options2[$code]->getValue())['technicalData'];
+                    $value2 = json_decode($options2[$code]->getValue(), true)['technicalData'];
                 } else {
                     $value2 = @unserialize($options2[$code]->getValue())['technicalData'];
                 }
@@ -116,7 +116,7 @@ class QuoteItem
     {
         $buyRequest = $subject->getProduct()->getCustomOption('info_buyRequest')->getValue();
         if ($this->_isJsonInfoByRequest) {
-            $productInfo = json_decode($buyRequest);
+            $productInfo = json_decode($buyRequest, true);
         } else {
             $productInfo = @unserialize($buyRequest);
         }

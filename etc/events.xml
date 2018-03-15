@@ -41,4 +41,7 @@
     <event name="catalog_product_get_final_price">
         <observer name="catalog_product_get_final_price" instance="Buildateam\CustomProductBuilder\Observer\ProductFinalPrice" shared="true"/>
     </event>
+    <event name="layout_render_before_catalog_product_view">
+        <observer name="layout_render_before_catalog_product_view" instance="Buildateam\CustomProductBuilder\Observer\BeforeProductView"/>
+    </event>
 </config>

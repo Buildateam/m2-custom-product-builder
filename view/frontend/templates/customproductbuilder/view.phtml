@@ -50,7 +50,14 @@ if (!(bool)$product->getData('json_configuration')) return;
     .product-info-main, .product.media{ display:none; }
 </style>
 
-<div id="product-builder" engine="magento" shop-name="<?php echo $block->getBaseUrl(); ?>" product-id="<?php echo $block->getProduct()->getId(); ?>" styles-path="<?php echo $block->getViewFileUrl('Buildateam_CustomProductBuilder::css/cpb.css')?>"></div>
+<div id="product-builder" engine="magento"
+     shop-name="<?php echo $block->getBaseUrl() ?>"
+     product-id="<?php echo $block->getProduct()->getId() ?>"
+     styles-path="<?php echo $block->getViewFileUrl('Buildateam_CustomProductBuilder::css/cpb.css') ?>"
+     product-sku="<?php echo $product->getSku() ?>"
+     product-name="<?php echo $product->getName() ?>"
+     product-short-description="<?php echo strval($product->getShortDescription()) ?>">
+</div>
 
 <script type="text/x-magento-init">
     {

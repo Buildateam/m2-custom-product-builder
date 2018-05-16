@@ -79,7 +79,7 @@ class CatalogProductTypeAll
     {
         $optionArr = $proceed($product);
         if ($additionalOptions = $product->getCustomOption('additional_options')) {
-            $optionArr['additional_options'] = unserialize($additionalOptions->getValue());
+            $optionArr['additional_options'] = $this->_isJsonInfoByRequest ? json_decode($additionalOptions->getValue(), true) : unserialize($additionalOptions->getValue());
         }
 
         return $optionArr;

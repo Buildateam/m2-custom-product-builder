@@ -39,12 +39,12 @@
 
 /** @var Buildateam\CustomProductBuilder\Block\Catalog\Product\View $block */
 /** @var Magento\Framework\View\TemplateEngine\Php $this */
-
-$product = $block->getProduct();
-if (!$product) return;
-
-if (!(bool)$product->getData('json_configuration')) return;
 ?>
+
+<?php $product = $block->getProduct(); ?>
+<?php if (!$product) return; ?>
+
+<?php if (!(bool)$product->getData('json_configuration')) return; ?>
 
 <style>
     .product-info-main, .product.media{ display:none; }
@@ -62,7 +62,7 @@ if (!(bool)$product->getData('json_configuration')) return;
 <script type="text/x-magento-init">
     {
         "*": {
-            "<?php echo $block->getBuilderMode() ?>-cpb":{}
+            "cpb-<?php echo $block->getFileLocation() ?>-<?php echo $block->getBuilderMode() ?>":{}
         }
     }
 </script>

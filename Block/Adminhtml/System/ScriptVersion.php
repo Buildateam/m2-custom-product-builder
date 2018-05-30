@@ -37,59 +37,42 @@
  * THE SOFTWARE COULD LEAD TO DEATH, PERSONAL INJURY, OR SEVERE PHYSICAL OR ENVIRONMENTAL DAMAGE.
  */
 
-namespace Buildateam\CustomProductBuilder\Block\Catalog\Product;
+namespace Buildateam\CustomProductBuilder\Block\Adminhtml\System;
 
-use Buildateam\CustomProductBuilder\Helper\Data;
-use Magento\Catalog\Block\Product\Context;
-use Magento\Framework\Registry;
-use Magento\Framework\View\Element\Template;
+use Buildateam\CustomProductBuilder\Helper\Version;
+use Magento\Backend\Block\Template\Context;
+use Magento\Framework\Data\Form\Element\AbstractElement;
 
-class View extends Template
+class ScriptVersion extends \Magento\Config\Block\System\Config\Form\Field
 {
+    /**
+     * @var Version
+     */
     protected $_helper;
-    protected $_coreRegistry;
 
     /**
-     * View constructor.
+     * ScriptVersion constructor.
      * @param Context $context
-     * @param Registry $coreRegistry
-     * @param Data $helper
+     * @param Version $helper
      * @param array $data
      */
     public function __construct(
         Context $context,
-        Data $helper,
+        Version $helper,
         array $data = []
     )
     {
         $this->_helper = $helper;
-        $this->_coreRegistry = $context->getRegistry();
         parent::__construct($context, $data);
     }
 
     /**
-     * Retrieve current product model
-     *
-     * @return \Magento\Catalog\Model\Product
-     */
-    public function getProduct()
-    {
-        return $this->_coreRegistry->registry('product');
-    }
-
-    /**
+     * @param AbstractElement $element
      * @return string
      */
-    public function getBuilderMode()
+    protected function _getElementHtml(AbstractElement $element)
     {
-        return $this->_helper->getBuilderMode();
-    }
-
-    /**
-     * @return string
-     */
-    public function getFileLocation()
-    {
-        return $this->_helper->getFileLocation();
+        return $this->_helper->isActualScriptVersion() ? __('Actual') :
+            __('Script files version is not actual. Please, click to <a href="%1" target="_self">download</a> for downloading latest version of scripts. After downloading replace it manually in module %2 directory', $this->getUrl('customproductbuilder/version/download'), $this->_helper->getBuilderMode());
     }
 }

@@ -43,6 +43,9 @@ use Magento\Framework\Option\ArrayInterface;
 
 class Mode implements ArrayInterface
 {
+    const MODE_DEVELOP = 'develop';
+    const MODE_PRODUCTION = 'production';
+
     /**
      * Options getter
      *
@@ -51,8 +54,8 @@ class Mode implements ArrayInterface
     public function toOptionArray()
     {
         return [
-            ['value' => 'production', 'label' => __('Production')],
-            ['value' => 'development', 'label' => __('Development')]
+            ['value' => self::MODE_PRODUCTION, 'label' => __('Production')],
+            ['value' => self::MODE_DEVELOP, 'label' => __('Development')]
         ];
     }
 }

@@ -37,59 +37,73 @@
  * THE SOFTWARE COULD LEAD TO DEATH, PERSONAL INJURY, OR SEVERE PHYSICAL OR ENVIRONMENTAL DAMAGE.
  */
 
-namespace Buildateam\CustomProductBuilder\Block\Catalog\Product;
+namespace Buildateam\CustomProductBuilder\Controller\Adminhtml\Version;
 
-use Buildateam\CustomProductBuilder\Helper\Data;
-use Magento\Catalog\Block\Product\Context;
-use Magento\Framework\Registry;
-use Magento\Framework\View\Element\Template;
+use Buildateam\CustomProductBuilder\Helper\Version;
+use Magento\Backend\App\Action;
+use Magento\Backend\App\Action\Context;
+use Magento\Framework\App\Response\Http\FileFactory;
+use Magento\Framework\Controller\Result\RedirectFactory;
+use Magento\Framework\Exception\FileSystemException;
+use Psr\Log\LoggerInterface;
 
-class View extends Template
+class Download extends Action
 {
-    protected $_helper;
-    protected $_coreRegistry;
+    /**
+     * @var RedirectFactory
+     */
+    protected $_resultRedirectFactory;
 
     /**
-     * View constructor.
+     * @var Version
+     */
+    protected $_versionHelper;
+
+    /**
+     * @var LoggerInterface
+     */
+    protected $_logger;
+
+    /**
+     * @var FileFactory
+     */
+    protected $_fileFactory;
+
+    /**
+     * ExportFile constructor.
      * @param Context $context
-     * @param Registry $coreRegistry
-     * @param Data $helper
-     * @param array $data
+     * @param Version $versionHelper
+     * @param LoggerInterface $logger
      */
     public function __construct(
         Context $context,
-        Data $helper,
-        array $data = []
+        Version $versionHelper,
+        LoggerInterface $logger,
+        FileFactory $fileFactory
     )
     {
-        $this->_helper = $helper;
-        $this->_coreRegistry = $context->getRegistry();
-        parent::__construct($context, $data);
+        $this->_resultRedirectFactory = $context->getResultRedirectFactory();
+        $this->_versionHelper = $versionHelper;
+        $this->_logger = $logger;
+        $this->_fileFactory = $fileFactory;
+        parent::__construct($context);
     }
 
-    /**
-     * Retrieve current product model
-     *
-     * @return \Magento\Catalog\Model\Product
-     */
-    public function getProduct()
+    public function execute()
     {
-        return $this->_coreRegistry->registry('product');
-    }
+        try {
+            $archive = $this->_versionHelper->getUpdateArchive();
+            if ($archive) {
+                return $this->_fileFactory->create(
+                    'scripts.zip',
+                    @file_get_contents($archive)
+                );
+            }
+        } catch (\Exception $e) {
+            $this->_logger->critical($e->getMessage());
+        }
 
-    /**
-     * @return string
-     */
-    public function getBuilderMode()
-    {
-        return $this->_helper->getBuilderMode();
-    }
-
-    /**
-     * @return string
-     */
-    public function getFileLocation()
-    {
-        return $this->_helper->getFileLocation();
+        $redirect = $this->_resultRedirectFactory->create();
+        return $redirect->setRefererUrl();
     }
 }

@@ -39,6 +39,7 @@
     <default>
         <cpb>
             <development>
+                <file_location>remote</file_location>
                 <mode>production</mode>
             </development>
         </cpb>

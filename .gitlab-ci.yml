@@ -17,7 +17,7 @@ update sources:
   only: &ci_only
     - master
   tags: &ci_tags
-    - cloudbuild
+    - php-fpm
     
 expose shell:
   stage: deploy

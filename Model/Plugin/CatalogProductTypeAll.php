@@ -126,6 +126,7 @@ class CatalogProductTypeAll
             }
 
             $addOptions = [];
+            unset($productInfo['properties']['configId']);
             foreach ($productInfo['properties'] as $propertyName => $propertyValue) {
                 $propertyValue = preg_replace('/(.*)(\s+\(.*\))/', '$1', $propertyValue);
                 $addOptions[] = [

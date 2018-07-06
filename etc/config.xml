@@ -40,7 +40,7 @@
         <cpb>
             <development>
                 <file_location>remote</file_location>
-                <mode>production</mode>
+                <mode>develop</mode>
             </development>
         </cpb>
     </default>

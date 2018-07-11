@@ -99,7 +99,7 @@ class ProductFinalPrice implements ObserverInterface
         if (!isset($productInfo['technicalData'])) {
             return;
         }
-        $technicalData = $productInfo['technicalData'];
+        $technicalData = $productInfo['technicalData']['layers'];
 
         if (!isset($this->_jsonConfig[$product->getId()])) {
             $productRepo = $this->_productRepository->getById($product->getId());

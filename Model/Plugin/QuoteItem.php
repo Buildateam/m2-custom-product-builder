@@ -124,10 +124,11 @@ class QuoteItem
         if (isset($productInfo['configid'])) {
             $configModel = $this->_shareLinksFactory->create()->loadByVariationId($productInfo['configid']);
             if ($configModel->getId()) {
-                $result->getProduct()
-                    ->setImage($configModel->getImage())
+                $product = clone $result->getProduct();
+                $product->setImage($configModel->getImage())
                     ->setSmallImage($configModel->getImage())
                     ->setThumbnail($configModel->getImage());
+                $result->setData('product', $product);
             }
         }
         return $result;

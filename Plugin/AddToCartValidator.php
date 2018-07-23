@@ -47,6 +47,7 @@ use \Magento\Framework\Logger\Monolog;
 use \Magento\Framework\Json\Helper\Data as JsonHelper;
 use \Buildateam\CustomProductBuilder\Model\ShareableLinksFactory;
 use \Buildateam\CustomProductBuilder\Helper\Data;
+use \Magento\Store\Model\StoreManagerInterface;
 
 class AddToCartValidator
 {
@@ -80,6 +81,11 @@ class AddToCartValidator
      */
     protected $_jsonHelper;
 
+    /**
+     * @var StoreManagerInterface
+     */
+    protected $_storeManager;
+
 
     public function __construct(
         Session $checkoutSession,
@@ -87,7 +93,8 @@ class AddToCartValidator
         Data $helper,
         Random $random,
         Monolog $logger,
-        JsonHelper $jsonHelper
+        JsonHelper $jsonHelper,
+        StoreManagerInterface $storeManager
     )
     {
         $this->_checkoutSession = $checkoutSession;
@@ -96,6 +103,7 @@ class AddToCartValidator
         $this->_helper = $helper;
         $this->_logger = $logger;
         $this->_jsonHelper = $jsonHelper;
+        $this->_storeManager = $storeManager;
     }
 
     /**
@@ -145,8 +153,21 @@ class AddToCartValidator
                     $this->_logger->critical($e->getMessage());
                 }
             }
-
-            $this->_checkoutSession->setNoCartRedirect(true);
+            $refererUrl = $request->getServer('HTTP_REFERER');
+            $search = $this->_storeManager->getStore()->getBaseUrl() . 'checkout/cart/configure/id/';
+            if (strpos($refererUrl, $search) !== false) {
+                $parts = explode('/', str_replace($search, '', $refererUrl));
+                $quoteItemId = $parts[0];
+                $quote = $this->_checkoutSession->getQuote();
+                foreach ($quote->getItems() as $item) {
+                    if ($item->getId() == $quoteItemId) {
+                        $quote->deleteItem($item);
+                        $request->setParam('return_url', $this->_storeManager->getStore()->getUrl('checkout/cart'));
+                    }
+                }
+            } else {
+                $this->_checkoutSession->setNoCartRedirect(true);
+            }
             return true;
         }
 

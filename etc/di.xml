@@ -53,6 +53,7 @@
     <type name="Magento\ProductVideo\Block\Product\View\Gallery">
         <plugin name="cpb_product_media" type="Buildateam\CustomProductBuilder\Plugin\ProductPageHideBlock" sortOrder="50"/>
     </type>
+
     <type name="Magento\Catalog\Block\Product\View\Gallery">
         <plugin name="cpb_product_media" type="Buildateam\CustomProductBuilder\Plugin\ProductPageHideBlock" sortOrder="50"/>
     </type>
@@ -79,5 +80,9 @@
 
     <type name="Magento\Wishlist\Model\Item">
         <plugin name="cpb_wishlist_represent_product" type="Buildateam\CustomProductBuilder\Model\Plugin\WishlistItem" sortOrder="50" />
+    </type>
+
+    <type name="Magento\Checkout\CustomerData\AbstractItem">
+        <plugin name="cpb_customer_data_abstract_item" type="Buildateam\CustomProductBuilder\CustomerData\Plugin\AbstractItem" sortOrder="50" />
     </type>
 </config>

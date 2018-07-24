@@ -85,4 +85,8 @@
     <type name="Magento\Checkout\CustomerData\AbstractItem">
         <plugin name="cpb_customer_data_abstract_item" type="Buildateam\CustomProductBuilder\CustomerData\Plugin\AbstractItem" sortOrder="50" />
     </type>
+
+    <type name="Magento\Checkout\Controller\Cart\Add">
+        <plugin name="cpb_checkout_cart_add" type="Buildateam\CustomProductBuilder\Controller\Plugin\Cart\Add" sortOrder="50" />
+    </type>
 </config>

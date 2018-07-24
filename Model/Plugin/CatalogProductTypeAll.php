@@ -121,7 +121,7 @@ class CatalogProductTypeAll
                 $productInfo = @unserialize($buyRequest);
             }
 
-            if (!isset($productInfo['properties']) || $product->getCustomOption('additional_options')) {
+            if (!isset($productInfo['properties']) || (!isset($productInfo['technicalData']['breakdownData']) && $product->getCustomOption('additional_options'))) {
                 continue;
             }
 

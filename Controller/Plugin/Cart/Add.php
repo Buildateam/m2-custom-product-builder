@@ -59,7 +59,7 @@ class Add extends \Magento\Checkout\Controller\Cart\Add
                 return $this->goBack();
             }
 
-            if (isset($params['technicalData']['breakdownData'])) {
+            if (count($params['technicalData']['breakdownData'])) {
                 $breakdownData = $params['technicalData']['breakdownData'];
                 foreach ($breakdownData as $data) {
                     if ($data['qty'] != 0) {

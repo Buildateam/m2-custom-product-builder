@@ -89,4 +89,8 @@
     <type name="Magento\Checkout\Controller\Cart\Add">
         <plugin name="cpb_checkout_cart_add" type="Buildateam\CustomProductBuilder\Controller\Plugin\Cart\Add" sortOrder="50" />
     </type>
+
+    <type name="Magento\Sales\Model\Order\Item">
+        <plugin name="cpb_order_item" type="Buildateam\CustomProductBuilder\Model\Plugin\Order\Item" sortOrder="50" />
+    </type>
 </config>

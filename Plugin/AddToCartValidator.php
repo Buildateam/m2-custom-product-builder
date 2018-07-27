@@ -120,6 +120,7 @@ class AddToCartValidator
                 if (isset($payload[$paramKey])) {
                     if($paramKey == 'properties' && isset($payload[$paramKey]['_image'])) {
                         unset($payload[$paramKey]['_image']);
+                        unset($payload[$paramKey]['configId']);
                     }
 
                     $request->setParam($paramKey, $payload[$paramKey]);

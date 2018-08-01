@@ -82,6 +82,10 @@ class CatalogProductTypeAll
             $optionArr['additional_options'] = $this->_isJsonInfoByRequest ? json_decode($additionalOptions->getValue(), true) : unserialize($additionalOptions->getValue());
         }
 
+        if ($cpbOptions = $product->getCustomOption('options')) {
+            $optionArr['options'] = $this->_isJsonInfoByRequest ? json_decode($cpbOptions->getValue(), true) : unserialize($cpbOptions->getValue());
+        }
+
         return $optionArr;
     }
 
@@ -139,6 +143,35 @@ class CatalogProductTypeAll
                 ];
             };
             $product->addCustomOption('additional_options', $this->_isJsonInfoByRequest ? json_encode($addOptions) : serialize($addOptions));
+
+            $cpbOptions = [];
+            if (isset($productInfo['technicalData']['additionalData']['images']) && count($productInfo['technicalData']['additionalData']['images'])) {
+                foreach ($productInfo['technicalData']['additionalData']['images'] as $image) {
+                    $cpbOptions[] = [
+                        'label' => 'Uploaded Image',
+                        'value' => $image,
+                        'print_value' => $image,
+                        'option_id' => null,
+                        'option_type' => 'file',
+                        'custom_view' => false
+                    ];
+                }
+            }
+            if (isset($productInfo['technicalData']['additionalData']['texts']) && count($productInfo['technicalData']['additionalData']['texts'])) {
+                foreach ($productInfo['technicalData']['additionalData']['texts'] as $texts) {
+                    foreach ($texts as $key => $value) {
+                        $cpbOptions[] = [
+                            'label' => $key,
+                            'value' => $value,
+                            'print_value' => $value,
+                            'option_id' => null,
+                            'option_type' => $key == 'fontSource' ? 'file' : 'text',
+                            'custom_view' => false
+                        ];
+                    }
+                }
+            }
+            $product->addCustomOption('options', $this->_isJsonInfoByRequest ? json_encode($cpbOptions) : serialize($cpbOptions));
         }
     }
 }

@@ -126,8 +126,11 @@ class AddToCartValidator
                             unset($payload[$paramKey]['configId']);
                         }
                     }
-
-                    $request->setParam($paramKey, $payload[$paramKey]);
+                    if ($paramKey == 'quantity') {
+                        $request->setParam('qty', $payload[$paramKey]);
+                    } else {
+                        $request->setParam($paramKey, $payload[$paramKey]);
+                    }
                 }
             }
 

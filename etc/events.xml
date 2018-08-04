@@ -44,4 +44,7 @@
     <event name="layout_render_before_catalog_product_view">
         <observer name="layout_render_before_catalog_product_view" instance="Buildateam\CustomProductBuilder\Observer\BeforeProductView"/>
     </event>
+    <event name="checkout_submit_all_after">
+        <observer name="saveQtyInJsonConfig" instance="Buildateam\CustomProductBuilder\Observer\CheckoutSubmitAllAfter"/>
+    </event>
 </config>

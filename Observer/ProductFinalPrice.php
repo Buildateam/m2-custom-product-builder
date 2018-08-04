@@ -39,6 +39,7 @@
 
 namespace Buildateam\CustomProductBuilder\Observer;
 
+use \Magento\Framework\Message\ManagerInterface;
 use \Buildateam\CustomProductBuilder\Helper\Data as Helper;
 use \Magento\Catalog\Model\ProductRepository;
 use \Magento\Framework\App\ProductMetadataInterface;
@@ -63,16 +64,27 @@ class ProductFinalPrice implements ObserverInterface
     protected $_isJsonInfoByRequest = true;
 
     /**
+     * @var ManagerInterface
+     */
+    protected $_messageManager;
+
+    /**
      * ProductFinalPrice constructor.
      * @param ProductRepository $productRepository
      * @param ProductMetadataInterface $productMetadata
+     * @param ManagerInterface $massageManager
      */
-    public function __construct(ProductRepository $productRepository, ProductMetadataInterface $productMetadata)
+    public function __construct(
+        ProductRepository $productRepository,
+        ProductMetadataInterface $productMetadata,
+        ManagerInterface $massageManager
+    )
     {
         $this->_productRepository = $productRepository;
         if (version_compare($productMetadata->getVersion(), '2.2.0', '<')) {
             $this->_isJsonInfoByRequest = false;
         }
+        $this->_messageManager = $massageManager;
     }
 
     /**
@@ -85,9 +97,6 @@ class ProductFinalPrice implements ObserverInterface
         if (is_null($product->getCustomOption('info_buyRequest'))) {
             return;
         }
-
-        $finalPrice = $product->getPrice();
-
         /* Retrieve technical data of product that was added to cart */
         $buyRequest = $product->getCustomOption('info_buyRequest')->getData('value');
         if ($this->_isJsonInfoByRequest) {
@@ -99,7 +108,6 @@ class ProductFinalPrice implements ObserverInterface
         if (!isset($productInfo['technicalData'])) {
             return;
         }
-        $technicalData = $productInfo['technicalData']['layers'];
 
         if (!isset($this->_jsonConfig[$product->getId()])) {
             $productRepo = $this->_productRepository->getById($product->getId());
@@ -110,18 +118,64 @@ class ProductFinalPrice implements ObserverInterface
             return;
         }
 
-        foreach ($jsonConfig['data']['panels'] as $panel) {
-            foreach ($technicalData as $techData) {
-                if ($panel['id'] == $techData['panel']) {
-                    foreach ($panel['categories'] as $category) {
-                        if ($category['id'] == $techData['category']) {
-                            foreach ($category['options'] as $option) {
-                                if ($option['id'] == $techData['option']) {
-                                    $finalPrice += $option['price'];
-                                }
-                            }
+        if (isset($productInfo['properties']['Item Customization - Colors'])) {
+            $property = $productInfo['properties']['Item Customization - Colors'];
+        } elseif (isset($productInfo['properties']['Colors'])) {
+            $property = $productInfo['properties']['Colors'];
+        } else {
+            $property = '';
+        }
+        if ($property != '') {
+            $parts = explode(' ', $property);
+            $sku = trim(end($parts), '[]');
+        }
+
+        if (isset($productInfo['properties']['Item Customization - Select Print Method'])) {
+            $printMethod = $productInfo['properties']['Item Customization - Select Print Method'];
+        } elseif (isset($productInfo['properties']['Select Print Method'])) {
+            $printMethod = $productInfo['properties']['Select Print Method'];
+        } elseif (isset($productInfo['properties']['Print Method'])) {
+            $printMethod = $productInfo['properties']['Print Method'];
+        } else {
+            $printMethod = 'blank';
+        }
+
+        $printMethod = trim(strtolower($printMethod));
+
+        if ($printMethod == 'blank') {
+            $type = 'Blank';
+        } elseif ($printMethod == 'order with logo') {
+            $type = 'Decorated';
+        } elseif ($printMethod == 'sample') {
+            $type = 'Sample';
+        }
+
+        if ($type == 'Sample') {
+            $finalPrice = 0;
+        } else {
+            $availablePrices = [];
+            if (isset($sku)) {
+                foreach ($jsonConfig['data']['prices'] as $price) {
+                    if ($price['sku'] == $sku && $price['type'] == $type) {
+                        $availablePrices[] = $price;
+                    }
+                }
+                usort($availablePrices, function ($a, $b) {
+                    return $a['minQty'] - $b['minQty'];
+                });
+                foreach ($availablePrices as $key => $value) {
+                    if ($productInfo['qty'] < $value['minQty']) {
+                        if (isset($availablePrices[$key - 1])) {
+                            $finalPrice = $availablePrices[$key - 1]['price'];
+                            break;
+                        } else {
+                            $this->_messageManager->addErrorMessage(__('This product cannot be added to your cart.'));
+                            exit;
                         }
                     }
+                }
+                if (!isset($finalPrice) && $productInfo['qty'] > end($availablePrices)['minQty']) {
+                    $finalPrice = end($availablePrices)['price'];
                 }
             }
         }

@@ -50,6 +50,10 @@ class CatalogProductTypeAll
      */
     protected $_isJsonInfoByRequest = true;
 
+    /**
+     * CatalogProductTypeAll constructor.
+     * @param ProductMetadataInterface $productMetadata
+     */
     public function __construct(ProductMetadataInterface $productMetadata)
     {
         if (version_compare($productMetadata->getVersion(), '2.2.0', '<')) {
@@ -171,7 +175,9 @@ class CatalogProductTypeAll
                     }
                 }
             }
-            $product->addCustomOption('options', $this->_isJsonInfoByRequest ? json_encode($cpbOptions) : serialize($cpbOptions));
+            if (!empty($cpbOptions)) {
+                $product->addCustomOption('options', $this->_isJsonInfoByRequest ? json_encode($cpbOptions) : serialize($cpbOptions));
+            }
         }
     }
 }

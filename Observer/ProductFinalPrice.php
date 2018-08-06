@@ -39,6 +39,7 @@
 
 namespace Buildateam\CustomProductBuilder\Observer;
 
+use Magento\Checkout\Exception;
 use \Magento\Framework\Message\ManagerInterface;
 use \Buildateam\CustomProductBuilder\Helper\Data as Helper;
 use \Magento\Catalog\Model\ProductRepository;
@@ -164,17 +165,17 @@ class ProductFinalPrice implements ObserverInterface
                     return $a['minQty'] - $b['minQty'];
                 });
                 foreach ($availablePrices as $key => $value) {
-                    if ($productInfo['qty'] < $value['minQty']) {
+                    if ($observer->getQty() < $value['minQty']) {
                         if (isset($availablePrices[$key - 1])) {
                             $finalPrice = $availablePrices[$key - 1]['price'];
                             break;
                         } else {
                             $this->_messageManager->addErrorMessage(__('This product cannot be added to your cart.'));
-                            exit;
+                            throw new Exception(__('Qty of added product is less than minimal qty'));
                         }
                     }
                 }
-                if (!isset($finalPrice) && $productInfo['qty'] > end($availablePrices)['minQty']) {
+                if (!isset($finalPrice) && $observer->getQty() > end($availablePrices)['minQty']) {
                     $finalPrice = end($availablePrices)['price'];
                 }
             }

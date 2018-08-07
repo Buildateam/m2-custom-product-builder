@@ -150,34 +150,29 @@ class ProductFinalPrice implements ObserverInterface
         } elseif ($printMethod == 'sample') {
             $type = 'Sample';
         }
-
-        if ($type == 'Sample') {
-            $finalPrice = 0;
-        } else {
-            $availablePrices = [];
-            if (isset($sku)) {
-                foreach ($jsonConfig['data']['prices'] as $price) {
-                    if ($price['sku'] == $sku && $price['type'] == $type) {
-                        $availablePrices[] = $price;
+        $availablePrices = [];
+        if (isset($sku)) {
+            foreach ($jsonConfig['data']['prices'] as $price) {
+                if ($price['sku'] == $sku && $price['type'] == $type) {
+                    $availablePrices[] = $price;
+                }
+            }
+            usort($availablePrices, function ($a, $b) {
+                return $a['minQty'] - $b['minQty'];
+            });
+            foreach ($availablePrices as $key => $value) {
+                if ($observer->getQty() < $value['minQty']) {
+                    if (isset($availablePrices[$key - 1])) {
+                        $finalPrice = $availablePrices[$key - 1]['price'];
+                        break;
+                    } else {
+                        $this->_messageManager->addErrorMessage(__('This product cannot be added to your cart.'));
+                        throw new Exception(__('Qty of added product is less than minimal qty'));
                     }
                 }
-                usort($availablePrices, function ($a, $b) {
-                    return $a['minQty'] - $b['minQty'];
-                });
-                foreach ($availablePrices as $key => $value) {
-                    if ($observer->getQty() < $value['minQty']) {
-                        if (isset($availablePrices[$key - 1])) {
-                            $finalPrice = $availablePrices[$key - 1]['price'];
-                            break;
-                        } else {
-                            $this->_messageManager->addErrorMessage(__('This product cannot be added to your cart.'));
-                            throw new Exception(__('Qty of added product is less than minimal qty'));
-                        }
-                    }
-                }
-                if (!isset($finalPrice) && $observer->getQty() > end($availablePrices)['minQty']) {
-                    $finalPrice = end($availablePrices)['price'];
-                }
+            }
+            if (!isset($finalPrice) && $observer->getQty() > end($availablePrices)['minQty']) {
+                $finalPrice = end($availablePrices)['price'];
             }
         }
 

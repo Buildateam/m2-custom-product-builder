@@ -90,6 +90,8 @@ class ProductFinalPrice implements ObserverInterface
 
     /**
      * @param EventObserver $observer
+     * @throws Exception
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
     public function execute(EventObserver $observer)
     {
@@ -131,12 +133,10 @@ class ProductFinalPrice implements ObserverInterface
             $sku = trim(end($parts), '[]');
         }
 
-        if (isset($productInfo['properties']['Item Customization - Select Print Method'])) {
-            $printMethod = $productInfo['properties']['Item Customization - Select Print Method'];
-        } elseif (isset($productInfo['properties']['Select Print Method'])) {
-            $printMethod = $productInfo['properties']['Select Print Method'];
-        } elseif (isset($productInfo['properties']['Print Method'])) {
-            $printMethod = $productInfo['properties']['Print Method'];
+        if (isset($productInfo['properties']['Item Customization - Order'])) {
+            $printMethod = $productInfo['properties']['Item Customization - Order'];
+        } elseif (isset($productInfo['properties']['Order'])) {
+            $printMethod = $productInfo['properties']['Order'];
         } else {
             $printMethod = 'blank';
         }
@@ -145,11 +145,12 @@ class ProductFinalPrice implements ObserverInterface
 
         if ($printMethod == 'blank') {
             $type = 'Blank';
-        } elseif ($printMethod == 'order with logo') {
+        } elseif ($printMethod == 'with logo') {
             $type = 'Decorated';
         } elseif ($printMethod == 'sample') {
             $type = 'Sample';
         }
+
         $availablePrices = [];
         if (isset($sku)) {
             foreach ($jsonConfig['data']['prices'] as $price) {
@@ -160,19 +161,38 @@ class ProductFinalPrice implements ObserverInterface
             usort($availablePrices, function ($a, $b) {
                 return $a['minQty'] - $b['minQty'];
             });
-            foreach ($availablePrices as $key => $value) {
-                if ($observer->getQty() < $value['minQty']) {
-                    if (isset($availablePrices[$key - 1])) {
-                        $finalPrice = $availablePrices[$key - 1]['price'];
-                        break;
-                    } else {
-                        $this->_messageManager->addErrorMessage(__('This product cannot be added to your cart.'));
-                        throw new Exception(__('Qty of added product is less than minimal qty'));
-                    }
+
+            foreach ($jsonConfig['data']['inventory'] as $inventory) {
+                if ($sku == $inventory['sku']) {
+                    $maxQty = $inventory['qty'];
+                    break;
                 }
             }
-            if (!isset($finalPrice) && $observer->getQty() > end($availablePrices)['minQty']) {
-                $finalPrice = end($availablePrices)['price'];
+
+            if ($printMethod == 'sample' && $observer->getQty() > 1) {
+                throw new Exception(__('Requested quantity is not available'));
+            }
+
+            if ($observer->getQty() <= $maxQty) {
+                foreach ($availablePrices as $key => $value) {
+                    if ($observer->getQty() == $value['minQty']) {
+                        $finalPrice = $value['price'];
+                        break;
+                    }
+                    if ($observer->getQty() < $value['minQty']) {
+                        if (isset($availablePrices[$key - 1])) {
+                            $finalPrice = $availablePrices[$key - 1]['price'];
+                            break;
+                        } else {
+                            throw new Exception(__('Requested quantity is not available'));
+                        }
+                    }
+                }
+                if (!isset($finalPrice) && $observer->getQty() > end($availablePrices)['minQty']) {
+                    $finalPrice = end($availablePrices)['price'];
+                }
+            } else {
+                throw new Exception(__('Requested quantity is not available'));
             }
         }
 

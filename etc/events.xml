@@ -47,4 +47,7 @@
     <event name="checkout_submit_all_after">
         <observer name="saveQtyInJsonConfig" instance="Buildateam\CustomProductBuilder\Observer\CheckoutSubmitAllAfter"/>
     </event>
+    <event name="order_cancel_after">
+        <observer name="update_product_qty_after_order_cancel" instance="Buildateam\CustomProductBuilder\Observer\OrderCancelAfter" />
+    </event>
 </config>

@@ -90,6 +90,8 @@ class ProductFinalPrice implements ObserverInterface
 
     /**
      * @param EventObserver $observer
+     * @throws Exception
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
     public function execute(EventObserver $observer)
     {

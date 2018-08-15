@@ -196,6 +196,8 @@ class ProductFinalPrice implements ObserverInterface
             }
         }
 
-        $product->setFinalPrice($finalPrice);
+        if (isset($finalPrice)) {
+            $product->setFinalPrice($finalPrice);
+        }
     }
 }

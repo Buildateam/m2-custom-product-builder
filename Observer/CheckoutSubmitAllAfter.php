@@ -42,12 +42,14 @@ class CheckoutSubmitAllAfter implements ObserverInterface
                if ($property != '') {
                    $parts = explode(' ', $property);
                    $sku = trim(end($parts), '[]');
-                   foreach ($jsonConfig['data']['inventory'] as $key => $value) {
-                       if ($value['sku'] == $sku) {
-                           $jsonConfig['data']['inventory'][$key]['qty'] -= $infoBuyRequest['qty'];
-                           $product->setJsonConfiguration($this->_serializer->serialize($jsonConfig));
-                           $product->save();
-                           break;
+                   if (isset($jsonConfig['data']['inventory'])) {
+                       foreach ($jsonConfig['data']['inventory'] as $key => $value) {
+                           if ($value['sku'] == $sku) {
+                               $jsonConfig['data']['inventory'][$key]['qty'] -= $infoBuyRequest['qty'];
+                               $product->setJsonConfiguration($this->_serializer->serialize($jsonConfig));
+                               $product->save();
+                               break;
+                           }
                        }
                    }
                }

@@ -33,6 +33,10 @@ class Item
      */
     protected $_shareLinksFactory;
 
+    /**
+     * Item constructor.
+     * @param ShareableLinksFactory $factory
+     */
     public function __construct(
         ShareableLinksFactory $factory
     )
@@ -40,6 +44,11 @@ class Item
         $this->_shareLinksFactory = $factory;
     }
 
+    /**
+     * @param \Magento\Sales\Model\Order\Item $subject
+     * @param $result
+     * @return mixed
+     */
     public function afterGetProduct(\Magento\Sales\Model\Order\Item $subject, $result)
     {
         $buyRequest = $subject->getProductOptionByCode('info_buyRequest');

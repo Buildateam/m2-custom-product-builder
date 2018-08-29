@@ -1,4 +1,5 @@
 <?xml version="1.0"?>
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Email:etc/email_templates.xsd">
     <template id="sales_email_order_custom_template" label="New Order Custom" file="order_new_custom.html" type="html" module="Buildateam_CustomProductBuilder" area="frontend"/>
+    <template id="sales_email_order_guest_custom_template" label="New Order For Guest Custom" file="order_new_guest_custom.html" type="html" module="Buildateam_CustomProductBuilder" area="frontend" />
 </config>

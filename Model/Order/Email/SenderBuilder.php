@@ -52,7 +52,11 @@ class SenderBuilder extends BaseSender
     public function sendToCustomer()
     {
         $this->configureEmailTemplate();
-        $this->transportBuilder->setTemplateIdentifier('sales_email_order_custom_template');
+        if ($this->templateContainer->getTemplateId() == 'sales_email_order_template') {
+            $this->transportBuilder->setTemplateIdentifier('sales_email_order_custom_template');
+        } elseif ($this->templateContainer->getTemplateId() == 'sales_email_order_guest_template') {
+            $this->transportBuilder->setTemplateIdentifier('sales_email_order_guest_custom_template');
+        }
 
         $this->transportBuilder->addTo(
             $this->identityContainer->getCustomerEmail(),

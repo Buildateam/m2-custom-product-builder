@@ -5,6 +5,8 @@ use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
 use \Magento\Framework\Serialize\Serializer\Json;
 use Magento\Sales\Exception\CouldNotRefundException;
+use \Magento\Catalog\Model\ResourceModel\Product\Action;
+use \Magento\Store\Model\StoreManagerInterface;
 
 class OrderCancelAfter implements ObserverInterface
 {
@@ -14,12 +16,26 @@ class OrderCancelAfter implements ObserverInterface
     protected $_serializer;
 
     /**
+     * @var Action
+     */
+    protected $_productAction;
+
+    /**
+     * @var StoreManagerInterface
+     */
+    protected $_storeManager;
+
+    /**
      * OrderCancelAfter constructor.
      * @param Json $json
+     * @param Action $action
+     * @param StoreManagerInterface $storeManager
      */
-    public function __construct(Json $json)
+    public function __construct(Json $json, Action $action, StoreManagerInterface $storeManager)
     {
         $this->_serializer = $json;
+        $this->_productAction = $action;
+        $this->_storeManager = $storeManager;
     }
 
     /**
@@ -28,6 +44,7 @@ class OrderCancelAfter implements ObserverInterface
      */
     public function execute(Observer $observer)
     {
+        $storeId = $this->_storeManager->getStore()->getId();
         $order = $observer->getData('order');
         foreach ($order->getItems() as $item) {
             $product = $item->getProduct();
@@ -51,11 +68,10 @@ class OrderCancelAfter implements ObserverInterface
                 foreach ($jsonConfig['data']['inventory'] as $key => $value) {
                     if ($sku == $value['sku']) {
                         $jsonConfig['data']['inventory'][$key]['qty'] += $qtyCanceled;
+                        $this->_productAction->updateAttributes([$product->getId()], ['json_configuration' => $this->_serializer->serialize($jsonConfig)], $storeId);
                         break;
                     }
                 }
-                $product->setJsonConfiguration($this->_serializer->serialize($jsonConfig));
-                $product->save();
             }
         }
     }

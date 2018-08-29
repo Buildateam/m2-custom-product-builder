@@ -4,6 +4,8 @@ namespace Buildateam\CustomProductBuilder\Observer;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
 use \Magento\Framework\Serialize\Serializer\Json;
+use \Magento\Catalog\Model\ResourceModel\Product\Action;
+use \Magento\Store\Model\StoreManagerInterface;
 
 class CreditmemoRefund implements ObserverInterface
 {
@@ -13,16 +15,31 @@ class CreditmemoRefund implements ObserverInterface
     protected $_serializer;
 
     /**
+     * @var Action
+     */
+    protected $_productAction;
+
+    /**
+     * @var StoreManagerInterface
+     */
+    protected $_storeManager;
+
+    /**
      * CreditmemoRefund constructor.
      * @param Json $json
+     * @param Action $action
+     * @param StoreManagerInterface $storeManager
      */
-    public function __construct(Json $json)
+    public function __construct(Json $json, Action $action, StoreManagerInterface $storeManager)
     {
         $this->_serializer = $json;
+        $this->_productAction = $action;
+        $this->_storeManager = $storeManager;
     }
 
     public function execute(Observer $observer)
     {
+        $storeId = $this->_storeManager->getStore()->getId();
         $creditmemo = $observer->getData('creditmemo');
         $memoItems = $creditmemo->getItems();
         foreach ($memoItems as $item) {
@@ -47,8 +64,7 @@ class CreditmemoRefund implements ObserverInterface
                         foreach ($jsonConfig['data']['inventory'] as $key => $value) {
                             if ($value['sku'] == $sku) {
                                 $jsonConfig['data']['inventory'][$key]['qty'] += $item->getQty();
-                                $product->setJsonConfiguration($this->_serializer->serialize($jsonConfig));
-                                $product->save();
+                                $this->_productAction->updateAttributes([$product->getId()], ['json_configuration' => $this->_serializer->serialize($jsonConfig)], $storeId);
                                 break;
                             }
                         }

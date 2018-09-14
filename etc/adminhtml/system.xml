@@ -48,14 +48,6 @@
             <resource>Buildateam_CustomProductBuilder::cpb_config</resource>
             <group id="development" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0">
                 <label><![CDATA[Development Configuration]]></label>
-                <field id="script_version" translate="label" type="label" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0">
-                    <label><![CDATA[Script Version]]></label>
-                    <frontend_model>\Buildateam\CustomProductBuilder\Block\Adminhtml\System\ScriptVersion</frontend_model>
-                </field>
-                <field id="file_location" translate="label" type="select" sortOrder="11" showInDefault="1" showInWebsite="0" showInStore="0">
-                    <label><![CDATA[Scripts Location]]></label>
-                    <source_model>\Buildateam\CustomProductBuilder\Model\Source\FileLocation</source_model>
-                </field>
                 <field id="mode" translate="label" type="select" sortOrder="12" showInDefault="1" showInWebsite="0" showInStore="0">
                     <label><![CDATA[Mode]]></label>
                     <source_model>\Buildateam\CustomProductBuilder\Model\Source\Mode</source_model>

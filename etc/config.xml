@@ -39,7 +39,6 @@
     <default>
         <cpb>
             <development>
-                <file_location>remote</file_location>
                 <mode>develop</mode>
             </development>
         </cpb>

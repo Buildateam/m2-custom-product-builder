@@ -84,12 +84,4 @@ class View extends Template
     {
         return $this->_helper->getBuilderMode();
     }
-
-    /**
-     * @return string
-     */
-    public function getFileLocation()
-    {
-        return $this->_helper->getFileLocation();
-    }
 }

@@ -162,6 +162,7 @@ class ProductFinalPrice implements ObserverInterface
                 return $a['minQty'] - $b['minQty'];
             });
 
+            $maxQty = 0;
             foreach ($jsonConfig['data']['inventory'] as $inventory) {
                 if ($sku == $inventory['sku']) {
                     $maxQty = $inventory['qty'];

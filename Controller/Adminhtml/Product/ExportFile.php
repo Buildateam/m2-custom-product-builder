@@ -88,55 +88,10 @@ class ExportFile extends \Magento\Backend\App\Action
         $product = $this->_productRepository->getById($productId);
         $productConfig = $product->getData('json_configuration');
 
-        if (!$productConfig) $productConfig = $this->_getBaseConfig();
         return $this->fileFactory->create(
             sprintf('product_%s.json', $productId),
             $productConfig
         );
-    }
-
-    /**
-     * @return string
-     */
-    protected function _getBaseConfig()
-    {
-        return <<<JSON
-{
-  "settings": {
-    "isAdmin": true,
-    "theme": {
-      "id": "alpine-white"
-    },
-    "views": {
-      "front": true,
-      "back": false,
-      "left": false,
-      "right": false,
-      "top": false,
-      "bottom": false
-    },
-    "currentView": "front",
-    "defaultView": "front",
-    "viewControls": "arrows",
-    "hasSummary": true,
-    "layout": "col-tabs",
-    "currency": "USD",
-    "cdnPath": "https://magento.thecustomproductbuilder.com/media/"
-  },
-  "data": {
-    "name": null,
-    "base": {
-      "price": null,
-      "image": {}
-    },
-    "panels": [],
-    "layers": [],
-    "price": null,
-    "isFetchingCategories": true
-  }
-}
-JSON;
-
     }
 
 }

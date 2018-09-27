@@ -39,6 +39,7 @@
 
 namespace Buildateam\CustomProductBuilder\Ui\DataProvider\Product\Form\Modifier;
 
+use Magento\Catalog\Model\ProductRepository;
 use \Magento\Catalog\Ui\DataProvider\Product\Form\Modifier\AbstractModifier;
 use \Magento\Catalog\Model\Locator\LocatorInterface;
 use \Magento\Framework\Stdlib\ArrayManager;
@@ -66,19 +67,27 @@ class CustomProductBuilder extends AbstractModifier
     protected $arrayManager;
 
     /**
+     * @var $productRepository
+     */
+    protected $productRepository;
+
+    /**
      * @param LocatorInterface $locator
      * @param ArrayManager $arrayManager
      * @param Context $context
+     * @param ProductRepository $productRepository
      */
     public function __construct(
         LocatorInterface $locator,
         ArrayManager $arrayManager,
-        Context $context
+        Context $context,
+        ProductRepository $productRepository
     )
     {
         $this->locator = $locator;
         $this->arrayManager = $arrayManager;
         $this->context = $context;
+        $this->productRepository = $productRepository;
     }
 
     /**
@@ -86,9 +95,11 @@ class CustomProductBuilder extends AbstractModifier
      */
     public function modifyMeta(array $meta)
     {
-        $meta = $this->createCustomProductBuilderModal($meta);
-        $meta = $this->customizeCustomProductBuilderField($meta);
-
+        $productId = $this->context->getRequest()->getParam('id');
+        if ($productId) {
+            $meta = $this->createCustomProductBuilderModal($meta);
+            $meta = $this->customizeCustomProductBuilderField($meta);
+        }
         return $meta;
     }
 
@@ -165,6 +176,9 @@ class CustomProductBuilder extends AbstractModifier
 
     protected function customizeCustomProductBuilderField($meta)
     {
+        $productId = (int)$this->context->getRequest()->getParam('id', 0);
+        $product = $this->productRepository->getById($productId);
+        $productConfig = $product->getData('json_configuration');
         $fieldCode = 'json_configuration';
         $elementPath = $this->arrayManager->findPath($fieldCode, $meta, null, 'children');
         $containerPath = $this->arrayManager->findPath(static::CONTAINER_PREFIX . $fieldCode, $meta, null, 'children');
@@ -173,135 +187,141 @@ class CustomProductBuilder extends AbstractModifier
             return $meta;
         }
 
-        $meta = $this->arrayManager->merge(
-            $containerPath,
-            $meta,
-            [
-                'arguments' => [
-                    'data' => [
-                        'config' => [
-                            'label' => __('Custom Product Builder'),
-                            'dataScope' => '',
-                            'breakLine' => false,
-                            'formElement' => 'container',
-                            'componentType' => 'container',
-                            'component' => 'Magento_Ui/js/form/components/group',
-                            'scopeLabel' => __('[GLOBAL]'),
+        $cpbMeta = [
+            'arguments' => [
+                'data' => [
+                    'config' => [
+                        'label' => __('Custom Product Builder'),
+                        'dataScope' => '',
+                        'breakLine' => false,
+                        'formElement' => 'container',
+                        'componentType' => 'container',
+                        'component' => 'Magento_Ui/js/form/components/group',
+                        'scopeLabel' => __('[GLOBAL]'),
+                    ],
+                ],
+            ],
+            'children' => [
+                $fieldCode => [
+                    'arguments' => [
+                        'data' => [
+                            'config' => [
+                                'formElement' => 'hidden',
+                                'component' => 'Magento_Ui/js/form/element/abstract',
+                                'componentType' => 'field',
+                                'filterOptions' => true,
+                                'chipsEnabled' => true,
+                                'disableLabel' => true,
+                                'elementTmpl' => 'ui/form/element/hidden',
+                                'config' => [
+                                    'dataScope' => $fieldCode,
+                                    'sortOrder' => 10,
+                                    'visible' => false,
+                                ],
+                            ],
                         ],
                     ],
                 ],
-                'children' => [
-                    $fieldCode => [
-                        'arguments' => [
-                            'data' => [
-                                'config' => [
-                                    'formElement' => 'hidden',
-                                    'component' => 'Magento_Ui/js/form/element/abstract',
-                                    'componentType' => 'field',
-                                    'filterOptions' => true,
-                                    'chipsEnabled' => true,
-                                    'disableLabel' => true,
-                                    'elementTmpl' => 'ui/form/element/hidden',
-                                    'config' => [
-                                        'dataScope' => $fieldCode,
-                                        'sortOrder' => 10,
-                                        'visible' => false,
+                'custom_product_builder_button' => [
+                    'arguments' => [
+                        'data' => [
+                            'config' => [
+                                'title' => __('Configure'),
+                                'formElement' => 'container',
+                                'additionalClasses' => 'admin__field-small',
+                                'componentType' => 'container',
+                                'component' => 'Magento_Ui/js/form/components/button',
+                                'template' => 'ui/form/components/button/container',
+                                'actions' => [
+                                    [
+                                        'targetName' => 'product_form.product_form.custom_product_builder_modal',
+                                        'actionName' => 'toggleModal',
                                     ],
+                                    [
+                                        'targetName' =>
+                                            'product_form.product_form.custom_product_builder_modal.product_builder',
+                                        'actionName' => 'render'
+                                    ],
+                                    [
+                                        'targetName' =>
+                                            'product_form.product_form.custom_product_builder_modal.product_builder',
+                                        'actionName' => 'resetForm'
+                                    ]
                                 ],
+                                'additionalForGroup' => true,
+                                'provider' => false,
+                                'source' => 'product_details',
+                                'displayArea' => 'insideGroup',
+                                'sortOrder' => 20,
                             ],
                         ],
-                    ],
-                    'custom_product_builder_button' => [
-                        'arguments' => [
-                            'data' => [
-                                'config' => [
-                                    'title' => __('Configure'),
-                                    'formElement' => 'container',
-                                    'additionalClasses' => 'admin__field-small',
-                                    'componentType' => 'container',
-                                    'component' => 'Magento_Ui/js/form/components/button',
-                                    'template' => 'ui/form/components/button/container',
-                                    'actions' => [
-                                        [
-                                            'targetName' => 'product_form.product_form.custom_product_builder_modal',
-                                            'actionName' => 'toggleModal',
-                                        ],
-                                        [
-                                            'targetName' =>
-                                                'product_form.product_form.custom_product_builder_modal.product_builder',
-                                            'actionName' => 'render'
-                                        ],
-                                        [
-                                            'targetName' =>
-                                                'product_form.product_form.custom_product_builder_modal.product_builder',
-                                            'actionName' => 'resetForm'
-                                        ]
-                                    ],
-                                    'additionalForGroup' => true,
-                                    'provider' => false,
-                                    'source' => 'product_details',
-                                    'displayArea' => 'insideGroup',
-                                    'sortOrder' => 20,
-                                ],
-                            ],
-                        ]
-                    ],
+                    ]
+                ],
 
-                    'custom_product_builder_export' => [
-                        'arguments' => [
-                            'data' => [
-                                'config' => [
-                                    'title' => __('Export'),
-                                    'formElement' => 'container',
-                                    'additionalClasses' => 'admin__field-small',
-                                    'componentType' => 'container',
-                                    'component' => 'custom-product-builder/iebutton',
-                                    'template' => 'ui/form/components/button/container',
-                                    'additionalForGroup' => true,
-                                    'provider' => false,
-                                    'source' => 'product_details',
-                                    'displayArea' => 'insideGroup',
-                                    'sortOrder' => 30,
-                                    'actions' => [
-                                        [
-                                            'onclick' => sprintf("setLocation('%s');", $this->context->getUrl()->getUrl('customproductbuilder/product/exportFile', [
-                                                'id' => $this->context->getRequest()->getParam('id')
-                                            ]))
-                                        ]
-                                    ],
-                                ],
-                            ],
-                        ]
-                    ],
-
-                    'custom_product_builder_import' => [
-                        'arguments' => [
-                            'data' => [
-                                'config' => [
-                                    'title' => __('Import'),
-                                    'formElement' => 'fileUploader',
-                                    'componentType' => 'fileUploader',
-                                    'component' => 'Magento_Ui/js/form/element/file-uploader',
-                                    'template' => 'custom-product-builder/form/element/uploader/uploader',
-                                    'dataScope' => 'file',
-                                    'fileInputName' => 'json_configuration',
-                                    'additionalForGroup' => true,
-                                    'provider' => false,
-                                    'source' => 'product_details',
-                                    'displayArea' => 'insideGroup',
-                                    'sortOrder' => 40,
-                                    'allowedExtensions' => 'json',
-                                    'uploaderConfig' => [
-                                        'url' => $this->context->getUrl()->getUrl('customproductbuilder/product/importFile', [
+                'custom_product_builder_export' => [
+                    'arguments' => [
+                        'data' => [
+                            'config' => [
+                                'title' => __('Export'),
+                                'formElement' => 'container',
+                                'additionalClasses' => 'admin__field-small',
+                                'componentType' => 'container',
+                                'component' => 'custom-product-builder/iebutton',
+                                'template' => 'ui/form/components/button/container',
+                                'additionalForGroup' => true,
+                                'provider' => false,
+                                'source' => 'product_details',
+                                'displayArea' => 'insideGroup',
+                                'sortOrder' => 30,
+                                'actions' => [
+                                    [
+                                        'onclick' => sprintf("setLocation('%s');", $this->context->getUrl()->getUrl('customproductbuilder/product/exportFile', [
                                             'id' => $this->context->getRequest()->getParam('id')
-                                        ])
+                                        ]))
                                     ]
                                 ],
                             ],
-                        ]
-                    ],
-                ]
+                        ],
+                    ]
+                ],
+
+                'custom_product_builder_import' => [
+                    'arguments' => [
+                        'data' => [
+                            'config' => [
+                                'title' => __('Import'),
+                                'formElement' => 'fileUploader',
+                                'componentType' => 'fileUploader',
+                                'component' => 'Magento_Ui/js/form/element/file-uploader',
+                                'template' => 'custom-product-builder/form/element/uploader/uploader',
+                                'dataScope' => 'file',
+                                'fileInputName' => 'json_configuration',
+                                'additionalForGroup' => true,
+                                'provider' => false,
+                                'source' => 'product_details',
+                                'displayArea' => 'insideGroup',
+                                'sortOrder' => 40,
+                                'allowedExtensions' => 'json',
+                                'uploaderConfig' => [
+                                    'url' => $this->context->getUrl()->getUrl('customproductbuilder/product/importFile', [
+                                        'id' => $this->context->getRequest()->getParam('id')
+                                    ])
+                                ]
+                            ],
+                        ],
+                    ]
+                ],
             ]
+        ];
+
+        if (!$productConfig) {
+            unset ($cpbMeta['children']['custom_product_builder_export']);
+        }
+
+        $meta = $this->arrayManager->merge(
+            $containerPath,
+            $meta,
+            $cpbMeta
         );
 
         return $meta;

@@ -45,7 +45,6 @@ use Magento\Framework\App\Helper\AbstractHelper;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Filesystem;
 use Magento\Framework\Math\Random;
-use Magento\Framework\View\Asset\Repository;
 use Magento\Store\Model\ScopeInterface;
 use Magento\Store\Model\StoreManagerInterface;
 
@@ -53,7 +52,6 @@ class Data extends AbstractHelper
 {
     const JSON_ATTRIBUTE = 'json_configuration';
     const XPATH_BUILDER_MODE = 'cpb/development/mode';
-    const XPATH_FILE_LOCATION = 'cpb/development/file_location';
 
     /**
      * @var \Magento\Framework\Filesystem
@@ -70,32 +68,22 @@ class Data extends AbstractHelper
     protected $_mathRandom;
 
     /**
-     * Asset service
-     *
-     * @var Repository
-     */
-    protected $_assetRepo;
-
-    /**
      * Data constructor.
      * @param Context $context
      * @param Filesystem $fileSystem
      * @param StoreManagerInterface $storeManager
      * @param Random $random
-     * @param Repository $assetRepo
      */
     public function __construct(
         Context $context,
         Filesystem $fileSystem,
         StoreManagerInterface $storeManager,
-        Random $random,
-        Repository $assetRepo
+        Random $random
     )
     {
         $this->_fileSystem = $fileSystem;
         $this->_storeManager = $storeManager;
         $this->_mathRandom = $random;
-        $this->_assetRepo = $assetRepo;
         parent::__construct($context);
     }
 
@@ -208,13 +196,5 @@ class Data extends AbstractHelper
     public function getBuilderMode()
     {
         return $this->getConfigValue(self::XPATH_BUILDER_MODE);
-    }
-
-    /**
-     * @return string
-     */
-    public function getFileLocation()
-    {
-        return $this->getConfigValue(self::XPATH_FILE_LOCATION);
     }
 }

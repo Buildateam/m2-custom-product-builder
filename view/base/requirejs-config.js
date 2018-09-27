@@ -38,9 +38,7 @@
 
 var config = {
     paths: {
-        'cpb-remote-production': '//customproductbuilder.buildateam.io/dist/custom-product-builder',
+        'cpb-remote-production': '//magento.thecustomproductbuilder.com/dist/custom-product-builder',
         'cpb-remote-develop': '//magento.thecustomproductbuilder.com/dist/custom-product-builder',
-        'cpb-local-production': 'Buildateam_CustomProductBuilder/js/production/dist/custom-product-builder',
-        'cpb-local-develop': 'Buildateam_CustomProductBuilder/js/develop/dist/custom-product-builder'
     }
 };

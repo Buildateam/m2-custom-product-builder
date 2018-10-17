@@ -156,22 +156,36 @@ class CatalogProductTypeAll
                         'value' => $image,
                         'print_value' => $image,
                         'option_id' => null,
-                        'option_type' => 'file',
-                        'custom_view' => false
+                        'option_type' => 'cpb_download',
+                        'custom_view' => true,
+                        'option_value' => [
+                            'title' => __('Download Image')->getText(),
+                            'link' => $image,
+                            'direct' => true
+                        ]
                     ];
                 }
             }
             if (isset($productInfo['technicalData']['additionalData']['texts']) && count($productInfo['technicalData']['additionalData']['texts'])) {
                 foreach ($productInfo['technicalData']['additionalData']['texts'] as $texts) {
                     foreach ($texts as $key => $value) {
-                        $cpbOptions[] = [
+                        $params = [
                             'label' => $key,
                             'value' => $value,
                             'print_value' => $value,
                             'option_id' => null,
-                            'option_type' => $key == 'fontSource' ? 'file' : 'text',
-                            'custom_view' => false
+                            'option_type' => $key == 'fontSource' ? 'cpb_download' : 'text',
+                            'custom_view' => true,
                         ];
+
+                        if ($key == 'fontSource') {
+                            $params['option_value'] = [
+                                'title' => __('Download font')->getText(),
+                                'link' => $value,
+                                'direct' => true
+                            ];
+                        }
+                        $cpbOptions[] = $params;
                     }
                 }
             }

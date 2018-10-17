@@ -6,21 +6,21 @@
 <?php $block->setPriceDataObject($_item) ?>
 <tr>
     <td>
-        <?php $product =  $_item->getProduct();?>
-        <?php $objectManager = \Magento\Framework\App\ObjectManager::getInstance();?>
+        <?php $product = $_item->getProduct(); ?>
+        <?php $objectManager = \Magento\Framework\App\ObjectManager::getInstance(); ?>
 
-        <?php  $imagewidth=200;
-        $imageheight=200;
-        $imageHelper  = $objectManager->get('\Magento\Catalog\Helper\Image');
-        $image_url = $imageHelper->init($product, 'small_image')->setImageFile($product->getSmallImage())->resize($imagewidth, $imageheight)->getUrl();
-        ?>
-        <img src="<?php echo $image_url;?>" style="min-width: 100px"/>
+        <?php $imageHelper = $objectManager->get('\Magento\Catalog\Helper\Image'); ?>
+        <?php $imageUrl = $imageHelper->init($product, 'small_image')->setImageFile($product->getSmallImage())->resize(200, 200)->getUrl(); ?>
+        <img src="<?= $imageUrl; ?>" style="min-width: 100px"/>
     </td>
     <?php $i = 0;
     $columns = $block->getColumns();
     $lastItemNumber = count($columns) ?>
-    <?php foreach ($columns as $columnName => $columnClass):?>
+    <?php foreach ($columns as $columnName => $columnClass): ?>
         <?php $i++; ?>
-        <td class="<?= /* @noEscape */ $columnClass ?><?= /* @noEscape */ ($i === $lastItemNumber ? ' last' : '') ?>"><?= /* @escapeNotVerified */ $block->getColumnHtml($_item, $columnName) ?></td>
+        <td class="<?= /* @noEscape */
+        $columnClass ?><?= /* @noEscape */
+        ($i === $lastItemNumber ? ' last' : '') ?>"><?= /* @escapeNotVerified */
+            $block->getColumnHtml($_item, $columnName) ?></td>
     <?php endforeach; ?>
 </tr>

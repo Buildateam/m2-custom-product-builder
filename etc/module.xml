@@ -40,11 +40,7 @@
     <module name="Buildateam_CustomProductBuilder" setup_version="0.1.6">
         <sequence>
             <module name="Magento_Catalog"/>
+            <module name="Magento_Sales"/>
         </sequence>
     </module>
-    <router id="admin">
-        <route id="productbuilder" frontName="productbuilder">
-            <module name="Buildateam_CustomProductBuilder"/>
-        </route>
-    </router>
 </config>

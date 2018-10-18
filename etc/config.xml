@@ -42,5 +42,11 @@
                 <mode>develop</mode>
             </development>
         </cpb>
+        <sales_email>
+            <order>
+                <template>sales_email_order_cpb_template</template>
+                <guest_template>sales_email_order_cpb_guest_template</guest_template>
+            </order>
+        </sales_email>
     </default>
 </config>

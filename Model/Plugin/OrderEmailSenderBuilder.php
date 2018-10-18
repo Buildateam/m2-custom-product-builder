@@ -39,35 +39,36 @@
 
 namespace Buildateam\CustomProductBuilder\Model\Plugin;
 
-use Magento\Catalog\Model\Product\Option;
-use Magento\Catalog\Model\Product\Option\Type\Factory;
-use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\Registry;
+use Magento\Sales\Model\Order\Email\SenderBuilder;
 
-class ProductOption
+class OrderEmailSenderBuilder
 {
-    private $_optionTypeFactory;
+    /**
+     * @var Registry
+     */
+    private $_registry;
 
+    /**
+     * @param Registry $registry
+     */
     public function __construct(
-        Factory $optionFactory
+        Registry $registry
     )
     {
-        $this->_optionTypeFactory = $optionFactory;
+        $this->_registry = $registry;
     }
 
     /**
-     * @param Option $subject
-     * @param callable $proceed
-     * @param $type
-     * @return mixed
-     * @throws LocalizedException
+     * Before send copy to plugin
+     *
+     * @param SenderBuilder $subject
+     * @param mixed ...$args
+     * @return null
      */
-    public function aroundGroupFactory(Option $subject, callable $proceed, $type)
+    public function beforeSendCopyTo(SenderBuilder $subject, ...$args)
     {
-        if ($type !== 'cpb_download') {
-            return $proceed($type);
-        }
-        return $this->_optionTypeFactory->create(
-            'Buildateam\CustomProductBuilder\Model\Product\Option\Type\Download'
-        );
+        $this->_registry->register('is_admin_notify', true);
+        return null;
     }
 }

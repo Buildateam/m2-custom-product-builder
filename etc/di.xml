@@ -97,4 +97,8 @@
     <type name="Magento\Catalog\Model\Product\Option">
         <plugin name="custom_product_option_type" type="Buildateam\CustomProductBuilder\Model\Plugin\ProductOption"/>
     </type>
+
+    <type name="Magento\Sales\Model\Order\Email\SenderBuilder">
+        <plugin name="cpb_sender_builder" type="Buildateam\CustomProductBuilder\Model\Plugin\OrderEmailSenderBuilder"/>
+    </type>
 </config>

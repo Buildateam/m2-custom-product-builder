@@ -3,7 +3,7 @@ namespace Buildateam\CustomProductBuilder\Observer;
 
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
-use \Magento\Framework\Serialize\Serializer\Json;
+use Buildateam\CustomProductBuilder\Helper\Json;
 use Magento\Sales\Exception\CouldNotRefundException;
 use \Magento\Catalog\Model\ResourceModel\Product\Action;
 use \Magento\Store\Model\StoreManagerInterface;

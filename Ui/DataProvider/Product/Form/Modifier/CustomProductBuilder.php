@@ -99,6 +99,8 @@ class CustomProductBuilder extends AbstractModifier
         if ($productId) {
             $meta = $this->createCustomProductBuilderModal($meta);
             $meta = $this->customizeCustomProductBuilderField($meta);
+        } else {
+            $meta = $this->arrayManager->remove('product-details/children/container_json_configuration', $meta);
         }
         return $meta;
     }

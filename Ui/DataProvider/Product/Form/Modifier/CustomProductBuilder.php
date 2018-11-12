@@ -100,7 +100,7 @@ class CustomProductBuilder extends AbstractModifier
             $meta = $this->createCustomProductBuilderModal($meta);
             $meta = $this->customizeCustomProductBuilderField($meta);
         } else {
-            $meta = $this->arrayManager->remove('product-details/children/container_json_configuration', $meta);
+            $meta = $this->customizeNewProductCpbField($meta);
         }
         return $meta;
     }
@@ -326,6 +326,80 @@ class CustomProductBuilder extends AbstractModifier
             $cpbMeta
         );
 
+        return $meta;
+    }
+
+    /**
+     * @param $meta
+     * @return array
+     */
+    protected function customizeNewProductCpbField($meta)
+    {
+        $fieldCode = 'json_configuration';
+        $elementPath = $this->arrayManager->findPath($fieldCode, $meta, null, 'children');
+        $containerPath = $this->arrayManager->findPath(static::CONTAINER_PREFIX . $fieldCode, $meta, null, 'children');
+
+        if (!$elementPath) {
+            return $meta;
+        }
+
+        $cpbMeta = [
+            'arguments' => [
+                'data' => [
+                    'config' => [
+                        'label' => __('Custom Product Builder'),
+                        'dataScope' => '',
+                        'breakLine' => false,
+                        'formElement' => 'container',
+                        'componentType' => 'container',
+                        'component' => 'Magento_Ui/js/form/components/group',
+                        'scopeLabel' => __('[GLOBAL]'),
+                    ],
+                ],
+            ],
+            'children' => [
+                $fieldCode => [
+                    'arguments' => [
+                        'data' => [
+                            'config' => [
+                                'formElement' => 'hidden',
+                                'component' => 'Magento_Ui/js/form/element/abstract',
+                                'componentType' => 'field',
+                                'filterOptions' => true,
+                                'chipsEnabled' => true,
+                                'disableLabel' => true,
+                                'elementTmpl' => 'ui/form/element/hidden',
+                                'config' => [
+                                    'dataScope' => $fieldCode,
+                                    'sortOrder' => 10,
+                                    'visible' => false,
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+                'test' => [
+                    'arguments' => [
+                        'data' => [
+                            'config' => [
+                                'inputName' => 'newProductMessage',
+                                'value' => __('Please save the product for enable Custom Product Builder configuration'),
+                                'links' => null,
+                                'componentType' => 'text',
+                                'formElement' => 'text',
+                                'elementTmpl' => 'ui/form/element/text',
+                                'sortOrder' => 15
+                            ]
+                        ]
+                    ]
+                ]
+            ]
+        ];
+        $meta = $this->arrayManager->merge(
+            $containerPath,
+            $meta,
+            $cpbMeta
+        );
         return $meta;
     }
 }

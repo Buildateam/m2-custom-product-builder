@@ -50,14 +50,6 @@
         </arguments>
     </virtualType>
 
-    <type name="Magento\ProductVideo\Block\Product\View\Gallery">
-        <plugin name="cpb_product_media" type="Buildateam\CustomProductBuilder\Plugin\ProductPageHideBlock" sortOrder="50"/>
-    </type>
-
-    <type name="Magento\Catalog\Block\Product\View\Gallery">
-        <plugin name="cpb_product_media" type="Buildateam\CustomProductBuilder\Plugin\ProductPageHideBlock" sortOrder="50"/>
-    </type>
-
     <type name="Magento\Framework\Data\Form\FormKey\Validator">
         <plugin name="cpb_form_key" type="Buildateam\CustomProductBuilder\Plugin\AddToCartValidator" sortOrder="50"/>
     </type>

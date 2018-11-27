@@ -130,7 +130,9 @@ class ProductFinalPrice implements ObserverInterface
         }
         if ($property != '') {
             $parts = explode(' ', $property);
-            $sku = trim(end($parts), '[]');
+            $skusList = trim(end($parts), '[]');
+            $skus = explode(',', $skusList);
+            $sku = $skus[0];
         }
 
         if (isset($productInfo['properties']['Item Customization - Order'])) {

@@ -154,48 +154,50 @@ class ProductFinalPrice implements ObserverInterface
         }
 
         $availablePrices = [];
-        if (isset($sku)) {
-            foreach ($jsonConfig['data']['prices'] as $price) {
-                if ($price['sku'] == $sku && $price['type'] == $type) {
-                    $availablePrices[] = $price;
+        if (isset($sku) && $sku != "") {
+            if (isset($jsonConfig['data']) && isset($jsonConfig['data']['prices'])) {
+                foreach ($jsonConfig['data']['prices'] as $price) {
+                    if ($price['sku'] == $sku && $price['type'] == $type) {
+                        $availablePrices[] = $price;
+                    }
                 }
-            }
-            usort($availablePrices, function ($a, $b) {
-                return $a['minQty'] - $b['minQty'];
-            });
+                usort($availablePrices, function ($a, $b) {
+                    return $a['minQty'] - $b['minQty'];
+                });
 
-            $maxQty = 0;
-            foreach ($jsonConfig['data']['inventory'] as $inventory) {
-                if ($sku == $inventory['sku']) {
-                    $maxQty = $inventory['qty'];
-                    break;
-                }
-            }
-
-            if ($printMethod == 'sample' && $observer->getQty() > 1) {
-                throw new Exception(__('Requested quantity is not available'));
-            }
-
-            if ($observer->getQty() <= $maxQty) {
-                foreach ($availablePrices as $key => $value) {
-                    if ($observer->getQty() == $value['minQty']) {
-                        $finalPrice = $value['price'];
+                $maxQty = 0;
+                foreach ($jsonConfig['data']['inventory'] as $inventory) {
+                    if ($sku == $inventory['sku']) {
+                        $maxQty = $inventory['qty'];
                         break;
                     }
-                    if ($observer->getQty() < $value['minQty']) {
-                        if (isset($availablePrices[$key - 1])) {
-                            $finalPrice = $availablePrices[$key - 1]['price'];
+                }
+
+                if ($printMethod == 'sample' && $observer->getQty() > 1) {
+                    throw new Exception(__('Requested quantity is not available'));
+                }
+
+                if ($observer->getQty() <= $maxQty) {
+                    foreach ($availablePrices as $key => $value) {
+                        if ($observer->getQty() == $value['minQty']) {
+                            $finalPrice = $value['price'];
                             break;
-                        } else {
-                            throw new Exception(__('Requested quantity is not available'));
+                        }
+                        if ($observer->getQty() < $value['minQty']) {
+                            if (isset($availablePrices[$key - 1])) {
+                                $finalPrice = $availablePrices[$key - 1]['price'];
+                                break;
+                            } else {
+                                throw new Exception(__('Requested quantity is not available'));
+                            }
                         }
                     }
+                    if (!isset($finalPrice) && $observer->getQty() > end($availablePrices)['minQty']) {
+                        $finalPrice = end($availablePrices)['price'];
+                    }
+                } else {
+                    throw new Exception(__('Requested quantity is not available'));
                 }
-                if (!isset($finalPrice) && $observer->getQty() > end($availablePrices)['minQty']) {
-                    $finalPrice = end($availablePrices)['price'];
-                }
-            } else {
-                throw new Exception(__('Requested quantity is not available'));
             }
         }
 

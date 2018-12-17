@@ -60,16 +60,16 @@ class OrderCancelAfter implements ObserverInterface
                 if ($property != '') {
                     $parts = explode(' ', $property);
                     $sku = trim(end($parts), '[]');
-                } else {
-                    throw new CouldNotRefundException('Could not retrieve product sku');
-                }
-                $qtyCanceled = $item->getQtyCanceled();
-                $jsonConfig = $this->_serializer->unserialize($product->getJsonConfiguration());
-                foreach ($jsonConfig['data']['inventory'] as $key => $value) {
-                    if ($sku == $value['sku']) {
-                        $jsonConfig['data']['inventory'][$key]['qty'] += $qtyCanceled;
-                        $this->_productAction->updateAttributes([$product->getId()], ['json_configuration' => $this->_serializer->serialize($jsonConfig)], $storeId);
-                        break;
+                    $qtyCanceled = $item->getQtyCanceled();
+                    $jsonConfig = $this->_serializer->unserialize($product->getJsonConfiguration());
+                    if (isset($jsonConfig['data']) && isset($jsonConfig['data']['inventory'])) {
+                        foreach ($jsonConfig['data']['inventory'] as $key => $value) {
+                            if ($sku == $value['sku']) {
+                                $jsonConfig['data']['inventory'][$key]['qty'] += $qtyCanceled;
+                                $this->_productAction->updateAttributes([$product->getId()], ['json_configuration' => $this->_serializer->serialize($jsonConfig)], $storeId);
+                                break;
+                            }
+                        }
                     }
                 }
             }

@@ -89,7 +89,7 @@ class Download extends DefaultType
     public function getCustomizedView($optionInfo)
     {
         if (!isset($optionInfo['option_value']['link'])) {
-            return $optionInfo;
+            return '';
         }
 
         return sprintf(

@@ -63,10 +63,10 @@ class CatalogProductTypeAll
 
     /**
      * @param $subject
-     * @param array $result
-     * @return array
+     * @param array|string $result
+     * @return array|string
      */
-    public function afterPrepareForCartAdvanced($subject, array $result)
+    public function afterPrepareForCartAdvanced($subject, $result)
     {
         $this->addOptions($subject, $result);
 

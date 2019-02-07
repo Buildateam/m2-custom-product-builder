@@ -1,7 +1,7 @@
 {
     "name": "buildateam/m2-custom-product-builder",
     "description": "N/A",
-    "version": "1.0.4",
+    "version": "1.0.5",
     "require": {
         "php": "~5.5.0|~5.6.0|~7.0.0|~7.1.0"
     },

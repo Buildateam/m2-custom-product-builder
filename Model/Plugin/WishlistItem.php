@@ -82,9 +82,9 @@ class WishlistItem
                 }
 
                 if ($this->_isJsonInfoByRequest) {
-                    $value2 = json_decode($options2[$code]->getValue(), true)['technicalData'];
+                    $value2 = json_decode($options2[$code]->getValue(), true);
                 } else {
-                    $value2 = @unserialize($options2[$code]->getValue())['technicalData'];
+                    $value2 = @unserialize($options2[$code]->getValue());
                 }
 
                 if (!isset($options2[$code]) || $value2['technicalData'] != $value['technicalData']) {

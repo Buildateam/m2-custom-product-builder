@@ -39,6 +39,6 @@
 var config = {
     paths: {
         'cpb-remote-production': '//m2-stage.thecustomproductbuilder.com/dist/custom-product-builder',
-        'cpb-remote-develop': '//m2-stage.thecustomproductbuilder.com/dist/custom-product-builder',
+        'cpb-remote-develop': '//m2-stage.thecustomproductbuilder.com/dist/custom-product-builder'
     }
 };

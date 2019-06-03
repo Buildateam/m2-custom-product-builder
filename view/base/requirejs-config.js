@@ -38,7 +38,7 @@
 
 var config = {
     paths: {
-        'cpb-remote-production': '//magento.thecustomproductbuilder.com/dist/custom-product-builder',
-        'cpb-remote-develop': '//magento.thecustomproductbuilder.com/dist/custom-product-builder',
+        'cpb-remote-production': '//m2-stage.thecustomproductbuilder.com/dist/custom-product-builder',
+        'cpb-remote-develop': '//m2-stage.thecustomproductbuilder.com/dist/custom-product-builder',
     }
 };

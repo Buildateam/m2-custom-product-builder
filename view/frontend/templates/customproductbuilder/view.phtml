@@ -59,6 +59,8 @@
      product-short-description="<?php echo strval($product->getShortDescription()) ?>">
 </div>
 
+<script type="text/json" id="custom-product-config"><?= $product->getData('json_configuration') ?></script>
+
 <script type="text/x-magento-init">
     {
         "*": {

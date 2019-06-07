@@ -81,16 +81,14 @@ class View extends Template
     /**
      * @return string
      */
-    public function getBuilderMode()
-    {
-        return $this->_helper->getBuilderMode();
-    }
-
     public function getCpbProductDistSource()
     {
         return $this->_scopeConfig->getValue(Data::XPATH_BUILDER_JS, ScopeInterface::SCOPE_STORE);
     }
 
+    /**
+     * @return string
+     */
     public function getCpbThemeDistSource()
     {
         return $this->_scopeConfig->getValue(Data::XPATH_BUILDER_THEME_JS, ScopeInterface::SCOPE_STORE);

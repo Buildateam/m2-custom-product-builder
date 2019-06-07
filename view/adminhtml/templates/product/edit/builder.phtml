@@ -63,13 +63,10 @@ $productId = (int)$block->getRequest()->getParam('product', 0);
                     }
                 }
             }
-        },
-        "#product-builder":
-         {
-            "cpb-remote-<?php echo $block->getBuilderMode() ?>":{}
-         }
+        }
      }
 </script>
+<script type="application/javascript" id="cpb-product-dist" src="<?php echo $block->getCpbProductDistSource() ?>"></script>
 <script>
     require(['jquery'], function ($) {
         $('body').trigger('contentUpdated');

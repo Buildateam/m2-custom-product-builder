@@ -42,6 +42,7 @@ namespace Buildateam\CustomProductBuilder\Block\Adminhtml\Product\Edit;
 use Buildateam\CustomProductBuilder\Helper\Data;
 use Magento\Framework\View\Element\Template;
 use Magento\Framework\View\Element\Template\Context;
+use Magento\Store\Model\ScopeInterface;
 
 class Builder extends Template
 {
@@ -66,8 +67,8 @@ class Builder extends Template
     /**
      * @return string
      */
-    public function getBuilderMode()
+    public function getCpbProductDistSource()
     {
-        return $this->_helper->getBuilderMode();
+        return $this->_scopeConfig->getValue(Data::XPATH_BUILDER_JS, ScopeInterface::SCOPE_STORE);
     }
 }

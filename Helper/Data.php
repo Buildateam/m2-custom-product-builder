@@ -52,6 +52,8 @@ class Data extends AbstractHelper
 {
     const JSON_ATTRIBUTE = 'json_configuration';
     const XPATH_BUILDER_MODE = 'cpb/development/mode';
+    const XPATH_BUILDER_JS = 'cpb/development/cpb_js';
+    const XPATH_BUILDER_THEME_JS = 'cpb/development/theme_js';
 
     /**
      * @var \Magento\Framework\Filesystem

@@ -43,6 +43,7 @@ use Buildateam\CustomProductBuilder\Helper\Data;
 use Magento\Catalog\Block\Product\Context;
 use Magento\Framework\Registry;
 use Magento\Framework\View\Element\Template;
+use Magento\Store\Model\ScopeInterface;
 
 class View extends Template
 {
@@ -83,5 +84,15 @@ class View extends Template
     public function getBuilderMode()
     {
         return $this->_helper->getBuilderMode();
+    }
+
+    public function getCpbProductDistSource()
+    {
+        return $this->_scopeConfig->getValue(Data::XPATH_BUILDER_JS, ScopeInterface::SCOPE_STORE);
+    }
+
+    public function getCpbThemeDistSource()
+    {
+        return $this->_scopeConfig->getValue(Data::XPATH_BUILDER_THEME_JS, ScopeInterface::SCOPE_STORE);
     }
 }

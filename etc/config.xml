@@ -40,6 +40,8 @@
         <cpb>
             <development>
                 <mode>develop</mode>
+                <cpb_js>https://m2-stage.thecustomproductbuilder.com/dist/custom-product-builder.js</cpb_js>
+                <theme_js>https://stage.thecustomproductbuilder.com/dist/customizer-theme-main.js</theme_js>
             </development>
         </cpb>
         <sales_email>

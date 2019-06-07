@@ -48,9 +48,15 @@
             <resource>Buildateam_CustomProductBuilder::cpb_config</resource>
             <group id="development" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0">
                 <label><![CDATA[Development Configuration]]></label>
-                <field id="mode" translate="label" type="select" sortOrder="12" showInDefault="1" showInWebsite="0" showInStore="0">
+                <field id="mode" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
                     <label><![CDATA[Mode]]></label>
                     <source_model>\Buildateam\CustomProductBuilder\Model\Source\Mode</source_model>
+                </field>
+                <field id="cpb_js" translate="label" type="text" sortOrder="2" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>CPB JS</label>
+                </field>
+                <field id="theme_js" translate="label" type="text" sortOrder="2" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Theme JS</label>
                 </field>
             </group>
         </section>

@@ -54,13 +54,31 @@
      shop-name="<?php echo $block->getBaseUrl() ?>"
      product-id="<?php echo $block->getProduct()->getId() ?>"
      styles-path="<?php echo $block->getViewFileUrl('Buildateam_CustomProductBuilder::css/cpb.css') ?>"
-     product-sku="<?php echo $product->getSku() ?>"
-     product-name="<?php echo $product->getName() ?>"
+     product-sku="<?php echo $block->escapeHtml($product->getSku()) ?>"
+     product-name="<?php echo $block->escapeHtml($product->getName()) ?>"
      product-short-description="<?php echo strval($product->getShortDescription()) ?>">
 </div>
 
-<script type="text/json" id="custom-product-config"><?= $product->getData('json_configuration') ?></script>
-
+<?php if ($block->getCpbProductDistSource()): ?>
 <script type="application/javascript" id="cpb-product-dist" src="<?php echo $block->getCpbProductDistSource() ?>"></script>
+<?php else: ?>
+    <script type="text/x-magento-init">
+    {
+        "*": {
+            "cpb-product":{}
+        }
+    }
+    </script>
+<?php endif; ?>
 
+<?php if ($block->getCpbThemeDistSource()): ?>
 <script type="application/javascript" id="cpb-theme-dist" src="<?php echo $block->getCpbThemeDistSource() ?>"></script>
+<?php else: ?>
+    <script type="text/x-magento-init">
+    {
+        "*": {
+            "cpb-theme":{}
+        }
+    }
+    </script>
+<?php endif; ?>

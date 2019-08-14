@@ -87,6 +87,7 @@ class Import extends \Magento\Framework\App\Action\Action
 
         if (!empty($jsonData) && $this->_helper->validate($jsonData) == "") {
             $product->setJsonConfiguration($jsonData);
+            $product->setStoreId(0);
             $product->save();
             $this->setSuccessResponse($response);
         } else {
@@ -94,7 +95,6 @@ class Import extends \Magento\Framework\App\Action\Action
         }
 
         return $response;
-
     }
 
     protected function setErrorResponse($response, $validate)

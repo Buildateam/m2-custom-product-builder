@@ -113,9 +113,9 @@ class Export extends \Magento\Framework\App\Action\Action
     "cdnPath": "https://magento.thecustomproductbuilder.com/media/"
   },
   "data": {
-    "name": null,
+    "name": $name,
     "base": {
-      "price": null,
+      "price": $price,
       "image": {}
     },
     "panels": [],

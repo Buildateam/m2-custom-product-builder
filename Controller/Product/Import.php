@@ -87,6 +87,7 @@ class Import extends \Magento\Framework\App\Action\Action
 
         if (!empty($jsonData) && $this->_helper->validate($jsonData) == "") {
             $jsonData = json_decode($jsonData, true);
+            $jsonData['data']['name'] = $product->getName();
             $jsonData['data']['base']['price'] = (int)$product->getPrice();
             $jsonData = json_encode($jsonData);
             $product->setJsonConfiguration($jsonData);

@@ -79,8 +79,7 @@ class ProductFinalPrice implements ObserverInterface
         ProductRepository $productRepository,
         ProductMetadataInterface $productMetadata,
         ManagerInterface $massageManager
-    )
-    {
+    ) {
         $this->_productRepository = $productRepository;
         if (version_compare($productMetadata->getVersion(), '2.2.0', '<')) {
             $this->_isJsonInfoByRequest = false;
@@ -111,6 +110,7 @@ class ProductFinalPrice implements ObserverInterface
         if (!isset($productInfo['technicalData'])) {
             return;
         }
+        $technicalData = $productInfo['technicalData']['layers'];
 
         if (!isset($this->_jsonConfig[$product->getId()])) {
             $productRepo = $this->_productRepository->getById($product->getId());
@@ -200,7 +200,24 @@ class ProductFinalPrice implements ObserverInterface
                 }
             }
         }
-
+        if (empty($finalPrice)) {
+            $finalPrice = $jsonConfig['data']['price'];
+        }
+        foreach ($jsonConfig['data']['panels'] as $panel) {
+            foreach ($technicalData as $techData) {
+                if ($panel['id'] == $techData['panel']) {
+                    foreach ($panel['categories'] as $category) {
+                        if ($category['id'] == $techData['category']) {
+                            foreach ($category['options'] as $option) {
+                                if ($option['id'] == $techData['option']) {
+                                    $finalPrice += $option['price'];
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
         if (isset($finalPrice)) {
             $product->setFinalPrice($finalPrice);
         }

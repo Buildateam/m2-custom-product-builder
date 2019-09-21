@@ -2,13 +2,15 @@
 [![pipeline status](https://git.buildateam.io/mage/m2-custom-product-builder/badges/master/pipeline.svg)](https://git.buildateam.io/mage/m2-custom-product-builder/commits/master)
 
 ## Installation Instructions via Composer. 
-
-1) Add new repository into composer.json wher located extension
+1) Add new repository into composer.json where extension is located.
 2) run `composer require buildateam/m2-custom-product-builder:dev-master`
 3) run `php bin:magento setup:upgrade`
 4) run `php bin/magento setupe:di:compile`
-5) run `php bin/magento setup:static-content:deploy` or 'bin/magento setup:deploy static-content en_GB en_US' (for multistore setup) 
-6) Remove all static files from both 'view/preprocessed' & 'pub/static' 
+5) run `rm -rf pub/static`
+6) run `rm -rf var/view_preprocessed`
+7) run `php bin/magento setup:static-content:deploy` or `bin/magento setup:deploy static-content en_GB en_US` (for multistore setup) 
+
+
 
 
 ## Products Import/Export

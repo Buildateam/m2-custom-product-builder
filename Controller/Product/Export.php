@@ -55,8 +55,7 @@ class Export extends \Magento\Framework\App\Action\Action
         \Magento\Catalog\Model\ProductRepository $productRepository,
         // \Magento\Framework\Controller\Result\RawFactory $resultRawFactory,
         \Magento\Framework\App\Response\Http\FileFactory $fileFactory,
-        \Magento\Framework\Controller\Result\JsonFactory $jsonResultFactory,
-
+        \Magento\Framework\Controller\Result\JsonFactory $jsonResultFactory
     ) {
         $this->_jsonHelper          = $jsonHelper;
         $this->_resultPageFactory   = $resultFactory;

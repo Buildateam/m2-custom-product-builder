@@ -39,93 +39,56 @@
 
 namespace Buildateam\CustomProductBuilder\Controller\Product;
 
-use \Magento\Framework\Controller\ResultFactory;
+use \Buildateam\CustomProductBuilder\Helper\Data;
+use \Magento\Backend\App as AdminApp;
+use \Magento\Catalog\Model\ProductRepository;
+use \Magento\Framework\App\Action\Context;
+use \Magento\Framework\Filesystem;
+use \Magento\Framework\View\Result\PageFactory;
+use \Magento\Store\Model\StoreManagerInterface;
 
-class Export extends \Magento\Framework\App\Action\Action
+class UploadImage extends \Magento\Framework\App\Action\Action
 {
+
+
     protected $_resultPageFactory;
     protected $_productRepository;
-    protected $_jsonHelper;
+    protected $_jsonProductContent;
+    protected $_auth;
+    protected $_fileSystem;
+    protected $_storeInterface;
+    protected $_helper;
 
     public function __construct(
-        \Magento\Framework\App\Action\Context $context,
-        \Magento\Framework\Json\Helper\Data $jsonHelper,
-        \Magento\Framework\View\Result\PageFactory $resultFactory,
-        \Magento\Catalog\Model\ProductRepository $productRepository,
-        \Magento\Framework\Controller\Result\RawFactory $resultRawFactory
-    ) { 
-        $this->_jsonHelper          = $jsonHelper;
-        $this->_resultPageFactory   = $resultFactory;
-        $this->_productRepository   = $productRepository;
-        $this->resultRawFactory     = $resultRawFactory;
+        Context $context,
+        PageFactory $resultFactory,
+        ProductRepository $productRepository,
+        Filesystem $fileSystem,
+        AdminApp\Action\Context $adminContext,
+        StoreManagerInterface $storeManager,
+        Data $helper
+    )
+    {
+        $this->_auth = $adminContext->getBackendUrl();
+        $this->_resultPageFactory = $resultFactory;
+        $this->_productRepository = $productRepository;
+        $this->_fileSystem = $fileSystem;
+        $this->_storeInterface = $storeManager;
+        $this->_helper = $helper;
         parent::__construct($context);
     }
 
-    /**
-     * Get Json_Configuration from a specific product
-     * @return \Magento\Framework\Controller\Result\Raw
-     */
     public function execute()
     {
-        $productId     = (int)$this->getRequest()->getParam('id', 0);
-        $product       = $this->_productRepository->getById($productId);
-        $productConfig = $product->getData('json_configuration');
-        if (!$productConfig) $productConfig = $this->_getBaseConfig($product);
-        $productConfigObject = json_decode($productConfig);
-        $resultRaw = $this->resultRawFactory->create();
-        $resultRaw->setHeader("Content-Type", 'application/json');
-        
-        if(!$productConfigObject){
-            $resultRaw->setHttpResponseCode(\Magento\Framework\Webapi\Exception::HTTP_INTERNAL_ERROR);     
-            $resultRaw->setContents(json_encode(['error_message' => 'ERROR PARSING PRODUCT CONFIG JSON']));
-        } else {
-            // SPACE SAVING: removing available fonts since em already present in cpb-frontend
-            $productConfigObject->settings->fonts->available = [];
-            $resultRaw->setContents(json_encode($productConfigObject));
-        }
-        return $resultRaw;
+        $imagePath = $this->_helper->uploadImage(file_get_contents('php://input'));
+        $imageBaseUrl = $this->_storeInterface->getStore()->getBaseUrl('media') . $imagePath;
+        $body = json_encode($imageBaseUrl);
+        $result = $this->resultFactory->create('raw');
+        $result->setHeader("Content-Type", 'application/json');
+        $result->setContents($body);
+
+        return $result;
+
     }
 
-    protected function _getBaseConfig($product)
-    {   
-        $name = json_encode($product->getName());
-        $price = json_encode((float)$product->getPrice());
-        
-        return <<<JSON
-{ 
-  "settings": {
-    "isAdmin": true,
-    "theme": {
-      "id": "alpine-white"
-    },
-    "views": { 
-      "front": true,
-      "back": false,
-      "left": false,
-      "right": false,
-      "top": false,
-      "bottom": false
-    },
-    "currentView": "front",
-    "defaultView": "front",
-    "viewControls": "arrows",
-    "hasSummary": true,
-    "layout": "col-tabs",
-    "currency": "USD",
-    "cdnPath": "https://magento.thecustomproductbuilder.com/media/"
-  },
-  "data": {
-    "name": $name,
-    "base": {
-      "price": $price,
-      "image": {}
-    },
-    "panels": [],
-    "layers": [],
-    "price": null,
-    "isFetchingCategories": true
-  }
-}
-JSON;
-    }
 }

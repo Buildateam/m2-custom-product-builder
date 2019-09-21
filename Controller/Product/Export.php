@@ -53,14 +53,17 @@ class Export extends \Magento\Framework\App\Action\Action
         \Magento\Framework\Json\Helper\Data $jsonHelper,
         \Magento\Framework\View\Result\PageFactory $resultFactory,
         \Magento\Catalog\Model\ProductRepository $productRepository,
-        \Magento\Framework\Controller\Result\RawFactory $resultRawFactory,
-        \Magento\Framework\App\Response\Http\FileFactory $fileFactory
+        // \Magento\Framework\Controller\Result\RawFactory $resultRawFactory,
+        \Magento\Framework\App\Response\Http\FileFactory $fileFactory,
+        \Magento\Framework\Controller\Result\JsonFactory $jsonResultFactory,
+
     ) {
         $this->_jsonHelper          = $jsonHelper;
         $this->_resultPageFactory   = $resultFactory;
         $this->_productRepository   = $productRepository;
-        $this->resultRawFactory     = $resultRawFactory;
+        // $this->resultRawFactory     = $resultRawFactory;
         $this->fileFactory          = $fileFactory;
+        $this->jsonResultFactory    = $jsonResultFactory;
         parent::__construct($context);
     }
 
@@ -73,14 +76,16 @@ class Export extends \Magento\Framework\App\Action\Action
         $productId     = (int)$this->getRequest()->getParam('id', 0);
         $product       = $this->_productRepository->getById($productId);
         $productConfig = $product->getData('json_configuration');
-
         if (!$productConfig) $productConfig = $this->_getBaseConfig($product);
 
-        $resultRaw = $this->resultRawFactory->create();
-        $resultRaw->setHeader("Content-Type", 'application/json');
-        $resultRaw->setContents($productConfig);
-
-        return $resultRaw;
+        // $resultRaw = $this->resultRawFactory->create();
+        // $resultRaw->setHeader("Content-Type", 'application/json');
+        // $resultRaw->setContents($productConfig);
+        // return $resultRaw;
+        
+        $result = $this->jsonResultFactory();
+        $result->setData($productConfig);
+        return $result;
 
     }
     
@@ -125,7 +130,5 @@ class Export extends \Magento\Framework\App\Action\Action
   }
 }
 JSON;
-        
     }
-
 }

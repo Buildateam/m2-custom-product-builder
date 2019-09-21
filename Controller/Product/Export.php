@@ -82,11 +82,11 @@ class Export extends \Magento\Framework\App\Action\Action
         // $resultRaw->setContents($productConfig);
         // return $resultRaw;
         
-        $productConfigObject = json_decode($productConfig);
-        $productConfigObject['settings']['fonts']['available'] = [];
+        // $productConfigObject = json_decode($productConfig);
+        $productConfig['settings']['fonts']['available'] = [];
         // unset($productConfigObject['settings']['fonts']['available']);
         $result = $this->jsonResultFactory();
-        $result->setData($productConfigObject);
+        $result->setData($productConfig);
         return $result;
 
     }

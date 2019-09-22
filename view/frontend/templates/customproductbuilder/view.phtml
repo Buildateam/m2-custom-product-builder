@@ -46,6 +46,8 @@
 
 <?php if (!(bool)$product->getData('json_configuration')) return; ?>
 
+<script type="text/json" id="cpb-product-config"><?= $product->getData('json_configuration') ?></script>
+
 <style>
     .product-info-main, .product.media{ display:none; }
 </style>

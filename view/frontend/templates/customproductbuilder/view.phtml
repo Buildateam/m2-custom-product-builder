@@ -42,9 +42,13 @@
 ?>
 
 <?php $product = $block->getProduct(); ?>
-<?php if (!$product) return; ?>
+<?php if (!$product) {
+    return;
+} ?>
 
-<?php if (!(bool)$product->getData('json_configuration')) return; ?>
+<?php if (!(bool)$product->getData('json_configuration')) {
+    return;
+} ?>
 
 <style>
     .product-info-main, .product.media{ display:none; }
@@ -60,7 +64,7 @@
 </div>
 
 <?php if ($block->getCpbProductDistSource()): ?>
-<script type="application/javascript" id="cpb-product-dist" src="<?php echo $block->getCpbProductDistSource() ?>"></script>
+    <script type="application/javascript" id="cpb-product-dist" src="<?php echo $block->getCpbProductDistSource() ?>"></script>
 <?php else: ?>
     <script type="text/x-magento-init">
     {
@@ -68,11 +72,12 @@
             "cpb-product":{}
         }
     }
+
     </script>
 <?php endif; ?>
 
 <?php if ($block->getCpbThemeDistSource()): ?>
-<script type="application/javascript" id="cpb-theme-dist" src="<?php echo $block->getCpbThemeDistSource() ?>"></script>
+    <script type="application/javascript" id="cpb-theme-dist" src="<?php echo $block->getCpbThemeDistSource() ?>"></script>
 <?php else: ?>
     <script type="text/x-magento-init">
     {
@@ -80,5 +85,6 @@
             "cpb-theme":{}
         }
     }
+
     </script>
 <?php endif; ?>

@@ -40,6 +40,7 @@
 namespace Buildateam\CustomProductBuilder\Model\Plugin;
 
 use \Magento\Framework\App\ProductMetadataInterface;
+use \Magento\Framework\Serialize\SerializerInterface;
 
 class WishlistItem
 {
@@ -49,14 +50,23 @@ class WishlistItem
     protected $_isJsonInfoByRequest = true;
 
     /**
+     * @var SerializerInterface
+     */
+    protected $serializer;
+
+    /**
      * WishlistItem constructor.
      * @param ProductMetadataInterface $productMetadata
+     * @param SerializerInterface $serializer
      */
-    public function __construct(ProductMetadataInterface $productMetadata)
-    {
+    public function __construct(
+        ProductMetadataInterface $productMetadata,
+        SerializerInterface $serializer
+    ) {
         if (version_compare($productMetadata->getVersion(), '2.2.0', '<')) {
             $this->_isJsonInfoByRequest = false;
         }
+        $this->serializer = $serializer;
     }
 
     /**
@@ -74,7 +84,7 @@ class WishlistItem
                 if ($this->_isJsonInfoByRequest) {
                     $value = json_decode($option->getValue(), true);
                 } else {
-                    $value = @unserialize($option->getValue());
+                    $value = $this->serializer->unserialize($option->getValue());
                 }
 
                 if (!isset($value['technicalData'])) {
@@ -84,7 +94,7 @@ class WishlistItem
                 if ($this->_isJsonInfoByRequest) {
                     $value2 = json_decode($options2[$code]->getValue(), true);
                 } else {
-                    $value2 = @unserialize($options2[$code]->getValue());
+                    $value2 = $this->serializer->unserialize($options2[$code]->getValue());
                 }
 
                 if (!isset($options2[$code]) || $value2['technicalData'] != $value['technicalData']) {

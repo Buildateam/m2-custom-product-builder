@@ -22,11 +22,13 @@
  * @copyright  Copyright (c) 2016 Profit Soft (http://profit-soft.pro/)
  * @license    http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0 (Apache-2.0)
  */
+
 namespace Buildateam\CustomProductBuilder\CustomerData\Plugin;
 
 use Magento\Checkout\CustomerData\AbstractItem as BaseAbstractItem;
 use \Magento\Framework\App\ProductMetadataInterface;
 use Magento\Quote\Model\Quote\Item;
+use \Magento\Framework\Serialize\SerializerInterface;
 
 class AbstractItem
 {
@@ -35,11 +37,26 @@ class AbstractItem
      */
     protected $_isJsonInfoByRequest = true;
 
-    public function __construct(ProductMetadataInterface $productMetadata, \Magento\Quote\Model\Quote $quote)
-    {
+    /**
+     * @var SerializerInterface
+     */
+    protected $serializer;
+
+    /**
+     * AbstractItem constructor.
+     * @param ProductMetadataInterface $productMetadata
+     * @param \Magento\Quote\Model\Quote $quote
+     * @param SerializerInterface $serializer
+     */
+    public function __construct(
+        ProductMetadataInterface $productMetadata,
+        \Magento\Quote\Model\Quote $quote,
+        SerializerInterface $serializer
+    ) {
         if (version_compare($productMetadata->getVersion(), '2.2.0', '<')) {
             $this->_isJsonInfoByRequest = false;
         }
+        $this->serializer = $serializer;
     }
 
     public function aroundGetItemData(BaseAbstractItem $subject, callable $proceed, Item $item)
@@ -49,7 +66,7 @@ class AbstractItem
         if ($this->_isJsonInfoByRequest) {
             $productInfo = json_decode($buyRequest, true);
         } else {
-            $productInfo = @unserialize($buyRequest);
+            $productInfo = $this->serializer->unserialize($buyRequest);
         }
 
         $result = $proceed($item);

@@ -42,6 +42,7 @@ namespace Buildateam\CustomProductBuilder\Model\Plugin;
 use \Magento\Framework\App\ProductMetadataInterface;
 use \Magento\Quote\Model\Quote\Item;
 use \Buildateam\CustomProductBuilder\Model\ShareableLinksFactory;
+use \Magento\Framework\Serialize\SerializerInterface;
 
 class QuoteItem
 {
@@ -55,11 +56,23 @@ class QuoteItem
      */
     protected $_isJsonInfoByRequest = true;
 
+    /**
+     * @var SerializerInterface
+     */
+    protected $serializer;
+
+    /**
+     * QuoteItem constructor.
+     * @param ShareableLinksFactory $factory
+     * @param ProductMetadataInterface $productMetadata
+     * @param SerializerInterface $serializer
+     */
     public function __construct(
         ShareableLinksFactory $factory,
-        ProductMetadataInterface $productMetadata
-    )
-    {
+        ProductMetadataInterface $productMetadata,
+        SerializerInterface $serializer
+    ) {
+        $this->serializer = $serializer;
         $this->_shareLinksFactory = $factory;
         if (version_compare($productMetadata->getVersion(), '2.2.0', '<')) {
             $this->_isJsonInfoByRequest = false;
@@ -84,7 +97,7 @@ class QuoteItem
                 if ($this->_isJsonInfoByRequest) {
                     $value = json_decode($option->getValue(), true);
                 } else {
-                    $value = @unserialize($option->getValue());
+                    $value = $this->serializer->unserialize($option->getValue());
                 }
 
                 if (!isset($value['technicalData'])) {
@@ -94,7 +107,7 @@ class QuoteItem
                 if ($this->_isJsonInfoByRequest) {
                     $value2 = json_decode($options2[$code]->getValue(), true);
                 } else {
-                    $value2 = @unserialize($options2[$code]->getValue());
+                    $value2 = $this->serializer->unserialize($options2[$code]->getValue());
                 }
 
                 if (!isset($options2[$code]) || $value2['technicalData'] != $value['technicalData']) {
@@ -118,7 +131,7 @@ class QuoteItem
         if ($this->_isJsonInfoByRequest) {
             $productInfo = json_decode($buyRequest, true);
         } else {
-            $productInfo = @unserialize($buyRequest);
+            $productInfo = $this->serializer->unserialize($buyRequest);
         }
 
         if (isset($productInfo['configid'])) {

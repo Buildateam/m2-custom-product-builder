@@ -1,7 +1,9 @@
 <?php
+
 namespace Buildateam\CustomProductBuilder\Helper;
 
 use \Magento\Framework\App\ProductMetadataInterface;
+use \Magento\Framework\Serialize\SerializerInterface;
 
 class Json
 {
@@ -11,14 +13,23 @@ class Json
     protected $_isJsonInfoByRequest = true;
 
     /**
+     * @var SerializerInterface
+     */
+    protected $serializer;
+
+    /**
      * Json constructor.
      * @param ProductMetadataInterface $productMetadata
+     * @param SerializerInterface $serializer
      */
-    public function __construct(ProductMetadataInterface $productMetadata)
-    {
+    public function __construct(
+        ProductMetadataInterface $productMetadata,
+        SerializerInterface $serializer
+    ) {
         if (version_compare($productMetadata->getVersion(), '2.2.0', '<')) {
             $this->_isJsonInfoByRequest = false;
         }
+        $this->serializer = $serializer;
     }
 
     /**
@@ -30,7 +41,7 @@ class Json
         if ($this->_isJsonInfoByRequest) {
             $result = json_encode($array);
         } else {
-            $result = @serialize($array);
+            $result = $this->serializer->serialize($array);
         }
         return $result;
     }
@@ -44,9 +55,8 @@ class Json
         if ($this->_isJsonInfoByRequest) {
             $result = json_decode($json, true);
         } else {
-            $result = @unserialize($json);
+            $result = $this->serializer->unserialize($json);
         }
         return $result;
     }
-
 }

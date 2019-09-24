@@ -81,8 +81,7 @@ class Data extends AbstractHelper
         Filesystem $fileSystem,
         StoreManagerInterface $storeManager,
         Random $random
-    )
-    {
+    ) {
         $this->_fileSystem = $fileSystem;
         $this->_storeManager = $storeManager;
         $this->_mathRandom = $random;
@@ -161,9 +160,9 @@ class Data extends AbstractHelper
      */
     public function uploadImage($base64Image, $frontImage = false)
     {
-        $mediaPath = $this->_fileSystem
-            ->getDirectoryRead(DirectoryList::MEDIA)
-            ->getAbsolutePath('catalog/product/customproductbuilder/' . ($frontImage ? 'variation' : 'configuration'));
+        $media = $this->_fileSystem
+            ->getDirectoryWrite(DirectoryList::MEDIA);
+        $mediaPath = $media->getAbsolutePath('catalog/product/customproductbuilder/' . ($frontImage ? 'variation' : 'configuration'));
 
         if (!file_exists($mediaPath)) {
             mkdir($mediaPath, 0777, true);
@@ -176,11 +175,10 @@ class Data extends AbstractHelper
         }
 
         $fileName = $variationId . '.' . $this->_request->getParam('type');
-        @file_put_contents("$mediaPath/$fileName", base64_decode($base64Image));
+        $media->writeFile("$mediaPath/$fileName", base64_decode($base64Image));
 
         return ($frontImage ? '' : 'catalog/product/') . 'customproductbuilder/' . ($frontImage ? 'variation/' : 'configuration/') . $fileName;
     }
-
 
     /**
      * @param $path

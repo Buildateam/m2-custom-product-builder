@@ -46,6 +46,7 @@ use \Magento\Catalog\Model\ProductRepository;
 use \Magento\Framework\App\ProductMetadataInterface;
 use \Magento\Framework\Event\ObserverInterface;
 use \Magento\Framework\Event\Observer as EventObserver;
+use \Magento\Framework\Serialize\SerializerInterface;
 
 class ProductFinalPrice implements ObserverInterface
 {
@@ -70,6 +71,11 @@ class ProductFinalPrice implements ObserverInterface
     protected $_messageManager;
 
     /**
+     * @var SerializerInterface
+     */
+    protected $serializer;
+
+    /**
      * ProductFinalPrice constructor.
      * @param ProductRepository $productRepository
      * @param ProductMetadataInterface $productMetadata
@@ -78,13 +84,15 @@ class ProductFinalPrice implements ObserverInterface
     public function __construct(
         ProductRepository $productRepository,
         ProductMetadataInterface $productMetadata,
-        ManagerInterface $massageManager
+        ManagerInterface $massageManager,
+        SerializerInterface $serializer
     ) {
         $this->_productRepository = $productRepository;
         if (version_compare($productMetadata->getVersion(), '2.2.0', '<')) {
             $this->_isJsonInfoByRequest = false;
         }
         $this->_messageManager = $massageManager;
+        $this->serializer = $serializer;
     }
 
     /**
@@ -104,7 +112,7 @@ class ProductFinalPrice implements ObserverInterface
         if ($this->_isJsonInfoByRequest) {
             $productInfo = json_decode($buyRequest, true);
         } else {
-            $productInfo = @unserialize($buyRequest);
+            $productInfo = $this->serializer->unserialize($buyRequest);
         }
 
         if (!isset($productInfo['technicalData'])) {

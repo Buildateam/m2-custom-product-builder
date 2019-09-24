@@ -127,7 +127,10 @@ class QuoteItem
      */
     public function afterSetProduct(Item $subject, $result)
     {
-        $buyRequest = $subject->getProduct()->getCustomOption('info_buyRequest')->getValue();
+        if ($buyRequest = $subject->getProduct()->getCustomOption('info_buyRequest') != null) {
+            $buyRequest = $subject->getProduct()->getCustomOption('info_buyRequest')->getValue();
+        }
+
         if ($this->_isJsonInfoByRequest) {
             $productInfo = json_decode($buyRequest, true);
         } else {

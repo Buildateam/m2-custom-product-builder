@@ -9,6 +9,10 @@ use Buildateam\CustomProductBuilder\Helper\Data;
 use \Magento\Catalog\Model\ResourceModel\Product\Action;
 use \Magento\Store\Model\StoreManagerInterface;
 
+/**
+ * Class CheckoutSubmitAllAfter
+ * @package Buildateam\CustomProductBuilder\Observer
+ */
 class CheckoutSubmitAllAfter implements ObserverInterface
 {
     /**
@@ -52,7 +56,7 @@ class CheckoutSubmitAllAfter implements ObserverInterface
 
     /**
      * @param Observer $observer
-     * @throws \Exception
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
     public function execute(Observer $observer)
     {
@@ -79,7 +83,11 @@ class CheckoutSubmitAllAfter implements ObserverInterface
                             foreach ($jsonConfig['data']['inventory'] as $key => $value) {
                                 if ($value['sku'] == $sku) {
                                     $jsonConfig['data']['inventory'][$key]['qty'] -= $infoBuyRequest['qty'];
-                                    $this->productAction->updateAttributes([$product->getId()], ['json_configuration' => $this->serializer->serialize($jsonConfig)], $storeId);
+                                    $this->productAction->updateAttributes(
+                                        [$product->getId()],
+                                        ['json_configuration' => $this->serializer->serialize($jsonConfig)],
+                                        $storeId
+                                    );
                                     break;
                                 }
                             }

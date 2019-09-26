@@ -4,6 +4,10 @@ namespace Buildateam\CustomProductBuilder\Plugin;
 
 use Magento\Catalog\Controller\Adminhtml\Product\Save as Subject;
 
+/**
+ * Class BeforeSave
+ * @package Buildateam\CustomProductBuilder\Plugin
+ */
 class BeforeSave
 {
     /**

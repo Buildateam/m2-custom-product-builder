@@ -25,6 +25,10 @@
 
 namespace Buildateam\CustomProductBuilder\Block\Adminhtml\Product\Edit\Button;
 
+/**
+ * Class Help
+ * @package Buildateam\CustomProductBuilder\Block\Adminhtml\Product\Edit\Button
+ */
 class Help extends Save
 {
     /**

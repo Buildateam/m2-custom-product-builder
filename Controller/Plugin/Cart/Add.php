@@ -22,8 +22,13 @@
  * @copyright  Copyright (c) 2016 Profit Soft (http://profit-soft.pro/)
  * @license    http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0 (Apache-2.0)
  */
+
 namespace Buildateam\CustomProductBuilder\Controller\Plugin\Cart;
 
+/**
+ * Class Add
+ * @package Buildateam\CustomProductBuilder\Controller\Plugin\Cart
+ */
 class Add extends \Magento\Checkout\Controller\Cart\Add
 {
     /**
@@ -42,9 +47,11 @@ class Add extends \Magento\Checkout\Controller\Cart\Add
         try {
             if (isset($params['qty'])) {
                 $filter = new \Zend_Filter_LocalizedToNormalized(
-                    ['locale' => $this->_objectManager->get(
-                        \Magento\Framework\Locale\ResolverInterface::class
-                    )->getLocale()]
+                    [
+                        'locale' => $this->_objectManager->get(
+                            \Magento\Framework\Locale\ResolverInterface::class
+                        )->getLocale()
+                    ]
                 );
                 $params['qty'] = $filter->filter($params['qty']);
             }
@@ -65,9 +72,11 @@ class Add extends \Magento\Checkout\Controller\Cart\Add
                     if ($data['qty'] != 0) {
                         $params['properties']['Size'] = $data['label'];
                         $filter = new \Zend_Filter_LocalizedToNormalized(
-                            ['locale' => $this->_objectManager->get(
-                                \Magento\Framework\Locale\ResolverInterface::class
-                            )->getLocale()]
+                            [
+                                'locale' => $this->_objectManager->get(
+                                    \Magento\Framework\Locale\ResolverInterface::class
+                                )->getLocale()
+                            ]
                         );
                         $params['qty'] = $filter->filter($data['qty']);
                         $params['technicalData']['breakdownData'] = $data;

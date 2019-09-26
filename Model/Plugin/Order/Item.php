@@ -22,10 +22,15 @@
  * @copyright  Copyright (c) 2016 Profit Soft (http://profit-soft.pro/)
  * @license    http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0 (Apache-2.0)
  */
+
 namespace Buildateam\CustomProductBuilder\Model\Plugin\Order;
 
 use \Buildateam\CustomProductBuilder\Model\ShareableLinksFactory;
 
+/**
+ * Class Item
+ * @package Buildateam\CustomProductBuilder\Model\Plugin\Order
+ */
 class Item
 {
     /**
@@ -39,8 +44,7 @@ class Item
      */
     public function __construct(
         ShareableLinksFactory $factory
-    )
-    {
+    ) {
         $this->_shareLinksFactory = $factory;
     }
 

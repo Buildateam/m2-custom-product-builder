@@ -33,7 +33,14 @@
  * all use of the Buildateam Software and destroy all copies, full or partial, of the Buildateam
  * Software.
  *
- * THIS SOFTWARE IS PROVIDED BY COPYRIGHT HOLDER "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL COPYRIGHT HOLDER BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. THE SOFTWARE IS NOT INTENDED FOR USE IN WHICH THE FAILURE OF
+ * THIS SOFTWARE IS PROVIDED BY COPYRIGHT HOLDER "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING,
+ * BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+ * IN NO EVENT SHALL COPYRIGHT HOLDER BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
+ * OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * THE SOFTWARE IS NOT INTENDED FOR USE IN WHICH THE FAILURE OF
  * THE SOFTWARE COULD LEAD TO DEATH, PERSONAL INJURY, OR SEVERE PHYSICAL OR ENVIRONMENTAL DAMAGE.
  */
 
@@ -41,9 +48,14 @@ namespace Buildateam\CustomProductBuilder\Controller\Adminhtml\Product;
 
 use Magento\Backend\App\Action\Context;
 use Magento\Framework\Controller\ResultFactory;
+use Magento\Framework\Filesystem;
 use \Magento\Framework\Logger\Monolog;
 use Exception;
 
+/**
+ * Class ImportFile
+ * @package Buildateam\CustomProductBuilder\Controller\Adminhtml\Product
+ */
 class ImportFile extends \Magento\Backend\App\Action
 {
 
@@ -67,8 +79,7 @@ class ImportFile extends \Magento\Backend\App\Action
     public function __construct(
         Context $context,
         Monolog $logger
-    )
-    {
+    ) {
         $this->_resultFactory = $context->getResultFactory();
         parent::__construct($context);
     }
@@ -77,7 +88,7 @@ class ImportFile extends \Magento\Backend\App\Action
     {
         $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
         $productId = $this->getRequest()->getParam('id');
-        $product = $objectManager->create('Magento\Catalog\Model\Product')->load($productId);
+        $product = $objectManager->create(\Magento\Catalog\Model\Product::class)->load($productId);
 
         $file = $this->getRequest()->getFiles('product')['file'];
         $jsonData = !empty($file['tmp_name'])
@@ -87,7 +98,8 @@ class ImportFile extends \Magento\Backend\App\Action
         $response = $this->_resultFactory->create(ResultFactory::TYPE_JSON);
         if (!empty($jsonData)) {
             $this->_jsonProductContent = $jsonData;
-            $validate = $this->_objectManager->create('Buildateam\CustomProductBuilder\Helper\Data')->validate($this->_jsonProductContent);
+            $validate = $this->_objectManager->create(\Buildateam\CustomProductBuilder\Helper\Data::class)
+                ->validate($this->_jsonProductContent);
 
             if (isset($this->_jsonProductContent) && !empty($this->_jsonProductContent) && $validate) {
                 $result = [

@@ -9,6 +9,10 @@ use \Magento\Catalog\Model\ResourceModel\Product\Action;
 use \Magento\Store\Model\StoreManagerInterface;
 use Buildateam\CustomProductBuilder\Helper\Data;
 
+/**
+ * Class CreditmemoRefund
+ * @package Buildateam\CustomProductBuilder\Observer
+ */
 class CreditmemoRefund implements ObserverInterface
 {
     /**
@@ -82,7 +86,11 @@ class CreditmemoRefund implements ObserverInterface
                                 foreach ($jsonConfig['data']['inventory'] as $key => $value) {
                                     if ($value['sku'] == $sku) {
                                         $jsonConfig['data']['inventory'][$key]['qty'] += $item->getQty();
-                                        $this->productAction->updateAttributes([$product->getId()], ['json_configuration' => $this->serializer->serialize($jsonConfig)], $storeId);
+                                        $this->productAction->updateAttributes(
+                                            [$product->getId()],
+                                            ['json_configuration' => $this->serializer->serialize($jsonConfig)],
+                                            $storeId
+                                        );
                                         break;
                                     }
                                 }

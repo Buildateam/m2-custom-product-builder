@@ -33,7 +33,14 @@
  * all use of the Buildateam Software and destroy all copies, full or partial, of the Buildateam
  * Software.
  *
- * THIS SOFTWARE IS PROVIDED BY COPYRIGHT HOLDER "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL COPYRIGHT HOLDER BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. THE SOFTWARE IS NOT INTENDED FOR USE IN WHICH THE FAILURE OF
+ * THIS SOFTWARE IS PROVIDED BY COPYRIGHT HOLDER "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING,
+ * BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+ * IN NO EVENT SHALL COPYRIGHT HOLDER BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
+ * OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * THE SOFTWARE IS NOT INTENDED FOR USE IN WHICH THE FAILURE OF
  * THE SOFTWARE COULD LEAD TO DEATH, PERSONAL INJURY, OR SEVERE PHYSICAL OR ENVIRONMENTAL DAMAGE.
  */
 
@@ -49,6 +56,10 @@ use \Buildateam\CustomProductBuilder\Model\ShareableLinksFactory;
 use \Buildateam\CustomProductBuilder\Helper\Data;
 use \Magento\Store\Model\StoreManagerInterface;
 
+/**
+ * Class AddToCartValidator
+ * @package Buildateam\CustomProductBuilder\Plugin
+ */
 class AddToCartValidator
 {
     /**
@@ -86,7 +97,16 @@ class AddToCartValidator
      */
     protected $_storeManager;
 
-
+    /**
+     * AddToCartValidator constructor.
+     * @param Session $checkoutSession
+     * @param ShareableLinksFactory $factory
+     * @param Data $helper
+     * @param Random $random
+     * @param Monolog $logger
+     * @param JsonHelper $jsonHelper
+     * @param StoreManagerInterface $storeManager
+     */
     public function __construct(
         Session $checkoutSession,
         ShareableLinksFactory $factory,
@@ -95,8 +115,7 @@ class AddToCartValidator
         Monolog $logger,
         JsonHelper $jsonHelper,
         StoreManagerInterface $storeManager
-    )
-    {
+    ) {
         $this->_checkoutSession = $checkoutSession;
         $this->_mathRandom = $random;
         $this->_shareLinksFactory = $factory;
@@ -118,7 +137,7 @@ class AddToCartValidator
             $payload = json_decode(file_get_contents('php://input'), true);
             foreach (['quantity', 'technicalData', 'properties', 'configid', 'type'] as $paramKey) {
                 if (isset($payload[$paramKey])) {
-                    if($paramKey == 'properties') {
+                    if ($paramKey == 'properties') {
                         if (isset($payload[$paramKey]['_image'])) {
                             unset($payload[$paramKey]['_image']);
                         }
@@ -148,12 +167,12 @@ class AddToCartValidator
 
                 $imagePath = $this->_helper->uploadImage($payload['buffer'], true);
                 $configModel = $this->_shareLinksFactory->create();
-                $configModel->setData(array(
+                $configModel->setData([
                     'product_id' => $request->getParam('product'),
                     'technical_data' => $this->_jsonHelper->jsonEncode($request->getParam('technicalData')),
                     'variation_id' => $request->getParam('configid'),
                     'image' => $imagePath
-                ));
+                ]);
 
                 try {
                     $configModel->save();
@@ -181,5 +200,4 @@ class AddToCartValidator
 
         return $proceed($request);
     }
-
 }

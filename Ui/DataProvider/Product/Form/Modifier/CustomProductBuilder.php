@@ -33,7 +33,14 @@
  * all use of the Buildateam Software and destroy all copies, full or partial, of the Buildateam
  * Software.
  *
- * THIS SOFTWARE IS PROVIDED BY COPYRIGHT HOLDER "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL COPYRIGHT HOLDER BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. THE SOFTWARE IS NOT INTENDED FOR USE IN WHICH THE FAILURE OF
+ * THIS SOFTWARE IS PROVIDED BY COPYRIGHT HOLDER "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING,
+ * BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+ * IN NO EVENT SHALL COPYRIGHT HOLDER BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
+ * OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * THE SOFTWARE IS NOT INTENDED FOR USE IN WHICH THE FAILURE OF
  * THE SOFTWARE COULD LEAD TO DEATH, PERSONAL INJURY, OR SEVERE PHYSICAL OR ENVIRONMENTAL DAMAGE.
  */
 
@@ -82,8 +89,7 @@ class CustomProductBuilder extends AbstractModifier
         ArrayManager $arrayManager,
         Context $context,
         ProductRepository $productRepository
-    )
-    {
+    ) {
         $this->locator = $locator;
         $this->arrayManager = $arrayManager;
         $this->context = $context;
@@ -105,7 +111,6 @@ class CustomProductBuilder extends AbstractModifier
         return $meta;
     }
 
-
     /**
      * {@inheritdoc}
      */
@@ -113,7 +118,6 @@ class CustomProductBuilder extends AbstractModifier
     {
         return $data;
     }
-
 
     /**
      * Create slide-out panel for modal editor
@@ -159,8 +163,14 @@ class CustomProductBuilder extends AbstractModifier
                                     'componentType' => 'container',
                                     'component' => 'Magento_Ui/js/form/components/insert-form',
                                     'dataScope' => '',
-                                    'update_url' => $this->context->getUrl()->getUrl('mui/index/render_handle', $params),
-                                    'render_url' => $this->context->getUrl()->getUrl('mui/index/render_handle', $params),
+                                    'update_url' => $this->context->getUrl()->getUrl(
+                                        'mui/index/render_handle',
+                                        $params
+                                    ),
+                                    'render_url' => $this->context->getUrl()->getUrl(
+                                        'mui/index/render_handle',
+                                        $params
+                                    ),
                                     'autoRender' => false,
                                     'ns' => 'custom_product_builder',
                                     'externalProvider' => 'custom_product_builder.builder_form_data_source',
@@ -175,7 +185,11 @@ class CustomProductBuilder extends AbstractModifier
         );
     }
 
-
+    /**
+     * @param $meta
+     * @return array
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     */
     protected function customizeCustomProductBuilderField($meta)
     {
         $productId = (int)$this->context->getRequest()->getParam('id', 0);
@@ -277,9 +291,15 @@ class CustomProductBuilder extends AbstractModifier
                                 'sortOrder' => 30,
                                 'actions' => [
                                     [
-                                        'onclick' => sprintf("setLocation('%s');", $this->context->getUrl()->getUrl('customproductbuilder/product/exportFile', [
-                                            'id' => $this->context->getRequest()->getParam('id')
-                                        ]))
+                                        'onclick' => sprintf(
+                                            "setLocation('%s');",
+                                            $this->context->getUrl()->getUrl(
+                                                'customproductbuilder/product/exportFile',
+                                                [
+                                                    'id' => $this->context->getRequest()->getParam('id')
+                                                ]
+                                            )
+                                        )
                                     ]
                                 ],
                             ],
@@ -305,9 +325,12 @@ class CustomProductBuilder extends AbstractModifier
                                 'sortOrder' => 40,
                                 'allowedExtensions' => 'json',
                                 'uploaderConfig' => [
-                                    'url' => $this->context->getUrl()->getUrl('customproductbuilder/product/importFile', [
-                                        'id' => $this->context->getRequest()->getParam('id')
-                                    ])
+                                    'url' => $this->context->getUrl()->getUrl(
+                                        'customproductbuilder/product/importFile',
+                                        [
+                                            'id' => $this->context->getRequest()->getParam('id')
+                                        ]
+                                    )
                                 ]
                             ],
                         ],
@@ -317,7 +340,7 @@ class CustomProductBuilder extends AbstractModifier
         ];
 
         if (!$productConfig) {
-            unset ($cpbMeta['children']['custom_product_builder_export']);
+            unset($cpbMeta['children']['custom_product_builder_export']);
         }
 
         $meta = $this->arrayManager->merge(

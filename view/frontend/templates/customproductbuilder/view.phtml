@@ -57,17 +57,17 @@
 </style>
 
 <div id="product-builder" engine="magento"
-     shop-name="<?php echo $block->getBaseUrl() ?>"
-     product-id="<?php echo $block->getProduct()->getId() ?>"
-     styles-path="<?php echo $block->getViewFileUrl('Buildateam_CustomProductBuilder::css/cpb.css') ?>"
-     product-sku="<?php echo $block->escapeHtml($product->getSku()) ?>"
-     product-name="<?php echo $block->escapeHtml($product->getName()) ?>"
-     product-short-description="<?php echo strval($product->getShortDescription()) ?>">
+     shop-name="<?= $block->getBaseUrl() ?>"
+     product-id="<?= $block->getProduct()->getId() ?>"
+     styles-path="<?= $block->getViewFileUrl('Buildateam_CustomProductBuilder::css/cpb.css') ?>"
+     product-sku="<?= $block->escapeHtml($product->getSku()) ?>"
+     product-name="<?= $block->escapeHtml($product->getName()) ?>"
+     product-short-description="<?= (string)$product->getShortDescription() ?>">
 </div>
 
-<?php if ($block->getCpbProductDistSource()): ?>
-    <script type="application/javascript" id="cpb-product-dist" src="<?php echo $block->getCpbProductDistSource() ?>"></script>
-<?php else: ?>
+<?php if ($block->getCpbProductDistSource()) : ?>
+    <script type="application/javascript" id="cpb-product-dist" src="<?= $block->getCpbProductDistSource() ?>"></script>
+<?php else : ?>
     <script type="text/x-magento-init">
     {
         "*": {
@@ -78,9 +78,9 @@
     </script>
 <?php endif; ?>
 
-<?php if ($block->getCpbThemeDistSource()): ?>
-    <script type="application/javascript" id="cpb-theme-dist" src="<?php echo $block->getCpbThemeDistSource() ?>"></script>
-<?php else: ?>
+<?php if ($block->getCpbThemeDistSource()) : ?>
+    <script type="application/javascript" id="cpb-theme-dist" src="<?= $block->getCpbThemeDistSource() ?>"></script>
+<?php else : ?>
     <script type="text/x-magento-init">
     {
         "*": {

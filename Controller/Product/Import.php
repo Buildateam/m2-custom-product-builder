@@ -33,7 +33,14 @@
  * all use of the Buildateam Software and destroy all copies, full or partial, of the Buildateam
  * Software.
  *
- * THIS SOFTWARE IS PROVIDED BY COPYRIGHT HOLDER "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL COPYRIGHT HOLDER BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. THE SOFTWARE IS NOT INTENDED FOR USE IN WHICH THE FAILURE OF
+ * THIS SOFTWARE IS PROVIDED BY COPYRIGHT HOLDER "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING,
+ * BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+ * IN NO EVENT SHALL COPYRIGHT HOLDER BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
+ * OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * THE SOFTWARE IS NOT INTENDED FOR USE IN WHICH THE FAILURE OF
  * THE SOFTWARE COULD LEAD TO DEATH, PERSONAL INJURY, OR SEVERE PHYSICAL OR ENVIRONMENTAL DAMAGE.
  */
 
@@ -42,16 +49,45 @@ namespace Buildateam\CustomProductBuilder\Controller\Product;
 use \Magento\Framework\Controller\ResultFactory;
 use \Magento\Backend\App as AdminApp;
 
-
+/**
+ * Class Import
+ * @package Buildateam\CustomProductBuilder\Controller\Product
+ */
 class Import extends \Magento\Framework\App\Action\Action
 {
+    /**
+     * @var \Magento\Framework\View\Result\PageFactory
+     */
     protected $_resultPageFactory;
+
+    /**
+     * @var \Magento\Catalog\Model\ProductRepository
+     */
     protected $_productRepository;
+
+    /**
+     * @var \Magento\Framework\Json\Helper\Data
+     */
     protected $_jsonHelper;
+    /**
+     * @var \Buildateam\CustomProductBuilder\Helper\Data
+     */
     protected $_helper;
-    protected $_jsonProductContent;
+
+    /**
+     * @var \Magento\Backend\Model\UrlInterface
+     */
     protected $_auth;
 
+    /**
+     * Import constructor.
+     * @param \Magento\Framework\App\Action\Context $context
+     * @param \Magento\Framework\Json\Helper\Data $jsonHelper
+     * @param \Magento\Framework\View\Result\PageFactory $resultFactory
+     * @param \Magento\Catalog\Model\ProductRepository $productRepository
+     * @param \Buildateam\CustomProductBuilder\Helper\Data $helper
+     * @param AdminApp\Action\Context $adminContext
+     */
     public function __construct(
         \Magento\Framework\App\Action\Context $context,
         \Magento\Framework\Json\Helper\Data $jsonHelper,
@@ -59,8 +95,7 @@ class Import extends \Magento\Framework\App\Action\Action
         \Magento\Catalog\Model\ProductRepository $productRepository,
         \Buildateam\CustomProductBuilder\Helper\Data $helper,
         AdminApp\Action\Context $adminContext
-    )
-    {
+    ) {
         $this->_auth = $adminContext->getBackendUrl();
         $this->_jsonHelper = $jsonHelper;
         $this->_resultPageFactory = $resultFactory;
@@ -69,6 +104,10 @@ class Import extends \Magento\Framework\App\Action\Action
         parent::__construct($context);
     }
 
+    /**
+     * @return \Magento\Framework\App\ResponseInterface|\Magento\Framework\Controller\ResultInterface
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     */
     public function execute()
     {
         $productId = (int)$this->getRequest()->getParam('id', 0);
@@ -137,5 +176,4 @@ class Import extends \Magento\Framework\App\Action\Action
             )
         );
     }
-
 }

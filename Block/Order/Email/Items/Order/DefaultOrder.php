@@ -6,6 +6,10 @@ use Magento\Framework\Registry;
 use Magento\Framework\View\Element\Template\Context;
 use Magento\Sales\Block\Order\Email\Items\Order\DefaultOrder as MagentoDefaultOrder;
 
+/**
+ * Class DefaultOrder
+ * @package Buildateam\CustomProductBuilder\Block\Order\Email\Items\Order
+ */
 class DefaultOrder extends MagentoDefaultOrder
 {
     /**
@@ -24,8 +28,7 @@ class DefaultOrder extends MagentoDefaultOrder
         Context $context,
         Registry $registry,
         array $data = []
-    )
-    {
+    ) {
         $this->_registry = $registry;
         parent::__construct($context, $data);
     }

@@ -33,20 +33,56 @@
  * all use of the Buildateam Software and destroy all copies, full or partial, of the Buildateam
  * Software.
  *
- * THIS SOFTWARE IS PROVIDED BY COPYRIGHT HOLDER "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL COPYRIGHT HOLDER BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. THE SOFTWARE IS NOT INTENDED FOR USE IN WHICH THE FAILURE OF
+ * THIS SOFTWARE IS PROVIDED BY COPYRIGHT HOLDER "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+ * INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+ * IN NO EVENT SHALL COPYRIGHT HOLDER BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
+ * OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
+ * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * THE SOFTWARE IS NOT INTENDED FOR USE IN WHICH THE FAILURE OF
  * THE SOFTWARE COULD LEAD TO DEATH, PERSONAL INJURY, OR SEVERE PHYSICAL OR ENVIRONMENTAL DAMAGE.
  */
 
 namespace Buildateam\CustomProductBuilder\Controller\Product;
 
-use \Magento\Framework\Controller\ResultFactory;
-
+/**
+ * Class Export
+ * @package Buildateam\CustomProductBuilder\Controller\Product
+ */
 class Export extends \Magento\Framework\App\Action\Action
 {
+    /**
+     * @var \Magento\Framework\View\Result\PageFactory
+     */
     protected $_resultPageFactory;
+
+    /**
+     * @var \Magento\Catalog\Model\ProductRepository
+     */
     protected $_productRepository;
+
+    /**
+     * @var \Magento\Framework\Json\Helper\Data
+     */
     protected $_jsonHelper;
 
+    /**
+     * @var \Magento\Framework\Controller\Result\RawFactory
+     */
+    protected $resultRawFactory;
+
+    /**
+     * Export constructor.
+     * @param \Magento\Framework\App\Action\Context $context
+     * @param \Magento\Framework\Json\Helper\Data $jsonHelper
+     * @param \Magento\Framework\View\Result\PageFactory $resultFactory
+     * @param \Magento\Catalog\Model\ProductRepository $productRepository
+     * @param \Magento\Framework\Controller\Result\RawFactory $resultRawFactory
+     * @param \Magento\Framework\App\Response\Http\FileFactory $fileFactory
+     */
     public function __construct(
         \Magento\Framework\App\Action\Context $context,
         \Magento\Framework\Json\Helper\Data $jsonHelper,
@@ -54,12 +90,12 @@ class Export extends \Magento\Framework\App\Action\Action
         \Magento\Catalog\Model\ProductRepository $productRepository,
         \Magento\Framework\Controller\Result\RawFactory $resultRawFactory,
         \Magento\Framework\App\Response\Http\FileFactory $fileFactory
-    ) { 
-        $this->_jsonHelper          = $jsonHelper;
-        $this->_resultPageFactory   = $resultFactory;
-        $this->_productRepository   = $productRepository;
-        $this->resultRawFactory     = $resultRawFactory;
-        $this->fileFactory          = $fileFactory;
+    ) {
+        $this->_jsonHelper = $jsonHelper;
+        $this->_resultPageFactory = $resultFactory;
+        $this->_productRepository = $productRepository;
+        $this->resultRawFactory = $resultRawFactory;
+        $this->fileFactory = $fileFactory;
         parent::__construct($context);
     }
 
@@ -69,21 +105,22 @@ class Export extends \Magento\Framework\App\Action\Action
      */
     public function execute()
     {
-        $productId     = (int)$this->getRequest()->getParam('id', 0);
-        $product       = $this->_productRepository->getById($productId);
+        $productId = (int)$this->getRequest()->getParam('id', 0);
+        $product = $this->_productRepository->getById($productId);
         $productConfig = $product->getData('json_configuration');
-        if (!$productConfig) $productConfig = $this->_getBaseConfig($product);
+        if (!$productConfig) {
+            $productConfig = $this->_getBaseConfig($product);
+        }
         $productConfigObject = json_decode($productConfig);
         $resultRaw = $this->resultRawFactory->create();
         $resultRaw->setHeader("Content-Type", 'application/json');
-        //var_dump($productId, $productConfigObject); 
-        if(!$productConfigObject){
-            $resultRaw->setHttpResponseCode(\Magento\Framework\Webapi\Exception::HTTP_INTERNAL_ERROR);     
+        if (!$productConfigObject) {
+            $resultRaw->setHttpResponseCode(\Magento\Framework\Webapi\Exception::HTTP_INTERNAL_ERROR);
             $resultRaw->setContents(json_encode([
-                'status': 500,
+                'status' => 500,
                 'error' => 'ERROR PARSING PRODUCT CONFIG JSON',
                 'data' => $productConfig
-                ]));
+            ]));
         } else {
             // SPACE SAVING: removing available fonts since em already present in cpb-frontend
             $productConfigObject->settings->fonts->available = [];
@@ -93,10 +130,10 @@ class Export extends \Magento\Framework\App\Action\Action
     }
 
     protected function _getBaseConfig($product)
-    {   
+    {
         $name = json_encode($product->getName());
         $price = json_encode((float)$product->getPrice());
-        
+
         return <<<JSON
 { 
   "settings": {

@@ -22,6 +22,7 @@
  * @copyright  Copyright (c) 2016 Profit Soft (http://profit-soft.pro/)
  * @license    http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0 (Apache-2.0)
  */
+
 namespace Buildateam\CustomProductBuilder\Observer;
 
 use \Magento\Framework\Event\Observer;
@@ -31,6 +32,10 @@ use \Magento\Framework\Exception\LocalizedException;
 use \Magento\Framework\View\Context;
 use \Magento\Framework\Registry;
 
+/**
+ * Class BeforeProductView
+ * @package Buildateam\CustomProductBuilder\Observer
+ */
 class BeforeProductView implements ObserverInterface
 {
     /**
@@ -64,7 +69,7 @@ class BeforeProductView implements ObserverInterface
     public function execute(Observer $observer)
     {
         try {
-            if(null !== $product = $this->_coreRegistry->registry('product')) {
+            if (null !== $product = $this->_coreRegistry->registry('product')) {
                 if ($product->getData('json_configuration')) {
                     $this->_pageConfig->setElementAttribute(
                         'html',

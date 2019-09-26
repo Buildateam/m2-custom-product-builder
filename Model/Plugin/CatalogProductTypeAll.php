@@ -33,7 +33,14 @@
  * all use of the Buildateam Software and destroy all copies, full or partial, of the Buildateam
  * Software.
  *
- * THIS SOFTWARE IS PROVIDED BY COPYRIGHT HOLDER "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL COPYRIGHT HOLDER BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. THE SOFTWARE IS NOT INTENDED FOR USE IN WHICH THE FAILURE OF
+ * THIS SOFTWARE IS PROVIDED BY COPYRIGHT HOLDER "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING,
+ * BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+ * IN NO EVENT SHALL COPYRIGHT HOLDER BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
+ * OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * THE SOFTWARE IS NOT INTENDED FOR USE IN WHICH THE FAILURE OF
  * THE SOFTWARE COULD LEAD TO DEATH, PERSONAL INJURY, OR SEVERE PHYSICAL OR ENVIRONMENTAL DAMAGE.
  */
 
@@ -44,6 +51,10 @@ use \Magento\Framework\App\ProductMetadataInterface;
 use \Magento\Framework\DataObject;
 use \Magento\Framework\Serialize\SerializerInterface;
 
+/**
+ * Class CatalogProductTypeAll
+ * @package Buildateam\CustomProductBuilder\Model\Plugin
+ */
 class CatalogProductTypeAll
 {
     /**
@@ -93,11 +104,15 @@ class CatalogProductTypeAll
     {
         $optionArr = $proceed($product);
         if ($additionalOptions = $product->getCustomOption('additional_options')) {
-            $optionArr['additional_options'] = $this->_isJsonInfoByRequest ? json_decode($additionalOptions->getValue(), true) : $this->serializer->unserialize($additionalOptions->getValue());
+            $optionArr['additional_options'] = $this->_isJsonInfoByRequest ?
+                json_decode($additionalOptions->getValue(), true) :
+                $this->serializer->unserialize($additionalOptions->getValue());
         }
 
         if ($cpbOptions = $product->getCustomOption('options')) {
-            $optionArr['options'] = $this->_isJsonInfoByRequest ? json_decode($cpbOptions->getValue(), true) : $this->serializer->unserialize($cpbOptions->getValue());
+            $optionArr['options'] = $this->_isJsonInfoByRequest ?
+                json_decode($cpbOptions->getValue(), true) :
+                $this->serializer->unserialize($cpbOptions->getValue());
         }
 
         return $optionArr;
@@ -127,7 +142,7 @@ class CatalogProductTypeAll
     {
         /** @var Product $product */
         foreach ($result as &$product) {
-            if (is_null($product->getCustomOption('info_buyRequest'))) {
+            if ($product->getCustomOption('info_buyRequest') === null) {
                 continue;
             }
 
@@ -139,7 +154,8 @@ class CatalogProductTypeAll
                 $productInfo = $this->serializer->unserialize($buyRequest);
             }
 
-            if (!isset($productInfo['properties']) || (!isset($productInfo['technicalData']['breakdownData']) && $product->getCustomOption('additional_options'))) {
+            if (!isset($productInfo['properties']) || (!isset($productInfo['technicalData']['breakdownData'])
+                    && $product->getCustomOption('additional_options'))) {
                 continue;
             }
 
@@ -156,10 +172,12 @@ class CatalogProductTypeAll
                     'custom_view' => false,
                 ];
             };
-            $product->addCustomOption('additional_options', $this->_isJsonInfoByRequest ? json_encode($addOptions) : $this->serializer->serialize($addOptions));
+            $product->addCustomOption('additional_options', $this->_isJsonInfoByRequest ?
+                json_encode($addOptions) : $this->serializer->serialize($addOptions));
 
             $cpbOptions = [];
-            if (isset($productInfo['technicalData']['additionalData']['images']) && count($productInfo['technicalData']['additionalData']['images'])) {
+            if (isset($productInfo['technicalData']['additionalData']['images']) &&
+                count($productInfo['technicalData']['additionalData']['images'])) {
                 foreach ($productInfo['technicalData']['additionalData']['images'] as $image) {
                     $cpbOptions[] = [
                         'label' => 'Uploaded Image',
@@ -176,7 +194,8 @@ class CatalogProductTypeAll
                     ];
                 }
             }
-            if (isset($productInfo['technicalData']['additionalData']['texts']) && count($productInfo['technicalData']['additionalData']['texts'])) {
+            if (isset($productInfo['technicalData']['additionalData']['texts']) &&
+                count($productInfo['technicalData']['additionalData']['texts'])) {
                 foreach ($productInfo['technicalData']['additionalData']['texts'] as $texts) {
                     foreach ($texts as $key => $value) {
                         $params = [
@@ -200,7 +219,8 @@ class CatalogProductTypeAll
                 }
             }
             if (!empty($cpbOptions)) {
-                $product->addCustomOption('options', $this->_isJsonInfoByRequest ? json_encode($cpbOptions) : $this->serializer->serialize($cpbOptions));
+                $product->addCustomOption('options', $this->_isJsonInfoByRequest ?
+                    json_encode($cpbOptions) : $this->serializer->serialize($cpbOptions));
             }
         }
     }

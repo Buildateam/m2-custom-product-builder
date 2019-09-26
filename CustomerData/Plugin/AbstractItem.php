@@ -30,6 +30,10 @@ use \Magento\Framework\App\ProductMetadataInterface;
 use Magento\Quote\Model\Quote\Item;
 use \Magento\Framework\Serialize\SerializerInterface;
 
+/**
+ * Class AbstractItem
+ * @package Buildateam\CustomProductBuilder\CustomerData\Plugin
+ */
 class AbstractItem
 {
     /**
@@ -59,6 +63,12 @@ class AbstractItem
         $this->serializer = $serializer;
     }
 
+    /**
+     * @param BaseAbstractItem $subject
+     * @param callable $proceed
+     * @param Item $item
+     * @return mixed
+     */
     public function aroundGetItemData(BaseAbstractItem $subject, callable $proceed, Item $item)
     {
         $buyRequest = $item->getProduct()->getCustomOption('info_buyRequest')->getValue();

@@ -5,6 +5,10 @@ namespace Buildateam\CustomProductBuilder\Helper;
 use \Magento\Framework\App\ProductMetadataInterface;
 use \Magento\Framework\Serialize\SerializerInterface;
 
+/**
+ * Class Json
+ * @package Buildateam\CustomProductBuilder\Helper
+ */
 class Json
 {
     /**

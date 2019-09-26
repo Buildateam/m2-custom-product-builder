@@ -65,16 +65,18 @@ $productId = (int)$block->getRequest()->getParam('product', 0);
             }
         }
      }
+
 </script>
-<?php if ($block->getCpbProductDistSource()): ?>
-    <script type="application/javascript" id="cpb-product-dist" src="<?php echo $block->getCpbProductDistSource() ?>"></script>
-<?php else: ?>
+<?php if ($block->getCpbProductDistSource()) : ?>
+    <script type="application/javascript" id="cpb-product-dist" src="<?= $block->getCpbProductDistSource() ?>"></script>
+<?php else : ?>
     <script type="text/x-magento-init">
     {
         "*": {
             "cpb-product":{}
         }
     }
+
     </script>
 <?php endif; ?>
 <script>

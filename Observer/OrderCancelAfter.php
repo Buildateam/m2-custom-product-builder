@@ -9,6 +9,10 @@ use Buildateam\CustomProductBuilder\Helper\Data;
 use \Magento\Catalog\Model\ResourceModel\Product\Action;
 use \Magento\Store\Model\StoreManagerInterface;
 
+/**
+ * Class OrderCancelAfter
+ * @package Buildateam\CustomProductBuilder\Observer
+ */
 class OrderCancelAfter implements ObserverInterface
 {
     /**
@@ -79,7 +83,11 @@ class OrderCancelAfter implements ObserverInterface
                             foreach ($jsonConfig['data']['inventory'] as $key => $value) {
                                 if ($sku == $value['sku']) {
                                     $jsonConfig['data']['inventory'][$key]['qty'] += $qtyCanceled;
-                                    $this->productAction->updateAttributes([$product->getId()], ['json_configuration' => $this->serializer->serialize($jsonConfig)], $storeId);
+                                    $this->productAction->updateAttributes(
+                                        [$product->getId()],
+                                        ['json_configuration' => $this->serializer->serialize($jsonConfig)],
+                                        $storeId
+                                    );
                                     break;
                                 }
                             }

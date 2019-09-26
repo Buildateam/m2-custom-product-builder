@@ -33,7 +33,14 @@
  * all use of the Buildateam Software and destroy all copies, full or partial, of the Buildateam
  * Software.
  *
- * THIS SOFTWARE IS PROVIDED BY COPYRIGHT HOLDER "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL COPYRIGHT HOLDER BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. THE SOFTWARE IS NOT INTENDED FOR USE IN WHICH THE FAILURE OF
+ * THIS SOFTWARE IS PROVIDED BY COPYRIGHT HOLDER "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING,
+ * BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+ * IN NO EVENT SHALL COPYRIGHT HOLDER BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
+ * OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * THE SOFTWARE IS NOT INTENDED FOR USE IN WHICH THE FAILURE OF
  * THE SOFTWARE COULD LEAD TO DEATH, PERSONAL INJURY, OR SEVERE PHYSICAL OR ENVIRONMENTAL DAMAGE.
  */
 
@@ -47,18 +54,53 @@ use \Magento\Framework\Filesystem;
 use \Magento\Framework\View\Result\PageFactory;
 use \Magento\Store\Model\StoreManagerInterface;
 
+/**
+ * Class UploadImage
+ * @package Buildateam\CustomProductBuilder\Controller\Product
+ */
 class UploadImage extends \Magento\Framework\App\Action\Action
 {
 
-
+    /**
+     * @var PageFactory
+     */
     protected $_resultPageFactory;
+
+    /**
+     * @var ProductRepository
+     */
     protected $_productRepository;
-    protected $_jsonProductContent;
+
+    /**
+     * @var \Magento\Backend\Model\UrlInterface
+     */
     protected $_auth;
+
+    /**
+     * @var Filesystem
+     */
     protected $_fileSystem;
+
+    /**
+     * @var StoreManagerInterface
+     */
     protected $_storeInterface;
+
+    /**
+     * @var Data
+     */
     protected $_helper;
 
+    /**
+     * UploadImage constructor.
+     * @param Context $context
+     * @param PageFactory $resultFactory
+     * @param ProductRepository $productRepository
+     * @param Filesystem $fileSystem
+     * @param AdminApp\Action\Context $adminContext
+     * @param StoreManagerInterface $storeManager
+     * @param Data $helper
+     */
     public function __construct(
         Context $context,
         PageFactory $resultFactory,
@@ -67,8 +109,7 @@ class UploadImage extends \Magento\Framework\App\Action\Action
         AdminApp\Action\Context $adminContext,
         StoreManagerInterface $storeManager,
         Data $helper
-    )
-    {
+    ) {
         $this->_auth = $adminContext->getBackendUrl();
         $this->_resultPageFactory = $resultFactory;
         $this->_productRepository = $productRepository;
@@ -88,7 +129,5 @@ class UploadImage extends \Magento\Framework\App\Action\Action
         $result->setContents($body);
 
         return $result;
-
     }
-
 }

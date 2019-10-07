@@ -111,7 +111,7 @@ class Export extends \Magento\Framework\App\Action\Action
         if (!$productConfig) {
             $productConfig = $this->_getBaseConfig($product);
         }
-        $productConfigObject = json_decode($productConfig);
+        $productConfigObject = json_decode($productConfig, true);
         $resultRaw = $this->resultRawFactory->create();
         $resultRaw->setHeader("Content-Type", 'application/json');
         if (!$productConfigObject) {
@@ -123,7 +123,7 @@ class Export extends \Magento\Framework\App\Action\Action
             ]));
         } else {
             // SPACE SAVING: removing available fonts since em already present in cpb-frontend
-            $productConfigObject->settings->fonts->available = [];
+            $productConfigObject['settings']['fonts']['available'] = [];
             $resultRaw->setContents(json_encode($productConfigObject));
         }
         return $resultRaw;

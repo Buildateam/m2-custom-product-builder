@@ -90,3 +90,14 @@
 
     </script>
 <?php endif; ?>
+
+<script>
+    require([
+        'Magento_Customer/js/customer-data'
+    ], function (customerData) {
+        document.addEventListener("cpb-add-to-cart", function (event) {
+            customerData.invalidate(['cart']);
+            customerData.reload(['cart'], true);
+        });
+    })
+</script>

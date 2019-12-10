@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
+    <table name="cpb_product_configuration" resource="default" engine="innodb"
+           comment="Custom Product Builder Product Configurations">
+        <column xsi:type="int" name="product_id" padding="10" unsigned="true" nullable="false" identity="true"
+                comment="Product ID"/>
+        <column xsi:type="longtext" name="configuration" nullable="true" comment="Product Configuration"/>
+        <constraint xsi:type="foreign" referenceId="CPB_PRD_CFG_PRD_ID_CAT_PRD_ENTT_ENTT_ID"
+                    table="cpb_product_configuration" column="product_id" referenceTable="catalog_product_entity"
+                    referenceColumn="entity_id" onDelete="CASCADE"/>
+        <constraint xsi:type="unique" referenceId="CATALOG_PRODUCT_ENTITY_DATETIME_ENTITY_ID_ATTRIBUTE_ID_STORE_ID">
+            <column name="product_id"/>
+        </constraint>
+    </table>
+</schema>

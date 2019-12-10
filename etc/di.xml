@@ -93,4 +93,8 @@
     <type name="Magento\Sales\Model\Order\Email\SenderBuilder">
         <plugin name="cpb_sender_builder" type="Buildateam\CustomProductBuilder\Model\Plugin\OrderEmailSenderBuilder"/>
     </type>
+
+    <type name="Magento\Catalog\Model\ResourceModel\Product">
+        <plugin name="cpb_json_config" type="Buildateam\CustomProductBuilder\Plugin\Catalog\Model\ResourceModel\Product"/>
+    </type>
 </config>

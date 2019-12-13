@@ -1,0 +1,12 @@
+{
+    "cpb_product_configuration": {
+        "column": {
+            "product_id": true,
+            "configuration": true
+        },
+        "constraint": {
+            "CPB_PRD_CONFIGURATION_PRD_ID_CAT_PRD_ENTT_ENTT_ID": true,
+            "CPB_PRODUCT_CONFIGURATION_PRODUCT_ID": true
+        }
+    }
+}

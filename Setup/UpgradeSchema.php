@@ -46,16 +46,15 @@
 
 namespace Buildateam\CustomProductBuilder\Setup;
 
+use Magento\Framework\DB\Adapter\AdapterInterface;
+use Magento\Framework\DB\Ddl\Table;
 use \Magento\Framework\Setup\UpgradeSchemaInterface;
 use \Magento\Framework\Setup\ModuleContextInterface;
 use \Magento\Framework\Setup\SchemaSetupInterface;
 
-/**
- * Class UpgradeSchema
- * @package Buildateam\CustomProductBuilder\Setup
- */
 class UpgradeSchema implements UpgradeSchemaInterface
 {
+
     /**
      * @param SchemaSetupInterface $setup
      * @param ModuleContextInterface $context
@@ -78,6 +77,9 @@ class UpgradeSchema implements UpgradeSchemaInterface
 
         if (version_compare($context->getVersion(), '0.1.6', '<')) {
             $this->_changeVariationColumnName($setup);
+        }
+        if (version_compare($context->getVersion(), '1.0.8', '<')) {
+            $this->_createNewConfigurationTable($setup);
         }
 
         $setup->endSetup();
@@ -181,5 +183,53 @@ class UpgradeSchema implements UpgradeSchemaInterface
                 'comment' => 'Config ID'
             ]
         );
+    }
+
+    private function _createNewConfigurationTable($setup)
+    {
+        $table = $setup->getConnection()->newTable(
+            $setup->getTable('cpb_product_configuration')
+        )->addColumn(
+            'product_id',
+            Table::TYPE_INTEGER,
+            null,
+            [
+                'identity' => true,
+                'nullable' => false,
+                'unsigned' => true,
+            ],
+            'Product ID'
+        )
+            ->addColumn(
+                'configuration',
+                Table::TYPE_TEXT,
+                '2M',
+                [
+                    'nullable' => true
+                ],
+                'Product Configuration'
+            )
+            ->addForeignKey(
+                $setup->getFkName(
+                    'cpb_product_configuration',
+                    'product_id',
+                    'catalog_product_entity',
+                    'entity_id'
+                ),
+                'product_id',
+                $setup->getTable('catalog_product_entity'),
+                'entity_id',
+                Table::ACTION_CASCADE
+            )
+            ->addIndex(
+                $setup->getIdxName(
+                    $setup->getTable('cpb_product_configuration'),
+                    'product_id',
+                    AdapterInterface::INDEX_TYPE_UNIQUE
+                ),
+                'product_id',
+                ['type' => AdapterInterface::INDEX_TYPE_UNIQUE]
+            );
+        $setup->getConnection()->createTable($table);
     }
 }

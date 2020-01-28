@@ -36,13 +36,15 @@ class Product
         $attributes = []
     ) {
         $result = $proceed($object, $entityId, $attributes);
-        $select = clone $subject->getConnection()->select();
-        $select->from(
-            'cpb_product_configuration',
-            'configuration'
-        )->where("product_id = {$object->getEntityId()}");
-        $jsonConfiguration = $subject->getConnection()->fetchOne($select);
-        $object->setData('json_configuration', $jsonConfiguration);
+        if ($object->getId()) {
+            $select = clone $subject->getConnection()->select();
+            $select->from(
+                'cpb_product_configuration',
+                'configuration'
+            )->where("product_id = {$object->getId()}");
+            $jsonConfiguration = $subject->getConnection()->fetchOne($select);
+            $object->setData('json_configuration', $jsonConfiguration);
+        }
         return $result;
     }
 }

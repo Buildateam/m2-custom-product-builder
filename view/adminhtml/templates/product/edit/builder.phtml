@@ -42,8 +42,6 @@
 
 $productId = (int)$block->getRequest()->getParam('product', 0);
 ?>
-
-
 <div id="product-builder"
      shop-name="<?php echo $baseUrl = $block->getBaseUrl(); ?>"
      product-id="<?php echo $productId; ?>"
@@ -65,23 +63,42 @@ $productId = (int)$block->getRequest()->getParam('product', 0);
             }
         }
      }
-
 </script>
-<?php if ($block->getCpbProductDistSource()) : ?>
+<?php if ($block->getCpbProductDistSource()): ?>
     <script type="application/javascript" id="cpb-product-dist" src="<?= $block->getCpbProductDistSource() ?>"></script>
-<?php else : ?>
+<?php else: ?>
     <script type="text/x-magento-init">
     {
         "*": {
             "cpb-product":{}
         }
     }
-
     </script>
 <?php endif; ?>
 <script>
     require(['jquery'], function ($) {
         $('body').trigger('contentUpdated');
         $('#product-builder').trigger('contentUpdated');
+
+        function sessionCheck() {
+            var request = new XMLHttpRequest();
+            var url = '<?= $block->escapeUrl($block->getUrl('customproductbuilder/dummy/index')) ?>';
+            request.onload = function () {
+                if (this.responseURL !== url)
+                {
+                    alert(
+                        '<?= $block->escapeJs(__('Your session was expired. Please login at new tab.'))?>'
+                    );
+                }
+            };
+            request.open('HEAD', url, true);
+            request.send();
+        }
+
+        $(document).ready(function () {
+            setInterval(function () {
+                sessionCheck();
+            }, 60000);
+        });
     });
 </script>

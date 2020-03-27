@@ -207,7 +207,6 @@ class CustomProductBuilder extends AbstractModifier
             'arguments' => [
                 'data' => [
                     'config' => [
-                        'label' => __('Custom Product Builder'),
                         'dataScope' => '',
                         'breakLine' => false,
                         'formElement' => 'container',

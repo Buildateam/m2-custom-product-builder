@@ -48,38 +48,44 @@ namespace Buildateam\CustomProductBuilder\Setup;
 
 use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\Framework\DB\Ddl\Table;
-use \Magento\Framework\Setup\UpgradeSchemaInterface;
-use \Magento\Framework\Setup\ModuleContextInterface;
-use \Magento\Framework\Setup\SchemaSetupInterface;
+use Magento\Framework\Setup\ModuleContextInterface;
+use Magento\Framework\Setup\SchemaSetupInterface;
+use Magento\Framework\Setup\UpgradeSchemaInterface;
+use Zend_Db_Exception;
 
 class UpgradeSchema implements UpgradeSchemaInterface
 {
-
     /**
      * @param SchemaSetupInterface $setup
      * @param ModuleContextInterface $context
+     * @throws Zend_Db_Exception
      */
     public function upgrade(SchemaSetupInterface $setup, ModuleContextInterface $context)
     {
         $setup->startSetup();
 
         if (version_compare($context->getVersion(), '0.1.3', '<')) {
-            $this->_changeAttributeColumnType($setup);
+            $this->changeAttributeColumnType($setup);
         }
 
         if (version_compare($context->getVersion(), '0.1.4', '<')) {
-            $this->_createCpbProductConfigTable($setup);
+            $this->createCpbProductConfigTable($setup);
         }
 
         if (version_compare($context->getVersion(), '0.1.5', '<')) {
-            $this->_addImagePathToProductConfigTable($setup);
+            $this->addImagePathToProductConfigTable($setup);
         }
 
         if (version_compare($context->getVersion(), '0.1.6', '<')) {
-            $this->_changeVariationColumnName($setup);
+            $this->changeVariationColumnName($setup);
         }
+
         if (version_compare($context->getVersion(), '1.0.8', '<')) {
-            $this->_createNewConfigurationTable($setup);
+            $this->createNewConfigurationTable($setup);
+        }
+
+        if (version_compare($context->getVersion(), '1.0.11', '<')) {
+            $this->removeProductIdAutoincrement($setup);
         }
 
         $setup->endSetup();
@@ -90,14 +96,14 @@ class UpgradeSchema implements UpgradeSchemaInterface
      *
      * @param SchemaSetupInterface $setup
      */
-    private function _changeAttributeColumnType(SchemaSetupInterface $setup)
+    private function changeAttributeColumnType(SchemaSetupInterface $setup)
     {
         $setup->getConnection()->changeColumn(
             $setup->getTable('catalog_product_entity_text'),
             'value',
             'value',
             [
-                'type' => \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
+                'type' => Table::TYPE_TEXT,
                 'length' => '16M',
                 'nullable' => true,
                 'comment' => 'Value'
@@ -105,27 +111,31 @@ class UpgradeSchema implements UpgradeSchemaInterface
         );
     }
 
-    private function _createCpbProductConfigTable(SchemaSetupInterface $setup)
+    /**
+     * @param SchemaSetupInterface $setup
+     * @throws Zend_Db_Exception
+     */
+    private function createCpbProductConfigTable(SchemaSetupInterface $setup)
     {
         $table = $setup->getConnection()
             ->newTable($setup->getTable('cpb_product_config'))
             ->addColumn(
                 'entity_id',
-                \Magento\Framework\DB\Ddl\Table::TYPE_INTEGER,
+                Table::TYPE_INTEGER,
                 null,
                 ['identity' => true, 'unsigned' => true, 'nullable' => false, 'primary' => true],
                 'Entity ID'
             )
             ->addColumn(
                 'config_id',
-                \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
+                Table::TYPE_TEXT,
                 20,
                 ['nullable' => false],
                 'Config ID'
             )
             ->addColumn(
                 'technical_data',
-                \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
+                Table::TYPE_TEXT,
                 '16M',
                 ['nullable' => true],
                 'Technical data'
@@ -139,14 +149,14 @@ class UpgradeSchema implements UpgradeSchemaInterface
      *
      * @param SchemaSetupInterface $setup
      */
-    private function _addImagePathToProductConfigTable($setup)
+    private function addImagePathToProductConfigTable($setup)
     {
         $setup->getConnection()->dropColumn($setup->getTable('cpb_product_config'), 'image');
         $setup->getConnection()->addColumn(
             $setup->getTable('cpb_product_config'),
             'image',
             [
-                'type' => \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
+                'type' => Table::TYPE_TEXT,
                 'nullable' => true,
                 'comment' => 'Image path'
             ]
@@ -157,7 +167,7 @@ class UpgradeSchema implements UpgradeSchemaInterface
             'config_id',
             'config_id',
             [
-                'type' => \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
+                'type' => Table::TYPE_TEXT,
                 'length' => 255,
                 'nullable' => false,
                 'comment' => 'Config ID'
@@ -170,14 +180,14 @@ class UpgradeSchema implements UpgradeSchemaInterface
      *
      * @param SchemaSetupInterface $setup
      */
-    private function _changeVariationColumnName($setup)
+    private function changeVariationColumnName($setup)
     {
         $setup->getConnection()->changeColumn(
             $setup->getTable('cpb_product_config'),
             'config_id',
             'variation_id',
             [
-                'type' => \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
+                'type' => Table::TYPE_TEXT,
                 'length' => 255,
                 'nullable' => false,
                 'comment' => 'Config ID'
@@ -185,7 +195,11 @@ class UpgradeSchema implements UpgradeSchemaInterface
         );
     }
 
-    private function _createNewConfigurationTable($setup)
+    /**
+     * @param SchemaSetupInterface $setup
+     * @throws Zend_Db_Exception
+     */
+    private function createNewConfigurationTable(SchemaSetupInterface $setup)
     {
         $table = $setup->getConnection()->newTable(
             $setup->getTable('cpb_product_configuration')
@@ -199,37 +213,86 @@ class UpgradeSchema implements UpgradeSchemaInterface
                 'unsigned' => true,
             ],
             'Product ID'
-        )
-            ->addColumn(
-                'configuration',
-                Table::TYPE_TEXT,
-                '2M',
-                [
-                    'nullable' => true
-                ],
-                'Product Configuration'
-            )
-            ->addForeignKey(
-                $setup->getFkName(
-                    'cpb_product_configuration',
-                    'product_id',
-                    'catalog_product_entity',
-                    'entity_id'
-                ),
+        )->addColumn(
+            'configuration',
+            Table::TYPE_TEXT,
+            '2M',
+            [
+                'nullable' => true
+            ],
+            'Product Configuration'
+        )->addForeignKey(
+            $setup->getFkName(
+                'cpb_product_configuration',
                 'product_id',
-                $setup->getTable('catalog_product_entity'),
-                'entity_id',
-                Table::ACTION_CASCADE
-            )
-            ->addIndex(
-                $setup->getIdxName(
-                    $setup->getTable('cpb_product_configuration'),
-                    'product_id',
-                    AdapterInterface::INDEX_TYPE_UNIQUE
-                ),
+                'catalog_product_entity',
+                'entity_id'
+            ),
+            'product_id',
+            $setup->getTable('catalog_product_entity'),
+            'entity_id',
+            Table::ACTION_CASCADE
+        )->addIndex(
+            $setup->getIdxName(
+                $setup->getTable('cpb_product_configuration'),
                 'product_id',
-                ['type' => AdapterInterface::INDEX_TYPE_UNIQUE]
-            );
+                AdapterInterface::INDEX_TYPE_UNIQUE
+            ),
+            'product_id',
+            ['type' => AdapterInterface::INDEX_TYPE_UNIQUE]
+        );
         $setup->getConnection()->createTable($table);
+    }
+
+    /**
+     * @param SchemaSetupInterface $setup
+     */
+    private function removeProductIdAutoincrement(SchemaSetupInterface $setup)
+    {
+        $setup->getConnection()->changeColumn(
+            $setup->getTable('cpb_product_configuration'),
+            'product_id',
+            'product_id',
+            [
+                'type' => Table::TYPE_INTEGER,
+                'auto_increment' => false,
+                'nullable' => false,
+                'unsigned' => true,
+                'comment' => 'Product ID'
+            ]
+        );
+        $setup->getConnection()->addColumn(
+            $setup->getTable('cpb_product_configuration'),
+            'config_id',
+            [
+                'type' => Table::TYPE_INTEGER,
+                'auto_increment' => true,
+                'primary' => true,
+                'nullable' => false,
+                'unsigned' => true,
+                'comment' => 'Config ID'
+            ]
+        );
+        $setup->getConnection()
+            ->dropIndex(
+                $setup->getTable('cpb_product_configuration'),
+                'CPB_PRODUCT_CONFIGURATION_PRODUCT_ID'
+            );
+        $setup->getConnection()->dropForeignKey(
+            $setup->getTable('cpb_product_configuration'),
+            'CPB_PRD_CONFIGURATION_PRD_ID_CAT_PRD_ENTT_ENTT_ID'
+        )->addForeignKey(
+            $setup->getFkName(
+                'cpb_product_configuration',
+                'product_id',
+                'catalog_product_entity',
+                'entity_id'
+            ),
+            $setup->getTable('cpb_product_configuration'),
+            'product_id',
+            $setup->getTable('catalog_product_entity'),
+            'entity_id',
+            Table::ACTION_CASCADE
+        );
     }
 }

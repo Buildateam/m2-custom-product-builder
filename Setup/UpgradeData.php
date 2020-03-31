@@ -49,9 +49,9 @@ namespace Buildateam\CustomProductBuilder\Setup;
 use Magento\Catalog\Model\Product;
 use Magento\Eav\Setup\EavSetup;
 use Magento\Eav\Setup\EavSetupFactory;
-use Magento\Framework\Setup\UpgradeDataInterface;
-use Magento\Framework\Setup\ModuleDataSetupInterface;
 use Magento\Framework\Setup\ModuleContextInterface;
+use Magento\Framework\Setup\ModuleDataSetupInterface;
+use Magento\Framework\Setup\UpgradeDataInterface;
 
 class UpgradeData implements UpgradeDataInterface
 {
@@ -77,17 +77,33 @@ class UpgradeData implements UpgradeDataInterface
      */
     public function upgrade(ModuleDataSetupInterface $setup, ModuleContextInterface $context)
     {
+        if (version_compare($context->getVersion(), '1.0.10', '<')) {
+            $this->moveJsonConfigurations($setup);
+        }
+    }
+
+    /**
+     * @param ModuleDataSetupInterface $setup
+     */
+    private function moveJsonConfigurations(ModuleDataSetupInterface $setup)
+    {
         $eavSetup = $this->eavSetup->create(['setup' => $setup]);
+        $connection = $setup->getConnection();
         $oldAttribute = $eavSetup->getAttribute(Product::ENTITY, 'json_configuration');
         if ($oldAttribute && isset($oldAttribute['attribute_id'])) {
-            $select = clone $setup->getConnection()->select();
+            $select = clone $connection->select();
             $select->from(
-                'catalog_product_entity_text',
+                $setup->getTable('catalog_product_entity_text'),
                 ['entity_id', 'value']
             )->where("attribute_id = {$oldAttribute['attribute_id']}");
-            $insert = $setup->getConnection()
-                ->insertFromSelect($select, 'cpb_product_configuration', ['product_id', 'configuration']);
-            $setup->getConnection()->query($insert);
+            $insert = $connection->insertFromSelect(
+                $select,
+                $setup->getTable('cpb_product_configuration'),
+                ['product_id', 'configuration']
+            );
+            $connection->query($insert);
+            $delete = $connection->deleteFromSelect($select, $setup->getTable('catalog_product_entity_text'));
+            $connection->query($delete);
         }
     }
 }

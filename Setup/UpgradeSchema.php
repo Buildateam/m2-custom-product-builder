@@ -88,6 +88,10 @@ class UpgradeSchema implements UpgradeSchemaInterface
             $this->removeProductIdAutoincrement($setup);
         }
 
+        if (version_compare($context->getVersion(), '1.0.12', '<')) {
+            $this->addUniqueProductIdIndex($setup);
+        }
+
         $setup->endSetup();
     }
 
@@ -293,6 +297,24 @@ class UpgradeSchema implements UpgradeSchemaInterface
             $setup->getTable('catalog_product_entity'),
             'entity_id',
             Table::ACTION_CASCADE
+        );
+    }
+
+    /**
+     * @param SchemaSetupInterface $setup
+     */
+    private function addUniqueProductIdIndex(SchemaSetupInterface $setup)
+    {
+        $connection = $setup->getConnection();
+        $connection->addIndex(
+            $setup->getTable('cpb_product_configuration'),
+            $setup->getIdxName(
+                $setup->getTable('cpb_product_configuration'),
+                'product_id',
+                AdapterInterface::INDEX_TYPE_UNIQUE
+            ),
+            'product_id',
+            AdapterInterface::INDEX_TYPE_UNIQUE
         );
     }
 }

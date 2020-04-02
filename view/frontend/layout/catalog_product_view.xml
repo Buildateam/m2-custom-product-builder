@@ -40,7 +40,10 @@
 
     <body>
         <referenceContainer name="content">
+            <block class="Buildateam\CustomProductBuilder\Block\Catalog\Product\Info\General" name="product.info.general" before="-"/>
             <block class="Buildateam\CustomProductBuilder\Block\Catalog\Product\View" name="custom.product.builder.view" template="Buildateam_CustomProductBuilder::customproductbuilder/view.phtml" before="product.info.details"/>
         </referenceContainer>
+        <move element="product.info.main" destination="product.info.general"/>
+        <move element="product.info.media" destination="product.info.general"/>
     </body>
 </page>

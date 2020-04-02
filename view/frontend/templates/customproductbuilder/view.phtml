@@ -51,10 +51,6 @@
 
 <script type="text/json" id="cpb-product-config"><?= $product->getData('json_configuration') ?></script>
 
-<style>
-    .product-info-main, .product.media{ display:none; }
-</style>
-
 <div id="product-builder" engine="magento"
      shop-name="<?= $block->getBaseUrl() ?>"
      product-id="<?= $block->getProduct()->getId() ?>"

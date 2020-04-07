@@ -49,6 +49,8 @@ namespace Buildateam\CustomProductBuilder\Setup;
 use Magento\Catalog\Model\Product;
 use Magento\Eav\Setup\EavSetup;
 use Magento\Eav\Setup\EavSetupFactory;
+use Buildateam\CustomProductBuilder\Model\ConfigModel;
+use Magento\Framework\Exception\AlreadyExistsException;
 use Magento\Framework\Setup\ModuleContextInterface;
 use Magento\Framework\Setup\ModuleDataSetupInterface;
 use Magento\Framework\Setup\UpgradeDataInterface;
@@ -62,23 +64,36 @@ class UpgradeData implements UpgradeDataInterface
     private $eavSetup;
 
     /**
+     * @var ConfigModel
+     */
+    private $configModel;
+
+    /**
      * UpgradeData constructor.
      * @param EavSetupFactory $eavSetupFactory
+     * @param ConfigModel $configModel
      */
     public function __construct(
-        EavSetupFactory $eavSetupFactory
+        EavSetupFactory $eavSetupFactory,
+        ConfigModel $configModel
     ) {
         $this->eavSetup = $eavSetupFactory;
+        $this->configModel = $configModel;
     }
 
     /**
      * @param ModuleDataSetupInterface $setup
      * @param ModuleContextInterface $context
+     * @throws AlreadyExistsException
      */
     public function upgrade(ModuleDataSetupInterface $setup, ModuleContextInterface $context)
     {
         if (version_compare($context->getVersion(), '1.0.10', '<')) {
             $this->moveJsonConfigurations($setup);
+        }
+
+        if (version_compare($context->getVersion(), '1.0.13', '<')) {
+            $this->createJsonConfigFlag($setup);
         }
     }
 
@@ -105,5 +120,13 @@ class UpgradeData implements UpgradeDataInterface
             $delete = $connection->deleteFromSelect($select, $setup->getTable('catalog_product_entity_text'));
             $connection->query($delete);
         }
+    }
+
+    /**
+     * @throws AlreadyExistsException
+     */
+    private function createJsonConfigFlag()
+    {
+        $this->configModel->flagResource->save($this->configModel->createConfigModel()->setData('flag_data', NULL));
     }
 }

@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Buildateam\CustomProductBuilder\Controller\Config;
+namespace Buildateam\CustomProductBuilder\Controller\Adminhtml\Config;
 
 use Buildateam\CustomProductBuilder\Model\ConfigModel;
-use Magento\Framework\App\Action\Action;
-use Magento\Framework\App\Action\Context;
+use Magento\Backend\App\Action;
+use Magento\Backend\App\Action\Context;
 use Magento\Framework\Controller\Result\Json;
 use Magento\Framework\Controller\ResultFactory;
 use Psr\Log\LoggerInterface;

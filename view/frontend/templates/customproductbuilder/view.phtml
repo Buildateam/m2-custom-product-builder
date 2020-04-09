@@ -45,7 +45,7 @@
     return;
 } ?>
 
-<?php if (!(bool)$product->getData('json_configuration')) {
+<?php if (!(bool)$product->getData('json_configuration') || !$product->getData('cpb_enabled')) {
     return;
 } ?>
 
@@ -70,6 +70,7 @@
         }
     }
 
+
     </script>
 <?php endif; ?>
 
@@ -82,6 +83,7 @@
             "cpb-theme":{}
         }
     }
+
 
     </script>
 <?php endif; ?>

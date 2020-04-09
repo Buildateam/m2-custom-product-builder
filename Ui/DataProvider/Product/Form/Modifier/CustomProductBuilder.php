@@ -49,6 +49,7 @@ namespace Buildateam\CustomProductBuilder\Ui\DataProvider\Product\Form\Modifier;
 use Magento\Catalog\Model\ProductRepository;
 use \Magento\Catalog\Ui\DataProvider\Product\Form\Modifier\AbstractModifier;
 use \Magento\Catalog\Model\Locator\LocatorInterface;
+use Magento\Framework\Exception\NoSuchEntityException;
 use \Magento\Framework\Stdlib\ArrayManager;
 use \Magento\Backend\App\Action\Context;
 
@@ -89,7 +90,8 @@ class CustomProductBuilder extends AbstractModifier
         ArrayManager $arrayManager,
         Context $context,
         ProductRepository $productRepository
-    ) {
+    )
+    {
         $this->locator = $locator;
         $this->arrayManager = $arrayManager;
         $this->context = $context;
@@ -102,9 +104,14 @@ class CustomProductBuilder extends AbstractModifier
     public function modifyMeta(array $meta)
     {
         $productId = $this->context->getRequest()->getParam('id');
+        $product = $this->productRepository->getById($productId);
         if ($productId) {
-            $meta = $this->createCustomProductBuilderModal($meta);
-            $meta = $this->customizeCustomProductBuilderField($meta);
+            if (!$product->getData('cpb_enabled')) {
+                $meta = $this->customizeDisabledCpbField($meta);
+            } else {
+                $meta = $this->createCustomProductBuilderModal($meta);
+                $meta = $this->customizeCustomProductBuilderField($meta);
+            }
         } else {
             $meta = $this->customizeNewProductCpbField($meta);
         }
@@ -188,7 +195,7 @@ class CustomProductBuilder extends AbstractModifier
     /**
      * @param $meta
      * @return array
-     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     * @throws NoSuchEntityException
      */
     protected function customizeCustomProductBuilderField($meta)
     {
@@ -422,6 +429,12 @@ class CustomProductBuilder extends AbstractModifier
             $meta,
             $cpbMeta
         );
+        return $meta;
+    }
+
+    protected function customizeDisabledCpbField($meta)
+    {
+        unset($meta['product-details']['children']['container_json_configuration']['children']['json_configuration']);
         return $meta;
     }
 }

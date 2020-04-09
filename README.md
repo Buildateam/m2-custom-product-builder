@@ -4,7 +4,7 @@
 ## Installation Instructions via Composer. 
 1) Add new repository into composer.json where extension is located.
 2) run `composer require buildateam/m2-custom-product-builder:dev-master`
-3) run `php bin:magento setup:upgrade`
+3) run `php bin/magento setup:upgrade`
 4) run `php bin/magento setupe:di:compile`
 5) run `rm -rf pub/static`
 6) run `rm -rf var/view_preprocessed`

@@ -46,11 +46,14 @@
 
 namespace Buildateam\CustomProductBuilder\Setup;
 
+use Buildateam\CustomProductBuilder\Model\Source\Switcher;
 use Magento\Catalog\Model\Product;
+use Magento\Eav\Model\Entity\Attribute\ScopedAttributeInterface;
 use Magento\Eav\Setup\EavSetup;
 use Magento\Eav\Setup\EavSetupFactory;
-use Buildateam\CustomProductBuilder\Model\ConfigModel;
-use Magento\Framework\Exception\AlreadyExistsException;
+use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\Setup\UpgradeDataInterface;
+use Magento\Framework\Setup\ModuleDataSetupInterface;
 use Magento\Framework\Setup\ModuleContextInterface;
 use Magento\Framework\Setup\ModuleDataSetupInterface;
 use Magento\Framework\Setup\UpgradeDataInterface;
@@ -64,36 +67,25 @@ class UpgradeData implements UpgradeDataInterface
     private $eavSetup;
 
     /**
-     * @var ConfigModel
-     */
-    private $configModel;
-
-    /**
      * UpgradeData constructor.
      * @param EavSetupFactory $eavSetupFactory
-     * @param ConfigModel $configModel
      */
     public function __construct(
-        EavSetupFactory $eavSetupFactory,
-        ConfigModel $configModel
+        EavSetupFactory $eavSetupFactory
     ) {
         $this->eavSetup = $eavSetupFactory;
-        $this->configModel = $configModel;
     }
 
     /**
      * @param ModuleDataSetupInterface $setup
      * @param ModuleContextInterface $context
-     * @throws AlreadyExistsException
+     * @throws LocalizedException
+     * @throws \Zend_Validate_Exception
      */
     public function upgrade(ModuleDataSetupInterface $setup, ModuleContextInterface $context)
     {
         if (version_compare($context->getVersion(), '1.0.10', '<')) {
             $this->moveJsonConfigurations($setup);
-        }
-
-        if (version_compare($context->getVersion(), '1.0.13', '<')) {
-            $this->createJsonConfigFlag($setup);
         }
     }
 
@@ -120,13 +112,27 @@ class UpgradeData implements UpgradeDataInterface
             $delete = $connection->deleteFromSelect($select, $setup->getTable('catalog_product_entity_text'));
             $connection->query($delete);
         }
-    }
-
-    /**
-     * @throws AlreadyExistsException
-     */
-    private function createJsonConfigFlag()
-    {
-        $this->configModel->flagResource->save($this->configModel->createConfigModel()->setData('flag_data', NULL));
+        if (version_compare($context->getVersion(), '1.0.12', '<')) {
+            $eavSetup->addAttribute(
+                Product::ENTITY,
+                'cpb_enabled',
+                [
+                    'group' => 'General',
+                    'type' => 'int',
+                    'input' => 'boolean',
+                    'default' => '1',
+                    'label' => 'Enable Custom Product Builder',
+                    'global' => ScopedAttributeInterface::SCOPE_GLOBAL,
+                    'required' => false,
+                    'is_used_in_grid' => true,
+                    'is_visible_in_grid' => true,
+                    'is_filterable_in_grid' => true,
+                    'position' => 150,
+                    'sort_order' => 10,
+                    'visible' => true,
+                    'source' => Switcher::class,
+                ]
+            );
+        }
     }
 }

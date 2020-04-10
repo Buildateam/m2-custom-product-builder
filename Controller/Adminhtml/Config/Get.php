@@ -6,11 +6,11 @@ namespace Buildateam\CustomProductBuilder\Controller\Adminhtml\Config;
 
 use Magento\Backend\App\Action;
 use Magento\Backend\App\Action\Context;
-use Magento\Framework\Controller\Result\Json;
+use Magento\Framework\Controller\Result\Raw;
 use Magento\Framework\Controller\ResultFactory;
 use Psr\Log\LoggerInterface;
-use Magento\Framework\Flag;
-use Buildateam\CustomProductBuilder\Model\ConfigModel;
+use Buildateam\CustomProductBuilder\Model\JsonFlagManager;
+use Magento\Framework\Serialize\Serializer\Json;
 
 class Get extends Action
 {
@@ -21,43 +21,50 @@ class Get extends Action
     public $logger;
 
     /**
-     * @var ConfigModel
+     * @var JsonFlagManager
      */
-    public $configModel;
+    public $flagManager;
+
+    /**
+     * @var
+     */
+    public $json;
 
     /**
      * Save constructor.
      * @param Context $context
-     * @param ConfigModel $configModel
+     * @param JsonFlagManager $flagManager
+     * @param Json $json
      * @param LoggerInterface $logger
      */
     public function __construct(
         Context $context,
-        ConfigModel $configModel,
+        JsonFlagManager $flagManager,
+        Json $json,
         LoggerInterface $logger
     ) {
         parent::__construct($context);
         $this->logger = $logger;
-        $this->configModel = $configModel;
+        $this->flagManager = $flagManager;
+        $this->json = $json;
     }
 
     /**
-     * @return Json
+     * @return Raw
      */
-    public function execute(): Json
+    public function execute(): Raw
     {
-        $jsonResult = $this->resultFactory->create(ResultFactory::TYPE_JSON);
+        $result = $this->resultFactory->create(ResultFactory::TYPE_RAW);
+        $result->setHeader('Content-type', 'application/json');
 
         try {
-            /** @var Flag $flagModel */
-            $flagModel = $this->configModel->getConfigModel();
+            $data = $this->flagManager->getFlagData('buildateam_customproductbuilder_config');
         } catch (\Exception $e) {
             $this->logger->critical($e->getMessage());
             $result = ['error' => $e->getMessage(), 'errorcode' => $e->getCode()];
-            return $jsonResult->setData($result);
+            return $result->setContents($this->json->serialize($result));
         }
 
-        $result = ['config' => $flagModel->getData('flag_data')];
-        return $jsonResult->setData($result);
+        return $result->setContents($data);
     }
 }

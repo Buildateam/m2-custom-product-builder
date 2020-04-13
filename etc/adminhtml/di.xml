@@ -50,25 +50,4 @@
     <type name="Magento\Catalog\Controller\Adminhtml\Product\Save">
         <plugin name="BeforeSave" type="Buildateam\CustomProductBuilder\Plugin\BeforeSave"/>
     </type>
-
-    <virtualType name="dummyFlagModel" type="Magento\Framework\Flag\Flag">
-        <arguments>
-            <argument name="json" xsi:type="object">Buildateam\CustomProductBuilder\Model\JsonSerializer</argument>
-        </arguments>
-    </virtualType>
-    <virtualType name="dummyFlagModelFactory" type="Magento\Framework\FlagFactory">
-        <arguments>
-            <argument name="instanceName" xsi:type="object">dummyFlagModel</argument>
-        </arguments>
-    </virtualType>
-    <virtualType name="dummyFlagManager" type="Magento\Framework\FlagManager">
-        <arguments>
-            <argument name="flagFactory" xsi:type="object">dummyFlagModelFactory</argument>
-        </arguments>
-    </virtualType>
-    <type name="Buildateam\CustomProductBuilder\Controller\Adminhtml\Config\Action">
-        <arguments>
-            <argument name="flagManager" xsi:type="object">dummyFlagManager</argument>
-        </arguments>
-    </type>
 </config>

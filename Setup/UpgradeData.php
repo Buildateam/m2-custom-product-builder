@@ -58,11 +58,10 @@ use Magento\Framework\Setup\UpgradeDataInterface;
 
 class UpgradeData implements UpgradeDataInterface
 {
-
     /**
-     * @var EavSetup
+     * @var EavSetupFactory
      */
-    private $eavSetup;
+    private $eavSetupFactory;
 
     /**
      * UpgradeData constructor.
@@ -71,7 +70,7 @@ class UpgradeData implements UpgradeDataInterface
     public function __construct(
         EavSetupFactory $eavSetupFactory
     ) {
-        $this->eavSetup = $eavSetupFactory;
+        $this->eavSetupFactory = $eavSetupFactory;
     }
 
     /**
@@ -82,17 +81,25 @@ class UpgradeData implements UpgradeDataInterface
      */
     public function upgrade(ModuleDataSetupInterface $setup, ModuleContextInterface $context)
     {
+        $setup->startSetup();
+
         if (version_compare($context->getVersion(), '1.0.10', '<')) {
             $this->moveJsonConfigurations($setup);
         }
+        if (version_compare($context->getVersion(), '1.0.13', '<')) {
+            $this->addCpbEnabledAttribute($setup);
+        }
+
+        $setup->endSetup();
     }
 
     /**
      * @param ModuleDataSetupInterface $setup
      */
-    private function moveJsonConfigurations(ModuleDataSetupInterface $setup, ModuleContextInterface $context)
+    private function moveJsonConfigurations(ModuleDataSetupInterface $setup)
     {
-        $eavSetup = $this->eavSetup->create(['setup' => $setup]);
+        /** @var EavSetup $eavSetup */
+        $eavSetup = $this->eavSetupFactory->create(['setup' => $setup]);
         $connection = $setup->getConnection();
         $oldAttribute = $eavSetup->getAttribute(Product::ENTITY, 'json_configuration');
         if ($oldAttribute && isset($oldAttribute['attribute_id'])) {
@@ -110,27 +117,36 @@ class UpgradeData implements UpgradeDataInterface
             $delete = $connection->deleteFromSelect($select, $setup->getTable('catalog_product_entity_text'));
             $connection->query($delete);
         }
-        if (version_compare($context->getVersion(), '1.0.12', '<')) {
-            $eavSetup->addAttribute(
-                Product::ENTITY,
-                'cpb_enabled',
-                [
-                    'group' => 'General',
-                    'type' => 'int',
-                    'input' => 'boolean',
-                    'default' => '1',
-                    'label' => 'Enable Custom Product Builder',
-                    'global' => ScopedAttributeInterface::SCOPE_GLOBAL,
-                    'required' => false,
-                    'is_used_in_grid' => true,
-                    'is_visible_in_grid' => true,
-                    'is_filterable_in_grid' => true,
-                    'position' => 150,
-                    'sort_order' => 10,
-                    'visible' => true,
-                    'source' => Switcher::class,
-                ]
-            );
-        }
+    }
+
+    /**
+     * @param ModuleDataSetupInterface $setup
+     * @throws LocalizedException
+     * @throws \Zend_Validate_Exception
+     */
+    private function addCpbEnabledAttribute(ModuleDataSetupInterface $setup)
+    {
+        /** @var EavSetup $eavSetup */
+        $eavSetup = $this->eavSetupFactory->create(['setup' => $setup]);
+        $eavSetup->addAttribute(
+            Product::ENTITY,
+            'cpb_enabled',
+            [
+                'group' => 'General',
+                'type' => 'int',
+                'input' => 'boolean',
+                'default' => '1',
+                'label' => 'Enable Custom Product Builder',
+                'global' => ScopedAttributeInterface::SCOPE_GLOBAL,
+                'required' => false,
+                'is_used_in_grid' => true,
+                'is_visible_in_grid' => true,
+                'is_filterable_in_grid' => true,
+                'position' => 150,
+                'sort_order' => 10,
+                'visible' => true,
+                'source' => Switcher::class,
+            ]
+        );
     }
 }

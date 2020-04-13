@@ -77,7 +77,7 @@ class General extends Template
     protected function _toHtml(): string
     {
         $product = $this->coreRegistry->registry('product');
-        if ($product && $product->getJsonConfiguration()) {
+        if ($product && $product->getJsonConfiguration() && $product->getCpbEnabled()) {
             return '';
         }
         return $this->getChildHtml();

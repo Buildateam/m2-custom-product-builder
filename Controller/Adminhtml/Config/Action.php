@@ -6,8 +6,7 @@ namespace Buildateam\CustomProductBuilder\Controller\Adminhtml\Config;
 
 use Magento\Backend\App\Action as BackendAction;
 use Magento\Backend\App\Action\Context;
-use Magento\Framework\Flag\FlagResource;
-use Magento\Framework\FlagFactory;
+use Magento\Framework\Serialize\Serializer\Json;
 use Psr\Log\LoggerInterface;
 use Magento\Framework\FlagManager;
 
@@ -26,34 +25,26 @@ abstract class Action extends BackendAction
     protected $flagManager;
 
     /**
-     * @var FlagResource
+     * @var Json
      */
-    protected $flagResource;
-
-    /**
-     * @var FlagFactory
-     */
-    protected $flagFactory;
+    protected $jsonSerializer;
 
     /**
      * Save constructor.
      * @param Context $context
      * @param FlagManager $flagManager
-     * @param FlagResource $flagResource
-     * @param FlagFactory $flagFactory
      * @param LoggerInterface $logger
+     * @param Json $jsonSerializer
      */
     public function __construct(
         Context $context,
         FlagManager $flagManager,
-        FlagResource $flagResource,
-        FlagFactory $flagFactory,
-        LoggerInterface $logger
+        LoggerInterface $logger,
+        Json $jsonSerializer
     ) {
         parent::__construct($context);
         $this->logger = $logger;
         $this->flagManager = $flagManager;
-        $this->flagResource = $flagResource;
-        $this->flagFactory = $flagFactory;
+        $this->jsonSerializer = $jsonSerializer;
     }
 }

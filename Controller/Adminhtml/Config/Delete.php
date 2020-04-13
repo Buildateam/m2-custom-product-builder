@@ -17,7 +17,7 @@ class Delete extends Action
         $jsonResult = $this->resultFactory->create(ResultFactory::TYPE_JSON);
 
         try {
-            $this->flagManager->deleteFlag('buildateam_customproductbuilder_config');
+            $this->flagManager->deleteFlag(Action::FLAG_CODE);
         } catch (\Exception $e) {
             $this->logger->critical($e->getMessage());
             $result = ['error' => $e->getMessage(), 'errorcode' => $e->getCode()];

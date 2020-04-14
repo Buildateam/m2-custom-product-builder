@@ -21,7 +21,7 @@ class Get extends Action
             $data = $this->flagManager->getFlagData(Action::FLAG_CODE);
         } catch (\Exception $e) {
             $this->logger->critical($e->getMessage());
-            $data = ['error' => $e->getMessage(), 'errorcode' => $e->getCode()];
+            $data = ['error' => true, 'message' => $e->getMessage()];
         }
 
         return $result->setData($data);

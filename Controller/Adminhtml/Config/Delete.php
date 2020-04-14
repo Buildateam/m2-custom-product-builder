@@ -20,7 +20,7 @@ class Delete extends Action
             $this->flagManager->deleteFlag(Action::FLAG_CODE);
         } catch (\Exception $e) {
             $this->logger->critical($e->getMessage());
-            $result = ['error' => $e->getMessage(), 'errorcode' => $e->getCode()];
+            $result = ['error' => true, 'message' => $e->getMessage()];
             return $jsonResult->setData($result);
         }
 

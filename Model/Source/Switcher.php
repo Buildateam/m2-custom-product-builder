@@ -16,11 +16,11 @@ class Switcher extends AbstractSource
     {
         return [
             [
-                'label' => __('Yes'),
+                'label' => __('Enabled'),
                 'value' => self::CPB_ENBALED
             ],
             [
-                'label' => __('No'),
+                'label' => __('Disabled'),
                 'value' => self::CPB_DISABLED
             ]
         ];

@@ -20,7 +20,7 @@ class Set extends Action
             try {
                 $config = $this->jsonSerializer->unserialize($this->getRequest()->getParam('config'));
             } catch (\InvalidArgumentException $e) {
-                $result = ['error' => $e->getMessage()];
+                $result = ['error' => true, 'message' => $e->getMessage()];
                 return $jsonResult->setData($result);
             }
 
@@ -28,7 +28,7 @@ class Set extends Action
                 $this->flagManager->saveFlag(Action::FLAG_CODE, $config);
             } catch (\Exception $e) {
                 $this->logger->critical($e->getMessage());
-                $resultSave = ['error' => $e->getMessage(), 'errorcode' => $e->getCode()];
+                $resultSave = ['error' => true, 'message' => $e->getMessage()];
                 return $jsonResult->setData($resultSave);
             }
         }

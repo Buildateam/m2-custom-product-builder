@@ -89,6 +89,9 @@ class UpgradeData implements UpgradeDataInterface
         if (version_compare($context->getVersion(), '1.0.13', '<')) {
             $this->addCpbEnabledAttribute($setup);
         }
+        if (version_compare($context->getVersion(), '1.0.15', '<')) {
+            $this->renameCpbEnabledAttribute($setup);
+        }
 
         $setup->endSetup();
     }
@@ -147,6 +150,21 @@ class UpgradeData implements UpgradeDataInterface
                 'visible' => true,
                 'source' => Switcher::class,
             ]
+        );
+    }
+
+    /**
+     * @param ModuleDataSetupInterface $setup
+     */
+    private function renameCpbEnabledAttribute(ModuleDataSetupInterface $setup)
+    {
+        /** @var EavSetup $eavSetup */
+        $eavSetup = $this->eavSetupFactory->create(['setup' => $setup]);
+        $eavSetup->updateAttribute(
+            Product::ENTITY,
+            'cpb_enabled',
+            'frontend_label',
+            'Custom Product Builder Status'
         );
     }
 }

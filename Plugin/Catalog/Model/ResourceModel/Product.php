@@ -32,7 +32,7 @@ class Product
         \Magento\Catalog\Model\ResourceModel\Product $subject,
         \Closure $proceed,
         AbstractModel $object,
-        int $entityId,
+        $entityId,
         $attributes = []
     ) {
         $result = $proceed($object, $entityId, $attributes);

@@ -104,8 +104,8 @@ class CustomProductBuilder extends AbstractModifier
     public function modifyMeta(array $meta)
     {
         $productId = $this->context->getRequest()->getParam('id');
-        $product = $this->productRepository->getById($productId);
         if ($productId) {
+            $product = $this->productRepository->getById($productId);
             if (!$product->getData('cpb_enabled')) {
                 $meta = $this->customizeDisabledCpbField($meta);
             } else {

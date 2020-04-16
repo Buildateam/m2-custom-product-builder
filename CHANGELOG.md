@@ -7,3 +7,7 @@
 
 * Renamed on/off option
 * Small improvements
+
+## 1.0.16
+
+* Bug fixes

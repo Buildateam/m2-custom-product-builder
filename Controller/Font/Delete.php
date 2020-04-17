@@ -46,16 +46,16 @@
 
 declare(strict_types=1);
 
-namespace Buildateam\CustomProductBuilder\Controller\Adminhtml\Font;
+namespace Buildateam\CustomProductBuilder\Controller\Font;
 
 use Buildateam\CustomProductBuilder\Model\FileUploader;
-use Magento\Backend\App\Action;
-use Magento\Backend\App\Action\Context;
-use Magento\Framework\Controller\Result\Json;
+use Magento\Framework\App\Action\Action;
+use Magento\Framework\App\Action\Context;
 use Magento\Framework\Controller\ResultFactory;
+use Magento\Framework\Controller\Result\Json;
 use Psr\Log\LoggerInterface;
 
-class Save extends Action
+class Delete extends Action
 {
     /**
      * @var FileUploader
@@ -68,18 +68,19 @@ class Save extends Action
     public $logger;
 
     /**
-     * Save constructor.
-     * @param Context $context
+     * Delete constructor.
      * @param FileUploader $fileUploader
+     * @param LoggerInterface $logger
+     * @param Context $context
      */
     public function __construct(
-        Context $context,
         FileUploader $fileUploader,
-        LoggerInterface $logger
+        LoggerInterface $logger,
+        Context $context
     ) {
-        parent::__construct($context);
         $this->fileUploader = $fileUploader;
         $this->logger = $logger;
+        parent::__construct($context);
     }
 
     /**
@@ -87,16 +88,17 @@ class Save extends Action
      */
     public function execute(): Json
     {
+        $result = $this->resultFactory->create(ResultFactory::TYPE_JSON);
+        $deleteResult = [];
+
         try {
             $font = $this->getRequest()->getParam('font');
-            $result = [
-                'url' => $this->fileUploader->saveFile($font)
-            ];
+
+            $deleteResult = $this->fileUploader->deleteFile($font);
         } catch (\Exception $e) {
-            $result = ['error' => $e->getMessage(), 'errorcode' => $e->getCode()];
             $this->logger->critical($e->getMessage());
+            return $result->setData($deleteResult);
         }
-        $jsonResult = $this->resultFactory->create(ResultFactory::TYPE_JSON);
-        return $jsonResult->setData($result);
+        return $result->setData($deleteResult);
     }
 }

@@ -11,3 +11,6 @@
 ## 1.0.16
 
 * Bug fixes
+
+## 1.0.17
+* Introducing Global Fonts

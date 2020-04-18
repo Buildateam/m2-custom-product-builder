@@ -46,16 +46,16 @@
 
 declare(strict_types=1);
 
-namespace Buildateam\CustomProductBuilder\Controller\Adminhtml\Font;
+namespace Buildateam\CustomProductBuilder\Controller\Font;
 
 use Buildateam\CustomProductBuilder\Model\FileUploader;
-use Magento\Backend\App\Action;
-use Magento\Backend\App\Action\Context;
-use Magento\Framework\Controller\ResultFactory;
+use Magento\Framework\App\Action\Action;
+use Magento\Framework\App\Action\Context;
 use Magento\Framework\Controller\Result\Json;
+use Magento\Framework\Controller\ResultFactory;
 use Psr\Log\LoggerInterface;
 
-class Delete extends Action
+class Save extends Action
 {
     /**
      * @var FileUploader
@@ -88,17 +88,16 @@ class Delete extends Action
      */
     public function execute(): Json
     {
-        $result = $this->resultFactory->create(ResultFactory::TYPE_JSON);
-        $deleteResult = [];
-
         try {
             $font = $this->getRequest()->getParam('font');
-
-            $deleteResult = $this->fileUploader->deleteFile($font);
+            $result = [
+                'url' => $this->fileUploader->saveFile($font)
+            ];
         } catch (\Exception $e) {
+            $result = ['error' => $e->getMessage(), 'errorcode' => $e->getCode()];
             $this->logger->critical($e->getMessage());
-            return $result->setData($deleteResult);
         }
-        return $result->setData($deleteResult);
+        $jsonResult = $this->resultFactory->create(ResultFactory::TYPE_JSON);
+        return $jsonResult->setData($result);
     }
 }

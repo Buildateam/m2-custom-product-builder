@@ -2,14 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Buildateam\CustomProductBuilder\Controller\Adminhtml\Config;
+namespace Buildateam\CustomProductBuilder\Controller\Config;
 
 use Magento\Framework\Controller\Result\Json;
 use Magento\Framework\Controller\ResultFactory;
 
 class Get extends Action
 {
-
     /**
      * @return Json
      */

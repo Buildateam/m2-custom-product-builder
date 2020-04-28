@@ -16,12 +16,14 @@ class Set extends Action
     {
         $jsonResult = $this->resultFactory->create(ResultFactory::TYPE_JSON);
 
-        if ($this->getRequest()->getParam('config')) {
-            try {
-                $config = $this->jsonSerializer->unserialize($this->getRequest()->getParam('config'));
-            } catch (\InvalidArgumentException $e) {
-                $result = ['error' => true, 'message' => $e->getMessage()];
-                return $jsonResult->setData($result);
+        if (null !== $config = $this->getRequest()->getParam('config')) {
+            if (!is_array($config)) {
+                try {
+                    $config = $this->jsonSerializer->unserialize($config);
+                } catch (\Exception $e) {
+                    $result = ['error' => true, 'message' => $e->getMessage()];
+                    return $jsonResult->setData($result);
+                }
             }
 
             try {

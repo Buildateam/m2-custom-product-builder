@@ -51,11 +51,13 @@ namespace Buildateam\CustomProductBuilder\Controller\Font;
 use Buildateam\CustomProductBuilder\Model\FileUploader;
 use Magento\Framework\App\Action\Action;
 use Magento\Framework\App\Action\Context;
+use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\Controller\Result\Json;
 use Magento\Framework\Controller\ResultFactory;
+use Magento\Framework\Filesystem;
 use Psr\Log\LoggerInterface;
 
-class Save extends Action
+class Upload extends Action
 {
     /**
      * @var FileUploader
@@ -68,19 +70,28 @@ class Save extends Action
     public $logger;
 
     /**
+     * @var Filesystem
+     */
+    private $filesystem;
+
+    /**
      * Save constructor.
      * @param Context $context
+     * @param Filesystem $filesystem
      * @param FileUploader $fileUploader
      * @param LoggerInterface $logger
      */
     public function __construct(
         Context $context,
+        Filesystem $filesystem,
         FileUploader $fileUploader,
         LoggerInterface $logger
     ) {
         parent::__construct($context);
         $this->fileUploader = $fileUploader;
+        $this->fileUploader->setUploadType('font');
         $this->logger = $logger;
+        $this->filesystem = $filesystem;
     }
 
     /**
@@ -88,14 +99,19 @@ class Save extends Action
      */
     public function execute(): Json
     {
-        try {
-            $font = $this->getRequest()->getParam('font');
-            $result = [
-                'url' => $this->fileUploader->saveFile($font)
-            ];
-        } catch (\Exception $e) {
-            $result = ['error' => $e->getMessage(), 'errorcode' => $e->getCode()];
-            $this->logger->critical($e->getMessage());
+        $requestData = json_decode(file_get_contents('php://input'), true);
+        $result = [
+            'error' => true
+        ];
+        if (isset($requestData['base64'])) {
+            try {
+                $result = [
+                    'url' => $this->fileUploader->saveFile($requestData)
+                ];
+            } catch (\Exception $e) {
+                $result = ['error' => $e->getMessage(), 'errorcode' => $e->getCode()];
+                $this->logger->critical($e->getMessage());
+            }
         }
         $jsonResult = $this->resultFactory->create(ResultFactory::TYPE_JSON);
         return $jsonResult->setData($result);

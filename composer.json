@@ -1,7 +1,7 @@
 {
     "name": "buildateam/m2-custom-product-builder",
     "description": "Magento 2 Custom Product Builder Implementation",
-    "version": "1.0.17",
+    "version": "1.0.18",
     "require": {
         "magento/framework": "101.0.*||102.0.*"
     },

@@ -53,6 +53,7 @@ use Magento\Framework\Exception\FileSystemException;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Filesystem;
+use Magento\Framework\Math\Random;
 use Magento\Framework\UrlInterface;
 use Magento\MediaStorage\Helper\File\Storage\Database;
 use Magento\MediaStorage\Model\File\UploaderFactory;
@@ -65,18 +66,28 @@ class FileUploader
     /**
      * @var string
      */
-    public $basePath = 'buildateam/fonts';
+    private $basePath = [
+        'image' => 'customproductbuilder/catalog/product',
+        'font' => 'customproductbuilder/fonts'
+    ];
 
     /**
      * @var array
      */
-    public $allowedExtensions = [
-        'ttf',
-        'woff',
-        'eot',
-        'otf',
-        'woff2',
-        'svg'
+    private $allowedExtensions = [
+        'image' => [
+            'jpg',
+            'jpeg',
+            'png'
+        ],
+        'font' => [
+            'ttf',
+            'woff',
+            'eot',
+            'otf',
+            'woff2',
+            'svg'
+        ]
     ];
 
     /**
@@ -110,11 +121,27 @@ class FileUploader
     private $logger;
 
     /**
+     * @var string
+     */
+    private $uploadType = 'image';
+
+    /**
+     * @var Filesystem\Directory\WriteInterface
+     */
+    private $tmpDirectory;
+
+    /**
+     * @var Random
+     */
+    private $mathRandom;
+
+    /**
      * FileUploader constructor.
      * @param Database $coreFileStorageDatabase
      * @param Filesystem $filesystem
      * @param File $fileDriver
      * @param UploaderFactory $uploaderFactory
+     * @param Random $mathRandom
      * @param StoreManagerInterface $storeManager
      * @param LoggerInterface $logger
      * @throws FileSystemException
@@ -124,15 +151,18 @@ class FileUploader
         Filesystem $filesystem,
         File $fileDriver,
         UploaderFactory $uploaderFactory,
+        Random $mathRandom,
         StoreManagerInterface $storeManager,
         LoggerInterface $logger
     ) {
         $this->coreFileStorageDatabase = $coreFileStorageDatabase;
         $this->mediaDirectory = $filesystem->getDirectoryWrite(DirectoryList::MEDIA);
+        $this->tmpDirectory = $filesystem->getDirectoryWrite(DirectoryList::TMP);
         $this->uploaderFactory = $uploaderFactory;
         $this->storeManager = $storeManager;
         $this->logger = $logger;
         $this->fileDriver = $fileDriver;
+        $this->mathRandom = $mathRandom;
     }
 
     /**
@@ -152,16 +182,27 @@ class FileUploader
     }
 
     /**
-     * @param string $fileId
+     * @param array $fileData
      * @return mixed
      * @throws LocalizedException
      * @throws NoSuchEntityException
      */
-    public function saveFile(string $fileId): string
+    public function saveFile(array $fileData): string
     {
-        $basePath = $this->basePath;
-        $uploader = $this->uploaderFactory->create(['fileId' => $fileId]);
-        $uploader->setAllowedExtensions($this->allowedExtensions);
+        $name = $fileData['name'] ?? $this->mathRandom->getRandomString(18);
+
+        $this->tmpDirectory->writeFile(
+            $this->tmpDirectory->getAbsolutePath() . $name,
+            base64_decode($fileData['base64'])
+        );
+        $file = [
+            'tmp_name' => $this->tmpDirectory->getAbsolutePath() . $name,
+            'name' => $name
+        ];
+
+        $basePath = $this->basePath[$this->uploadType];
+        $uploader = $this->uploaderFactory->create(['fileId' => $file]);
+        $uploader->setAllowedExtensions($this->allowedExtensions[$this->uploadType]);
         $uploader->setAllowRenameFiles(true);
         $result = $uploader->save($this->mediaDirectory->getAbsolutePath($basePath));
         if (!$result) {
@@ -197,5 +238,15 @@ class FileUploader
     public function getFilePath(string $path, string $imageName): string
     {
         return rtrim($path, '/') . '/' . ltrim($imageName, '/');
+    }
+
+    /**
+     * @param string $uploadType
+     * @return $this
+     */
+    public function setUploadType(string $uploadType): self
+    {
+        $this->uploadType = $uploadType;
+        return $this;
     }
 }

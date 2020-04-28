@@ -1,3 +1,7 @@
+## 1.0.18
+* Bug fixes
+* Code improvements
+
 ## 1.0.17
 * Added Global Fonts
 

@@ -51,6 +51,7 @@ use Magento\Catalog\Model\Product;
 use Magento\Eav\Model\Entity\Attribute\ScopedAttributeInterface;
 use Magento\Eav\Setup\EavSetup;
 use Magento\Eav\Setup\EavSetupFactory;
+use Magento\Framework\App\ProductMetadataInterface;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Setup\ModuleContextInterface;
 use Magento\Framework\Setup\ModuleDataSetupInterface;
@@ -64,13 +65,21 @@ class UpgradeData implements UpgradeDataInterface
     private $eavSetupFactory;
 
     /**
+     * @var ProductMetadataInterface
+     */
+    private $productMetadata;
+
+    /**
      * UpgradeData constructor.
      * @param EavSetupFactory $eavSetupFactory
+     * @param ProductMetadataInterface $productMetadata
      */
     public function __construct(
-        EavSetupFactory $eavSetupFactory
+        EavSetupFactory $eavSetupFactory,
+        ProductMetadataInterface $productMetadata
     ) {
         $this->eavSetupFactory = $eavSetupFactory;
+        $this->productMetadata = $productMetadata;
     }
 
     /**
@@ -107,10 +116,18 @@ class UpgradeData implements UpgradeDataInterface
         $oldAttribute = $eavSetup->getAttribute(Product::ENTITY, 'json_configuration');
         if ($oldAttribute && isset($oldAttribute['attribute_id'])) {
             $select = clone $connection->select();
-            $select->from(
-                $setup->getTable('catalog_product_entity_text'),
-                ['entity_id', 'value']
-            )->where("attribute_id = {$oldAttribute['attribute_id']}");
+            if ($this->productMetadata->getEdition() == 'Community') {
+                $select->from(
+                    $setup->getTable('catalog_product_entity_text'),
+                    ['entity_id', 'value']
+                );
+            } else { // workaround for EE
+                $select->from(
+                    $setup->getTable('catalog_product_entity_text'),
+                    ['row_id', 'value']
+                );
+            }
+            $select->where("attribute_id = {$oldAttribute['attribute_id']}");
             $insert = $connection->insertFromSelect(
                 $select,
                 $setup->getTable('cpb_product_configuration'),

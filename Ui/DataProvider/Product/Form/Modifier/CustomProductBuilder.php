@@ -203,12 +203,7 @@ class CustomProductBuilder extends AbstractModifier
         $product = $this->productRepository->getById($productId);
         $productConfig = $product->getData('json_configuration');
         $fieldCode = 'json_configuration';
-        $elementPath = $this->arrayManager->findPath($fieldCode, $meta, null, 'children');
-        $containerPath = $this->arrayManager->findPath(static::CONTAINER_PREFIX . $fieldCode, $meta, null, 'children');
-
-        if (!$elementPath) {
-            return $meta;
-        }
+        $containerPath = 'product-details/children/container_json_configuration';
 
         $cpbMeta = [
             'arguments' => [
@@ -219,6 +214,7 @@ class CustomProductBuilder extends AbstractModifier
                         'formElement' => 'container',
                         'componentType' => 'container',
                         'component' => 'Magento_Ui/js/form/components/group',
+                        'label' => __('Custom Product Configuration'),
                         'scopeLabel' => __('[GLOBAL]'),
                     ],
                 ],
@@ -349,7 +345,7 @@ class CustomProductBuilder extends AbstractModifier
             unset($cpbMeta['children']['custom_product_builder_export']);
         }
 
-        $meta = $this->arrayManager->merge(
+        $meta = $this->arrayManager->set(
             $containerPath,
             $meta,
             $cpbMeta
@@ -365,12 +361,7 @@ class CustomProductBuilder extends AbstractModifier
     protected function customizeNewProductCpbField($meta)
     {
         $fieldCode = 'json_configuration';
-        $elementPath = $this->arrayManager->findPath($fieldCode, $meta, null, 'children');
-        $containerPath = $this->arrayManager->findPath(static::CONTAINER_PREFIX . $fieldCode, $meta, null, 'children');
-
-        if (!$elementPath) {
-            return $meta;
-        }
+        $containerPath = 'product-details/children/container_json_configuration';
 
         $cpbMeta = [
             'arguments' => [
@@ -424,7 +415,7 @@ class CustomProductBuilder extends AbstractModifier
                 ]
             ]
         ];
-        $meta = $this->arrayManager->merge(
+        $meta = $this->arrayManager->set(
             $containerPath,
             $meta,
             $cpbMeta

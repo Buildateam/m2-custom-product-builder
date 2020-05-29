@@ -46,6 +46,7 @@
 
 namespace Buildateam\CustomProductBuilder\Controller\Adminhtml\Product;
 
+use Magento\Framework\App\Filesystem\DirectoryList;
 use \Magento\Framework\App\Response\Http\FileFactory;
 use \Magento\Catalog\Model\ProductRepository;
 use \Magento\Backend\App\Action\Context;
@@ -104,7 +105,8 @@ class ExportFile extends \Magento\Backend\App\Action
 
         return $this->fileFactory->create(
             sprintf('product_%s.json', $productId),
-            $productConfig
+            $productConfig,
+            DirectoryList::TMP
         );
     }
 }

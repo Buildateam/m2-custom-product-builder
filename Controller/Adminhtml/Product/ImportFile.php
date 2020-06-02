@@ -46,20 +46,27 @@
 
 namespace Buildateam\CustomProductBuilder\Controller\Adminhtml\Product;
 
+use Buildateam\CustomProductBuilder\Helper\Data;
+use Buildateam\CustomProductBuilder\Model\FileUploader;
+use Magento\Backend\App\Action;
 use Magento\Backend\App\Action\Context;
+use Magento\Catalog\Model\Product;
+use Magento\Framework\App\ObjectManager;
+use Magento\Framework\App\ResponseInterface;
 use Magento\Framework\Controller\ResultFactory;
-use Magento\Framework\Filesystem;
+use Magento\Framework\Controller\ResultInterface;
+use Magento\Framework\HTTP\Client\Curl;
 use \Magento\Framework\Logger\Monolog;
 use Exception;
+use Magento\Framework\View\Result\Layout;
 
 /**
- * Class ImportFile
- * @package Buildateam\CustomProductBuilder\Controller\Adminhtml\Product
+ * @SuppressWarnings(PHPMD.CamelCasePropertyName)
  */
-class ImportFile extends \Magento\Backend\App\Action
+class ImportFile extends Action
 {
 
-    protected $_jsonProductContent;
+    protected $jsonProductContent;
 
     /**
      * @var ResultFactory
@@ -72,23 +79,43 @@ class ImportFile extends \Magento\Backend\App\Action
     protected $_logger;
 
     /**
+     * @var FileUploader
+     */
+    private $fileUploader;
+
+    /**
+     * @var Curl
+     */
+    private $curl;
+
+    /**
      * Share constructor.
      *
      * @param Context $context
+     * @param FileUploader $fileUploader
+     * @param Curl $curl
      */
     public function __construct(
         Context $context,
-        Monolog $logger
+        FileUploader $fileUploader,
+        Curl $curl
     ) {
-        $this->_resultFactory = $context->getResultFactory();
         parent::__construct($context);
+        $this->_resultFactory = $context->getResultFactory();
+        $this->fileUploader = $fileUploader;
+        $this->curl = $curl;
     }
 
+    /**
+     * @return ResponseInterface|ResultInterface|Layout
+     *
+     * //phpcs:disable Magento2.Functions.DiscouragedFunction.Discouraged
+     */
     public function execute()
     {
-        $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+        $objectManager = ObjectManager::getInstance();
         $productId = $this->getRequest()->getParam('id');
-        $product = $objectManager->create(\Magento\Catalog\Model\Product::class)->load($productId);
+        $product = $objectManager->create(Product::class)->load($productId);
 
         $file = $this->getRequest()->getFiles('product')['file'];
         $jsonData = !empty($file['tmp_name'])
@@ -97,11 +124,11 @@ class ImportFile extends \Magento\Backend\App\Action
 
         $response = $this->_resultFactory->create(ResultFactory::TYPE_JSON);
         if (!empty($jsonData)) {
-            $this->_jsonProductContent = $jsonData;
-            $validate = $this->_objectManager->create(\Buildateam\CustomProductBuilder\Helper\Data::class)
-                ->validate($this->_jsonProductContent);
+            $this->jsonProductContent = $jsonData;
+            $validate = $this->_objectManager->create(Data::class)
+                ->validate($this->jsonProductContent);
 
-            if (isset($this->_jsonProductContent) && !empty($this->_jsonProductContent) && $validate) {
+            if (isset($this->jsonProductContent) && !empty($this->jsonProductContent) && $validate) {
                 $result = [
                     'status' => 'error',
                     'msg' => $validate
@@ -111,7 +138,12 @@ class ImportFile extends \Magento\Backend\App\Action
                 return $response;
             }
 
-            $product->setJsonConfiguration($this->_jsonProductContent);
+            $images = $this->getImages($this->jsonProductContent);
+            if ($images) {
+                $this->jsonProductContent = $this->saveImages($images, $this->jsonProductContent);
+            }
+
+            $product->setJsonConfiguration($this->jsonProductContent);
 
             try {
                 $product->save();
@@ -128,5 +160,55 @@ class ImportFile extends \Magento\Backend\App\Action
         }
 
         return $response;
+    }
+
+    /**
+     * Make preg match all with offsets and format array  to one dimensional
+     *
+     * @param string $haystack
+     * @return array|null
+     *
+     * //phpcs:disable Magento2.Functions.DiscouragedFunction.Discouraged
+     */
+    private function getImages(string $haystack): ?array
+    {
+        $urlInfo = parse_url($this->_url->getBaseUrl());
+        $currentDomain = preg_quote($urlInfo['host']);
+        $result = preg_match_all(
+            '@http[s]?:[\\\/]+(?!' . $currentDomain . ')[\w\-\\\/.]+\.(jp[e]?g|png)@',
+            $haystack,
+            $matches
+        );
+        if ($result) {
+            return $matches['0'];
+        }
+
+        return null;
+    }
+    //phpcs:enable
+
+    /**
+     * @param array $matches
+     * @param string $config
+     * @return string
+     *
+     * //phpcs:disable Magento2.Functions.DiscouragedFunction.Discouraged
+     */
+    private function saveImages(array $matches, string $config): string
+    {
+        foreach ($matches as $match) {
+            $match = str_replace('\/', '/', $match);
+            try {
+                $this->curl->get($match);
+                $imageData ['base64'] = base64_encode($this->curl->getBody());
+                $imageData ['name'] = basename($match);
+                $url = $this->fileUploader->saveFile($imageData);
+                $config = str_replace($match, $url, $config);
+            } catch (Exception $e) {
+                $this->_logger->error($e->getMessage());
+            }
+        }
+
+        return $config;
     }
 }

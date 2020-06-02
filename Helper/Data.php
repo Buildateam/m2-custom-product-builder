@@ -75,6 +75,7 @@ class Data extends AbstractHelper
      * @var StoreManagerInterface
      */
     protected $_storeManager;
+
     /**
      * @var Random
      */
@@ -168,6 +169,7 @@ class Data extends AbstractHelper
      * @param $base64Image
      * @param bool $frontImage
      * @return string
+     * @throws \Magento\Framework\Exception\FileSystemException
      */
     public function uploadImage($base64Image, $frontImage = false)
     {
@@ -176,12 +178,11 @@ class Data extends AbstractHelper
         $mediaPath = $media->getAbsolutePath('catalog/product/customproductbuilder/' .
             ($frontImage ? 'variation' : 'configuration'));
 
-        if (!file_exists($mediaPath)) {
-            mkdir($mediaPath, 0777, true);
+        if (!file_exists($mediaPath) && !mkdir($mediaPath, 0777, true) && !is_dir($mediaPath)) {
+            throw new \RuntimeException(sprintf('Directory "%s" was not created', $mediaPath));
         }
         try {
-            $variationId = $this->_request->getParam('configid') ?
-                $this->_request->getParam('configid') : $this->_mathRandom->getRandomString(18);
+            $variationId = $this->_request->getParam('configid') ?: $this->_mathRandom->getRandomString(18);
         } catch (LocalizedException $e) {
             $this->_logger->critical($e->getMessage());
             return false;
@@ -200,8 +201,7 @@ class Data extends AbstractHelper
      */
     public function getConfigValue($path)
     {
-        $value = $this->scopeConfig->getValue($path, ScopeInterface::SCOPE_STORE);
-        return $value;
+        return $this->scopeConfig->getValue($path, ScopeInterface::SCOPE_STORE);
     }
 
     /**

@@ -1,3 +1,7 @@
+## 1.0.20
+* Implemented image grab for peoduct import
+* Fixed issue with permissions on json configuration export
+
 ## 1.0.18
 * Bug fixes
 * Code improvements

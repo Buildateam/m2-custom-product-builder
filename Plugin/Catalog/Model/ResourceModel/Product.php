@@ -7,7 +7,12 @@ use Magento\Framework\Model\AbstractModel;
 
 class Product
 {
-
+    /**
+     * @param \Magento\Catalog\Model\ResourceModel\Product $subject
+     * @param \Closure $proceed
+     * @param AbstractModel $object
+     * @return \Magento\Catalog\Model\ResourceModel\Product
+     */
     public function aroundSave(
         \Magento\Catalog\Model\ResourceModel\Product $subject,
         \Closure $proceed,
@@ -18,7 +23,7 @@ class Product
         if (!empty($jsonConfiguration)) {
             $productId = $object->getEntityId();
             $subject->getConnection()->insertOnDuplicate(
-                'cpb_product_configuration',
+                $subject->getTable('cpb_product_configuration'),
                 [
                     'product_id' => $productId,
                     'configuration' => $jsonConfiguration
@@ -28,6 +33,14 @@ class Product
         return $result;
     }
 
+    /**
+     * @param \Magento\Catalog\Model\ResourceModel\Product $subject
+     * @param \Closure $proceed
+     * @param AbstractModel $object
+     * @param $entityId
+     * @param array $attributes
+     * @return \Magento\Catalog\Model\ResourceModel\Product
+     */
     public function aroundLoad(
         \Magento\Catalog\Model\ResourceModel\Product $subject,
         \Closure $proceed,
@@ -39,7 +52,7 @@ class Product
         if ($object->getId()) {
             $select = clone $subject->getConnection()->select();
             $select->from(
-                'cpb_product_configuration',
+                $subject->getTable('cpb_product_configuration'),
                 'configuration'
             )->where("product_id = {$object->getId()}");
             $jsonConfiguration = $subject->getConnection()->fetchOne($select);

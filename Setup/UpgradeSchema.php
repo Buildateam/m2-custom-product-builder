@@ -122,8 +122,9 @@ class UpgradeSchema implements UpgradeSchemaInterface
     private function createCpbProductConfigTable(SchemaSetupInterface $setup)
     {
         $connection = $setup->getConnection();
-        $connection->dropTable('cpb_product_config');
-        $table = $connection->newTable($setup->getTable('cpb_product_config'))
+        $tableName = $setup->getTable('cpb_product_config');
+        $connection->dropTable($tableName);
+        $table = $connection->newTable($tableName)
             ->addColumn(
                 'entity_id',
                 Table::TYPE_INTEGER,
@@ -207,9 +208,10 @@ class UpgradeSchema implements UpgradeSchemaInterface
     private function createNewConfigurationTable(SchemaSetupInterface $setup)
     {
         $connection = $setup->getConnection();
-        $connection->dropTable('cpb_product_configuration');
+        $tableName = $setup->getTable('cpb_product_configuration');
+        $connection->dropTable($tableName);
         $table = $connection->newTable(
-            $setup->getTable('cpb_product_configuration')
+            $tableName
         )->addColumn(
             'product_id',
             Table::TYPE_INTEGER,

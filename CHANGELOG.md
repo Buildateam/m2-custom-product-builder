@@ -1,5 +1,8 @@
+## 1.0.21
+* Added support of magento installation with table prefix
+
 ## 1.0.20
-* Implemented image grab for peoduct import
+* Implemented image grab for product import
 * Fixed issue with permissions on json configuration export
 
 ## 1.0.18

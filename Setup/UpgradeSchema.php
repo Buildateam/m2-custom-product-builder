@@ -282,15 +282,16 @@ class UpgradeSchema implements UpgradeSchemaInterface
                 'comment' => 'Config ID'
             ]
         );
+        $setup->getConnection()->dropForeignKey(
+            $setup->getTable('cpb_product_configuration'),
+            'CPB_PRD_CONFIGURATION_PRD_ID_CAT_PRD_ENTT_ENTT_ID'
+        );
         $setup->getConnection()
             ->dropIndex(
                 $setup->getTable('cpb_product_configuration'),
                 'CPB_PRODUCT_CONFIGURATION_PRODUCT_ID'
             );
-        $setup->getConnection()->dropForeignKey(
-            $setup->getTable('cpb_product_configuration'),
-            'CPB_PRD_CONFIGURATION_PRD_ID_CAT_PRD_ENTT_ENTT_ID'
-        )->addForeignKey(
+        $setup->getConnection()->addForeignKey(
             $setup->getFkName(
                 'cpb_product_configuration',
                 'product_id',

@@ -97,4 +97,12 @@
     <type name="Magento\Catalog\Model\ResourceModel\Product">
         <plugin name="cpb_json_config" type="Buildateam\CustomProductBuilder\Plugin\Catalog\Model\ResourceModel\Product"/>
     </type>
+
+    <type name="Magento\Csp\Model\CompositePolicyCollector">
+        <arguments>
+            <argument name="collectors" xsi:type="array">
+                <item name="111" xsi:type="object">Buildateam\CustomProductBuilder\Model\Collector\CpbCollector</item>
+            </argument>
+        </arguments>
+    </type>
 </config>

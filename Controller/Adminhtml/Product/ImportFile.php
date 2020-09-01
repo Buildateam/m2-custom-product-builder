@@ -51,6 +51,7 @@ use Buildateam\CustomProductBuilder\Model\FileUploader;
 use Magento\Backend\App\Action;
 use Magento\Backend\App\Action\Context;
 use Magento\Catalog\Model\Product;
+use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\App\ObjectManager;
 use Magento\Framework\App\ResponseInterface;
 use Magento\Framework\Controller\ResultFactory;
@@ -59,6 +60,7 @@ use Magento\Framework\HTTP\Client\Curl;
 use \Magento\Framework\Logger\Monolog;
 use Exception;
 use Magento\Framework\View\Result\Layout;
+use Magento\Store\Model\ScopeInterface;
 
 /**
  * @SuppressWarnings(PHPMD.CamelCasePropertyName)
@@ -87,6 +89,10 @@ class ImportFile extends Action
      * @var Curl
      */
     private $curl;
+    /**
+     * @var ScopeConfigInterface
+     */
+    private $scopeConfig;
 
     /**
      * Share constructor.
@@ -94,16 +100,19 @@ class ImportFile extends Action
      * @param Context $context
      * @param FileUploader $fileUploader
      * @param Curl $curl
+     * @param ScopeConfigInterface $scopeConfig
      */
     public function __construct(
         Context $context,
         FileUploader $fileUploader,
-        Curl $curl
+        Curl $curl,
+        ScopeConfigInterface $scopeConfig
     ) {
         parent::__construct($context);
         $this->_resultFactory = $context->getResultFactory();
         $this->fileUploader = $fileUploader;
         $this->curl = $curl;
+        $this->scopeConfig = $scopeConfig;
     }
 
     /**
@@ -140,7 +149,9 @@ class ImportFile extends Action
 
             $images = $this->getImages($this->jsonProductContent);
             if ($images) {
-                $this->jsonProductContent = $this->saveImages($images, $this->jsonProductContent);
+                if ($this->scopeConfig->getValue('cpb/development/download_images', ScopeInterface::SCOPE_STORE)) {
+                    $this->jsonProductContent = $this->saveImages($images, $this->jsonProductContent);
+                }
             }
 
             $product->setJsonConfiguration($this->jsonProductContent);

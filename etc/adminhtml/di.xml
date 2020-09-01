@@ -50,4 +50,7 @@
     <type name="Magento\Catalog\Controller\Adminhtml\Product\Save">
         <plugin name="BeforeSave" type="Buildateam\CustomProductBuilder\Plugin\BeforeSave"/>
     </type>
+    <type name="Magento\Catalog\Controller\Adminhtml\Product\Edit">
+        <plugin name="cpb_product_edit_policy" type="Buildateam\CustomProductBuilder\Plugin\ProductPolicy" sortOrder="50"/>
+    </type>
 </config>

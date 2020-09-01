@@ -1,9 +1,9 @@
 {
     "name": "buildateam/m2-custom-product-builder",
     "description": "Magento 2 Custom Product Builder Implementation",
-    "version": "1.0.21",
+    "version": "1.0.22",
     "require": {
-        "magento/framework": "101.0.*||102.0.*"
+        "magento/framework": "103.0.*"
     },
     "type": "magento2-module",
     "autoload": {

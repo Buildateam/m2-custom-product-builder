@@ -1,4 +1,4 @@
-<?xml version="1.0"?><!--
+<?xml version="1.0" encoding="UTF-8"?><!--
   ~ Copyright (c) 2017 Indigo Geeks, Inc. All rights reserved.
   ~
   ~ General.
@@ -36,29 +36,8 @@
   ~ THE SOFTWARE COULD LEAD TO DEATH, PERSONAL INJURY, OR SEVERE PHYSICAL OR ENVIRONMENTAL DAMAGE.
   -->
 
-<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
-    <system>
-        <tab id="buildateam" translate="label" sortOrder="100">
-            <label><![CDATA[Buildateam]]></label>
-        </tab>
-        <section id="cpb" translate="label" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
-            <class>separator-top</class>
-            <label><![CDATA[Custom Product Builder]]></label>
-            <tab>buildateam</tab>
-            <resource>Buildateam_CustomProductBuilder::cpb_config</resource>
-            <group id="development" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0">
-                <label><![CDATA[Development Configuration]]></label>
-                <field id="cpb_js" translate="label" type="text" sortOrder="2" showInDefault="1" showInWebsite="0" showInStore="0">
-                    <label>CPB JS</label>
-                </field>
-                <field id="theme_js" translate="label" type="text" sortOrder="2" showInDefault="1" showInWebsite="0" showInStore="0">
-                    <label>Theme JS</label>
-                </field>
-                <field id="download_images" translate="label" type="select" showInDefault="1" canRestore="1">
-                    <label>Download images</label>
-                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
-                </field>
-            </group>
-        </section>
-    </system>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <type name="Magento\Catalog\Controller\Product\View">
+        <plugin name="cpb_product_view_policy" type="Buildateam\CustomProductBuilder\Plugin\ProductPolicy" sortOrder="50"/>
+    </type>
 </config>

@@ -48,9 +48,12 @@ namespace Buildateam\CustomProductBuilder\Block\Catalog\Product;
 
 use Buildateam\CustomProductBuilder\Helper\Data;
 use Magento\Catalog\Block\Product\Context;
+use Magento\Framework\Exception\NoSuchEntityException;
+use Magento\Framework\Locale\Resolver;
 use Magento\Framework\Registry;
 use Magento\Framework\View\Element\Template;
 use Magento\Store\Model\ScopeInterface;
+use Magento\Store\Model\StoreManagerInterface;
 
 /**
  * Class View
@@ -67,21 +70,35 @@ class View extends Template
      * @var Registry
      */
     protected $_coreRegistry;
+    /**
+     * @var StoreManagerInterface
+     */
+    private StoreManagerInterface $storeManager;
+    /**
+     * @var Resolver
+     */
+    private Resolver $locale;
 
     /**
      * View constructor.
      * @param Context $context
      * @param Data $helper
+     * @param StoreManagerInterface $storeManager
+     * @param Resolver $locale
      * @param array $data
      */
     public function __construct(
         Context $context,
         Data $helper,
+        StoreManagerInterface $storeManager,
+        Resolver $locale,
         array $data = []
     ) {
         $this->_helper = $helper;
         $this->_coreRegistry = $context->getRegistry();
         parent::__construct($context, $data);
+        $this->storeManager = $storeManager;
+        $this->locale = $locale;
     }
 
     /**
@@ -108,5 +125,24 @@ class View extends Template
     public function getCpbThemeDistSource()
     {
         return $this->_scopeConfig->getValue(Data::XPATH_BUILDER_THEME_JS, ScopeInterface::SCOPE_STORE);
+    }
+
+    /**
+     * @return mixed
+     * @throws NoSuchEntityException
+     */
+    public function getCurrency()
+    {
+        return $this->storeManager->getStore()->getCurrentCurrencyCode();
+    }
+
+    /**
+     * @return string
+     * @throws NoSuchEntityException
+     */
+    public function getLanguage()
+    {
+        $currentLocaleCode = $this->locale->getLocale();
+        return strstr($currentLocaleCode, '_', true);
     }
 }

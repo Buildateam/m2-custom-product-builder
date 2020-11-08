@@ -57,7 +57,9 @@
      styles-path="<?= $block->getViewFileUrl('Buildateam_CustomProductBuilder::css/cpb.css') ?>"
      product-sku="<?= $block->escapeHtml($product->getSku()) ?>"
      product-name="<?= $block->escapeHtml($product->getName()) ?>"
-     product-short-description="<?= (string)$product->getShortDescription() ?>">
+     product-short-description="<?= (string)$product->getShortDescription() ?>"
+     currency="<?= $block->getCurrency() ?>"
+     language="<?= $block->getLanguage() ?>">
 </div>
 
 <?php if ($block->getCpbProductDistSource()) : ?>

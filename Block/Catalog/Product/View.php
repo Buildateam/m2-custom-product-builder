@@ -73,11 +73,11 @@ class View extends Template
     /**
      * @var StoreManagerInterface
      */
-    private StoreManagerInterface $storeManager;
+    private $storeManager;
     /**
      * @var Resolver
      */
-    private Resolver $locale;
+    private $locale;
 
     /**
      * View constructor.

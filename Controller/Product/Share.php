@@ -46,6 +46,7 @@
 
 namespace Buildateam\CustomProductBuilder\Controller\Product;
 
+use Buildateam\CustomProductBuilder\Model\ResourceModel\ShareableLinks;
 use \Magento\Framework\App\Action\Action;
 use \Magento\Framework\App\Action\Context;
 use \Magento\Framework\Controller\ResultFactory;
@@ -72,23 +73,30 @@ class Share extends Action
      * @var ResultFactory
      */
     protected $_resultFactory;
+    /**
+     * @var ShareableLinks
+     */
+    private $sharableResource;
 
     /**
      * Share constructor.
      *
      * @param Context $context
      * @param ShareableLinksFactory $factory
+     * @param ShareableLinks $sharableResource
      * @param Validator $validator
      */
     public function __construct(
         Context $context,
         ShareableLinksFactory $factory,
+        ShareableLinks $sharableResource,
         Validator $validator
     ) {
         $this->_formKeyValidator = $validator;
         $this->_shareLinksFactory = $factory;
         $this->_resultFactory = $context->getResultFactory();
         parent::__construct($context);
+        $this->sharableResource = $sharableResource;
     }
 
     /**
@@ -99,22 +107,26 @@ class Share extends Action
         if ($this->_validateRequest() !== true) {
             return $this->resultRedirectFactory->create()->setPath('*/*/');
         }
+        $request = $this->getRequest()->getParams();
+        $configModel = $this->_shareLinksFactory->create();
 
-        $configModel = $this->_shareLinksFactory->create()
-            ->loadByVariationId($this->getRequest()->getParam('configid'));
-        if ($configModel->getId()) {
+        $configModel->setData([
+            'technical_data' => json_encode($request['technicalData']),
+            'variation_id' => $request['configid']
+        ]);
+        try {
+            $this->sharableResource->save($configModel);
             $result = [
                 'success' => true,
                 'message' => __('Product configuration successfully saved.'),
-                'configid' => $configModel->getConfigId()
+                'configid' => $request['configid']
             ];
-        } else {
+        } catch (\Exception $exception) {
             $result = [
                 'success' => false,
                 'message' => __('Config didn\'t save. Please, try again later.'),
             ];
         }
-
         $response = $this->_resultFactory->create(ResultFactory::TYPE_JSON);
         $response->setData($result);
 

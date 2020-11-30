@@ -1,3 +1,6 @@
+## 1.0.24
+* Fixed share button functional
+
 ## 1.0.21
 * Added support of magento installation with table prefix
 

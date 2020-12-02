@@ -95,11 +95,9 @@ class UpgradeData implements UpgradeDataInterface
         if (version_compare($context->getVersion(), '1.0.10', '<')) {
             $this->moveJsonConfigurations($setup);
         }
-        if (version_compare($context->getVersion(), '1.0.13', '<')) {
-            $this->addCpbEnabledAttribute($setup);
-        }
-        if (version_compare($context->getVersion(), '1.0.15', '<')) {
-            $this->renameCpbEnabledAttribute($setup);
+
+        if (version_compare($context->getVersion(), '1.1.0', '<')) {
+            $this->setupNewProductType($setup);
         }
 
         $setup->endSetup();
@@ -141,47 +139,34 @@ class UpgradeData implements UpgradeDataInterface
 
     /**
      * @param ModuleDataSetupInterface $setup
-     * @throws LocalizedException
-     * @throws \Zend_Validate_Exception
      */
-    private function addCpbEnabledAttribute(ModuleDataSetupInterface $setup)
+    private function setupNewProductType(ModuleDataSetupInterface $setup)
     {
         /** @var EavSetup $eavSetup */
         $eavSetup = $this->eavSetupFactory->create(['setup' => $setup]);
-        $eavSetup->addAttribute(
-            Product::ENTITY,
-            'cpb_enabled',
-            [
-                'group' => 'General',
-                'type' => 'int',
-                'input' => 'boolean',
-                'default' => '1',
-                'label' => 'Enable Custom Product Builder',
-                'global' => ScopedAttributeInterface::SCOPE_GLOBAL,
-                'required' => false,
-                'is_used_in_grid' => true,
-                'is_visible_in_grid' => true,
-                'is_filterable_in_grid' => true,
-                'position' => 150,
-                'sort_order' => 10,
-                'visible' => true,
-                'source' => Switcher::class,
-            ]
-        );
-    }
-
-    /**
-     * @param ModuleDataSetupInterface $setup
-     */
-    private function renameCpbEnabledAttribute(ModuleDataSetupInterface $setup)
-    {
-        /** @var EavSetup $eavSetup */
-        $eavSetup = $this->eavSetupFactory->create(['setup' => $setup]);
-        $eavSetup->updateAttribute(
-            Product::ENTITY,
-            'cpb_enabled',
-            'frontend_label',
-            'Custom Product Builder Status'
-        );
+        $fieldList = [
+            'price',
+            'special_from_date',
+            'special_to_date',
+            'cost',
+            'tier_price',
+            'weight',
+        ];
+        $newType = \Buildateam\CustomProductBuilder\Model\Product\Type::TYPE_CODE;
+        foreach ($fieldList as $field) {
+            $applyTo = explode(
+                ',',
+                $eavSetup->getAttribute(\Magento\Catalog\Model\Product::ENTITY, $field, 'apply_to')
+            );
+            if (!in_array($newType, $applyTo)) {
+                $applyTo[] = $newType;
+                $eavSetup->updateAttribute(
+                    \Magento\Catalog\Model\Product::ENTITY,
+                    $field,
+                    'apply_to',
+                    implode(',', $applyTo)
+                );
+            }
+        }
     }
 }

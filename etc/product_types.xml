@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Catalog:etc/product_types.xsd">
+    <type name="custom" label="Custom Product" modelInstance="Buildateam\CustomProductBuilder\Model\Product\Type" composite="true" isQty="true" canUseQtyDecimals="false" sortOrder="70">
+        <indexerModel instance="Magento\Catalog\Model\ResourceModel\Product\Indexer\Price\SimpleProductPrice" />
+        <customAttributes>
+            <attribute name="refundable" value="true"/>
+        </customAttributes>
+    </type>
+    <composableTypes>
+        <type name="custom" />
+    </composableTypes>
+</config>

@@ -108,7 +108,7 @@ class UpgradeData implements UpgradeDataInterface
             $this->setupNewProductType($setup);
         }
 
-        if (version_compare($context->getVersion(), '1.1.1', '<')) {
+        if (version_compare($context->getVersion(), '1.1.2', '<')) {
             $this->changeProductType($setup);
         }
 
@@ -189,8 +189,7 @@ class UpgradeData implements UpgradeDataInterface
     {
         $connection = $setup->getConnection();
         $collection = $this->productCollectionFactory->create();
-        $collection->addAttributeToFilter('cpb_enabled', 1)
-            ->addAttributeToFilter('json_configuration', ['notnull' => true]);
+        $collection->addAttributeToFilter('json_configuration', ['notnull' => true]);
 
         /** @var \Magento\Catalog\Model\Product $product */
         foreach($collection as $product) {

@@ -45,7 +45,9 @@
     return;
 } ?>
 
-<?php if (!(bool)$product->getData('json_configuration') || !$product->getData('cpb_enabled')) {
+<?php if (!(bool)$product->getData('json_configuration')
+    || $product->getTypeId() != \Buildateam\CustomProductBuilder\Model\Product\Type::TYPE_CODE
+) {
     return;
 } ?>
 

@@ -106,7 +106,7 @@ class CustomProductBuilder extends AbstractModifier
         $productId = $this->context->getRequest()->getParam('id');
         if ($productId) {
             $product = $this->productRepository->getById($productId);
-            if (!$product->getData('cpb_enabled')) {
+            if ($product->getTypeId() != \Buildateam\CustomProductBuilder\Model\Product\Type::TYPE_CODE) {
                 $meta = $this->customizeDisabledCpbField($meta);
             } else {
                 $meta = $this->createCustomProductBuilderModal($meta);

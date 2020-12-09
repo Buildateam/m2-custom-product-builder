@@ -230,6 +230,7 @@ class CustomProductBuilder extends AbstractModifier
                                 'filterOptions' => true,
                                 'chipsEnabled' => true,
                                 'disableLabel' => true,
+                                'labelVisible' => false,
                                 'elementTmpl' => 'ui/form/element/hidden',
                                 'config' => [
                                     'dataScope' => $fieldCode,
@@ -388,6 +389,7 @@ class CustomProductBuilder extends AbstractModifier
                                 'filterOptions' => true,
                                 'chipsEnabled' => true,
                                 'disableLabel' => true,
+                                'labelVisible' => false,
                                 'elementTmpl' => 'ui/form/element/hidden',
                                 'config' => [
                                     'dataScope' => $fieldCode,

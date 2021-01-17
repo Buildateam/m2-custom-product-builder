@@ -108,8 +108,9 @@ class UpgradeData implements UpgradeDataInterface
             $this->setupNewProductType($setup);
         }
 
-        if (version_compare($context->getVersion(), '1.1.2', '<')) {
+        if (version_compare($context->getVersion(), '1.1.6', '<')) {
             $this->changeProductType($setup);
+            $this->removeOldAttributes($setup);
         }
 
         $setup->endSetup();
@@ -188,18 +189,27 @@ class UpgradeData implements UpgradeDataInterface
     private function changeProductType(ModuleDataSetupInterface $setup)
     {
         $connection = $setup->getConnection();
-        $collection = $this->productCollectionFactory->create();
-        $collection->addAttributeToFilter('json_configuration', ['notnull' => true]);
+        $select = $connection->select();
+        $select->from($setup->getTable('cpb_product_configuration'), ['product_id'])
+            ->where('LENGTH(`configuration`) > 1256');
 
-        /** @var \Magento\Catalog\Model\Product $product */
-        foreach($collection as $product) {
-            if (strlen($product->getJsonConfiguration()) > 16) {
-                $connection->update(
-                    $setup->getTable('catalog_product_entity'),
-                    array('type_id' => \Buildateam\CustomProductBuilder\Model\Product\Type::TYPE_CODE),
-                    'entity_id = ' . $product->getId()
-                );
-            }
+        $productIds = $connection->fetchRow($select);
+        foreach($productIds as $productId) {
+            $connection->update(
+                $setup->getTable('catalog_product_entity'),
+                array('type_id' => \Buildateam\CustomProductBuilder\Model\Product\Type::TYPE_CODE),
+                'entity_id = ' . $productId
+            );
         }
+    }
+
+    /**
+     * @param ModuleDataSetupInterface $setup
+     */
+    private function removeOldAttributes(ModuleDataSetupInterface $setup)
+    {
+        $eavSetup = $this->eavSetupFactory->create(['setup' => $setup]);
+        $eavSetup->removeAttribute(\Magento\Catalog\Model\Product::ENTITY, 'json_configuration');
+        $eavSetup->removeAttribute(\Magento\Catalog\Model\Product::ENTITY, 'cpb_enabled');
     }
 }

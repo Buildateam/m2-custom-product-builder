@@ -54,6 +54,7 @@ use Magento\Framework\Filesystem;
 use Magento\Framework\Math\Random;
 use Magento\Store\Model\ScopeInterface;
 use Magento\Store\Model\StoreManagerInterface;
+use Magento\Framework\App\ResourceConnection;
 
 /**
  * Class Data
@@ -82,21 +83,29 @@ class Data extends AbstractHelper
     protected $_mathRandom;
 
     /**
+     * @var ResourceConnection
+     */
+    private $resource;
+
+    /**
      * Data constructor.
      * @param Context $context
      * @param Filesystem $fileSystem
      * @param StoreManagerInterface $storeManager
      * @param Random $random
+     * @param ResourceConnection $resource
      */
     public function __construct(
         Context $context,
         Filesystem $fileSystem,
         StoreManagerInterface $storeManager,
-        Random $random
+        Random $random,
+        ResourceConnection $resource
     ) {
         $this->_fileSystem = $fileSystem;
         $this->_storeManager = $storeManager;
         $this->_mathRandom = $random;
+        $this->resource = $resource;
         parent::__construct($context);
     }
 
@@ -210,5 +219,37 @@ class Data extends AbstractHelper
     public function getBuilderMode()
     {
         return $this->getConfigValue(self::XPATH_BUILDER_MODE);
+    }
+
+    /**
+     * @param int $productId
+     * @param string $jsonConfiguration
+     */
+    public function saveJsonConfiguration($productId, $jsonConfiguration)
+    {
+        $connection = $this->resource->getConnection();
+        $connection->insertOnDuplicate(
+            $this->resource->getTableName('cpb_product_configuration'),
+            [
+                'product_id' => $productId,
+                'configuration' => $jsonConfiguration
+            ]
+        );
+    }
+
+    /**
+     * @param int $productId
+     * @return string
+     */
+    public function loadJsonConfiguration($productId)
+    {
+        $connection = $this->resource->getConnection();
+        $select = clone $connection->select();
+        $select->from(
+            $this->resource->getTableName('cpb_product_configuration'),
+            'configuration'
+        )->where('product_id = ?', $productId);
+        $jsonConfiguration = $connection->fetchOne($select);
+        return $jsonConfiguration;
     }
 }

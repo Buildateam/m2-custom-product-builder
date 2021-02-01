@@ -108,7 +108,7 @@ class UpgradeData implements UpgradeDataInterface
             $this->setupNewProductType($setup);
         }
 
-        if (version_compare($context->getVersion(), '1.1.6', '<')) {
+        if (version_compare($context->getVersion(), '1.1.7', '<')) {
             $this->changeProductType($setup);
             $this->removeOldAttributes($setup);
         }
@@ -193,13 +193,15 @@ class UpgradeData implements UpgradeDataInterface
         $select->from($setup->getTable('cpb_product_configuration'), ['product_id'])
             ->where('LENGTH(`configuration`) > 1256');
 
-        $productIds = $connection->fetchRow($select);
-        foreach($productIds as $productId) {
-            $connection->update(
-                $setup->getTable('catalog_product_entity'),
-                array('type_id' => \Buildateam\CustomProductBuilder\Model\Product\Type::TYPE_CODE),
-                'entity_id = ' . $productId
-            );
+        $productIds = $connection->fetchCol($select);
+        if ($productIds && is_array($productIds)) {
+            foreach($productIds as $productId) {
+                $connection->update(
+                    $setup->getTable('catalog_product_entity'),
+                    array('type_id' => \Buildateam\CustomProductBuilder\Model\Product\Type::TYPE_CODE),
+                    'entity_id = ' . $productId
+                );
+            }
         }
     }
 

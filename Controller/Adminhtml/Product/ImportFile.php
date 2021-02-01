@@ -89,21 +89,28 @@ class ImportFile extends Action
     private $curl;
 
     /**
-     * Share constructor.
-     *
+     * @var Data
+     */
+    private $helper;
+
+    /**
+     * ImportFile constructor.
      * @param Context $context
      * @param FileUploader $fileUploader
      * @param Curl $curl
+     * @param Data $helper
      */
     public function __construct(
         Context $context,
         FileUploader $fileUploader,
-        Curl $curl
+        Curl $curl,
+        \Buildateam\CustomProductBuilder\Helper\Data $helper
     ) {
         parent::__construct($context);
         $this->_resultFactory = $context->getResultFactory();
         $this->fileUploader = $fileUploader;
         $this->curl = $curl;
+        $this->helper = $helper;
     }
 
     /**
@@ -143,10 +150,8 @@ class ImportFile extends Action
                 $this->jsonProductContent = $this->saveImages($images, $this->jsonProductContent);
             }
 
-            $product->setJsonConfiguration($this->jsonProductContent);
-
             try {
-                $product->save();
+                $this->helper->saveJsonConfiguration($product->getId(), $this->jsonProductContent);
             } catch (Exception $e) {
                 $this->_logger->critical($e->getMessage());
             }

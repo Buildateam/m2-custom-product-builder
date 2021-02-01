@@ -129,9 +129,7 @@ class Import extends \Magento\Framework\App\Action\Action
             $jsonData['data']['name'] = $product->getName();
             $jsonData['data']['base']['price'] = $product->getPrice();
             $jsonData = json_encode($jsonData);
-            $product->setJsonConfiguration($jsonData);
-            $product->setStoreId(0);
-            $product->save();
+            $this->_helper->saveJsonConfiguration($product->getId(), $jsonData);
             $this->setSuccessResponse($response);
         } else {
             $this->setErrorResponse($response, $this->_helper->validate($jsonData));

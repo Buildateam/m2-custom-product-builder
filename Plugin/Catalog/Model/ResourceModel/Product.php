@@ -8,54 +8,54 @@ use Magento\Framework\Model\AbstractModel;
 class Product
 {
     /**
-     * @param \Magento\Catalog\Model\ResourceModel\Product $subject
-     * @param \Closure $proceed
-     * @param AbstractModel $object
-     * @return \Magento\Catalog\Model\ResourceModel\Product
+     * @var \Buildateam\CustomProductBuilder\Helper\Data
      */
-    public function aroundSave(
+    private $helper;
+
+    /**
+     * Product constructor.
+     * @param \Buildateam\CustomProductBuilder\Helper\Data $helper
+     */
+    public function __construct(\Buildateam\CustomProductBuilder\Helper\Data $helper)
+    {
+        $this->helper = $helper;
+    }
+
+    /**
+     * @param \Magento\Catalog\Model\ResourceModel\Product $subject
+     * @param $result
+     * @param AbstractModel $object
+     * @return mixed
+     */
+    public function afterSave(
         \Magento\Catalog\Model\ResourceModel\Product $subject,
-        \Closure $proceed,
+        $result,
         AbstractModel $object
     ) {
         $jsonConfiguration = $object->getData('json_configuration');
-        $result = $proceed($object);
         if (!empty($jsonConfiguration)) {
-            $productId = $object->getEntityId();
-            $subject->getConnection()->insertOnDuplicate(
-                $subject->getTable('cpb_product_configuration'),
-                [
-                    'product_id' => $productId,
-                    'configuration' => $jsonConfiguration
-                ]
-            );
+            $this->helper->saveJsonConfiguration($object->getEntityId(), $jsonConfiguration);
         }
         return $result;
     }
 
     /**
      * @param \Magento\Catalog\Model\ResourceModel\Product $subject
-     * @param \Closure $proceed
+     * @param $result
      * @param AbstractModel $object
      * @param $entityId
      * @param array $attributes
-     * @return \Magento\Catalog\Model\ResourceModel\Product
+     * @return mixed
      */
-    public function aroundLoad(
+    public function afterLoad(
         \Magento\Catalog\Model\ResourceModel\Product $subject,
-        \Closure $proceed,
+        $result,
         AbstractModel $object,
         $entityId,
         $attributes = []
     ) {
-        $result = $proceed($object, $entityId, $attributes);
         if ($object->getId()) {
-            $select = clone $subject->getConnection()->select();
-            $select->from(
-                $subject->getTable('cpb_product_configuration'),
-                'configuration'
-            )->where("product_id = {$object->getId()}");
-            $jsonConfiguration = $subject->getConnection()->fetchOne($select);
+            $jsonConfiguration = $this->helper->loadJsonConfiguration($object->getId());
             $object->setData('json_configuration', $jsonConfiguration);
         }
         return $result;

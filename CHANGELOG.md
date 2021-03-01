@@ -1,3 +1,31 @@
+## 1.1.7
+* Improved JSON configuration saving
+* Fix change of product type for existing CPB
+* Fix CSS for product edit page
+
+## 1.1.6
+* Improved change of product type for existing CPB
+* Remove old attributes
+
+## 1.1.5
+* Removing unnecessary css 
+* Fix "Custom Product Configuration" label
+
+## 1.1.4
+* Fix for Enterprise Edition
+
+## 1.1.3
+* Fix search for new product type - "Custom Product"
+
+## 1.1.2
+* Improved change of product type for existing CPB
+
+## 1.1.1
+* Change of product type for existing CPB
+
+## 1.1.0
+* Added a new product type - "Custom Product"
+
 ## 1.0.24
 * Fixed share button functional
 
@@ -16,15 +44,12 @@
 * Added Global Fonts
 
 ## 1.0.16
-
 * Bug fixes
 
 ## 1.0.15
-
 * Renamed on/off option
 * Bug fixes
 
 ## 1.0.14
-
 * Added cpb on/off option to product edit page
 * Bug fixes

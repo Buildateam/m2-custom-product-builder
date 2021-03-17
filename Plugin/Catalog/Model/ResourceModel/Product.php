@@ -34,6 +34,10 @@ class Product
     ) {
         $jsonConfiguration = $object->getData('json_configuration');
         if (!empty($jsonConfiguration)) {
+            $jsonData = json_decode($jsonConfiguration, true);
+            $jsonData['data']['name'] = $object->getName();
+            $jsonData['data']['base']['price'] = $object->getPrice();
+            $jsonConfiguration = json_encode($jsonData);
             $this->helper->saveJsonConfiguration($object->getEntityId(), $jsonConfiguration);
         }
         return $result;

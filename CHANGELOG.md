@@ -1,3 +1,6 @@
+## 1.1.8
+* Fixed update price and product name
+
 ## 1.1.7
 * Improved JSON configuration saving
 * Fix change of product type for existing CPB

@@ -1,3 +1,6 @@
+## 1.1.9
+* Update CORS whitelist
+
 ## 1.1.8
 * Fixed update price and product name
 

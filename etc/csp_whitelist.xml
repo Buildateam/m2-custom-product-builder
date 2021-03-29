@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<csp_whitelist xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Csp:etc/csp_whitelist.xsd">
+    <policies>
+        <policy id="script-src">
+            <values>
+                <value id="universal-stage_thecustomproductbuilder" type="host">universal-stage.thecustomproductbuilder.com</value>
+                <value id="universal_thecustomproductbuilder" type="host">universal.thecustomproductbuilder.com</value>
+                <value id="magento_thecustomproductbuilder" type="host">magento.thecustomproductbuilder.com</value>
+                <value id="m2-stage_thecustomproductbuilder" type="host">m2-stage.thecustomproductbuilder.com</value>
+            </values>
+        </policy>
+    </policies>
+</csp_whitelist>

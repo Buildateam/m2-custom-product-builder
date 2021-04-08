@@ -1,3 +1,6 @@
+## 1.1.10
+* Fixed JSON saving
+
 ## 1.1.9
 * Update CORS whitelist
 

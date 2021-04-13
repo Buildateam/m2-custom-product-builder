@@ -3,10 +3,7 @@
     <policies>
         <policy id="script-src">
             <values>
-                <value id="universal-stage_thecustomproductbuilder" type="host">universal-stage.thecustomproductbuilder.com</value>
-                <value id="universal_thecustomproductbuilder" type="host">universal.thecustomproductbuilder.com</value>
-                <value id="magento_thecustomproductbuilder" type="host">magento.thecustomproductbuilder.com</value>
-                <value id="m2-stage_thecustomproductbuilder" type="host">m2-stage.thecustomproductbuilder.com</value>
+                <value id="magento_thecustomproductbuilder" type="host">*.thecustomproductbuilder.com</value>
             </values>
         </policy>
     </policies>

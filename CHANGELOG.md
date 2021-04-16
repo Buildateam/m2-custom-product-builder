@@ -1,3 +1,6 @@
+## 1.1.12
+* Fixed JSON update
+
 ## 1.1.11
 * Update CORS whitelist
 

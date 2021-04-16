@@ -230,10 +230,8 @@ class Data extends AbstractHelper
         $connection = $this->resource->getConnection();
         $connection->insertOnDuplicate(
             $this->resource->getTableName('cpb_product_configuration'),
-            [
-                'product_id' => $productId,
-                'configuration' => $jsonConfiguration
-            ]
+            ['product_id' => $productId, 'configuration' => $jsonConfiguration]
+            ['configuration']
         );
     }
 

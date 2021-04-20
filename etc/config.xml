@@ -3,8 +3,8 @@
     <default>
         <cpb>
             <development>
-                <cpb_js>https://m2-stage.thecustomproductbuilder.com/dist/custom-product-builder.js</cpb_js>
-                <theme_js>https://m2-stage.thecustomproductbuilder.com/dist/customizer-theme-main.js</theme_js>
+                <cpb_js>https://universal-magento-cdn.thecustomproductbuilder.com/dist/latest/custom-product-builder.js</cpb_js>
+                <theme_js>https://universal-magento-cdn.thecustomproductbuilder.com/dist/latest/customizer-theme-main.js</theme_js>
             </development>
         </cpb>
     </default>

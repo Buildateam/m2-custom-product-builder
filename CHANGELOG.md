@@ -1,3 +1,9 @@
+## 1.2.0
+* New magento frontend v3.12.9
+  server - universal-magento.thecustomproductbuilder.com
+  cdn - universal-magento-cdn.thecustomproductbuilder.com
+  main branch - universal-magento
+
 ## 1.1.13
 * Update JS initialization by config URL 
 

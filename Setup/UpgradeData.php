@@ -46,9 +46,7 @@
 
 namespace Buildateam\CustomProductBuilder\Setup;
 
-use Buildateam\CustomProductBuilder\Model\Source\Switcher;
 use Magento\Catalog\Model\Product;
-use Magento\Eav\Model\Entity\Attribute\ScopedAttributeInterface;
 use Magento\Eav\Setup\EavSetup;
 use Magento\Eav\Setup\EavSetupFactory;
 use Magento\Framework\App\ProductMetadataInterface;
@@ -70,6 +68,11 @@ class UpgradeData implements UpgradeDataInterface
     private $productMetadata;
 
     /**
+     * @var \Magento\Framework\App\Config\ValueFactory
+     */
+    private $configValueFactory;
+
+    /**
      * @var \Magento\Catalog\Model\ResourceModel\Product\CollectionFactory
      */
     private $productCollectionFactory;
@@ -78,15 +81,18 @@ class UpgradeData implements UpgradeDataInterface
      * UpgradeData constructor.
      * @param EavSetupFactory $eavSetupFactory
      * @param ProductMetadataInterface $productMetadata
+     * @param \Magento\Framework\App\Config\ValueFactory $configValueFactory
      * @param \Magento\Catalog\Model\ResourceModel\Product\CollectionFactory $productCollectionFactory
      */
     public function __construct(
         EavSetupFactory $eavSetupFactory,
         ProductMetadataInterface $productMetadata,
+        \Magento\Framework\App\Config\ValueFactory $configValueFactory,
         \Magento\Catalog\Model\ResourceModel\Product\CollectionFactory $productCollectionFactory
     ) {
         $this->eavSetupFactory = $eavSetupFactory;
         $this->productMetadata = $productMetadata;
+        $this->configValueFactory = $configValueFactory;
         $this->productCollectionFactory = $productCollectionFactory;
     }
 
@@ -111,6 +117,10 @@ class UpgradeData implements UpgradeDataInterface
         if (version_compare($context->getVersion(), '1.1.7', '<')) {
             $this->changeProductType($setup);
             $this->removeOldAttributes($setup);
+        }
+
+        if (version_compare($context->getVersion(), '1.1.13', '<')) {
+            $this->removeEmptyConfig($setup);
         }
 
         $setup->endSetup();
@@ -213,5 +223,20 @@ class UpgradeData implements UpgradeDataInterface
         $eavSetup = $this->eavSetupFactory->create(['setup' => $setup]);
         $eavSetup->removeAttribute(\Magento\Catalog\Model\Product::ENTITY, 'json_configuration');
         $eavSetup->removeAttribute(\Magento\Catalog\Model\Product::ENTITY, 'cpb_enabled');
+    }
+
+    private function removeEmptyConfig()
+    {
+        $bulderJsConfig = $this->configValueFactory->create()
+            ->load(\Buildateam\CustomProductBuilder\Helper\Data::XPATH_BUILDER_JS, 'path');
+        if (empty($bulderJsConfig->getValue())) {
+            $bulderJsConfig->delete();
+        }
+
+        $bulderThemeConfig = $this->configValueFactory->create()
+            ->load(\Buildateam\CustomProductBuilder\Helper\Data::XPATH_BUILDER_THEME_JS, 'path');
+        if (empty($bulderThemeConfig->getValue())) {
+            $bulderThemeConfig->delete();
+        }
     }
 }

@@ -111,21 +111,10 @@ class Export extends \Magento\Framework\App\Action\Action
         if (!$productConfig) {
             $productConfig = $this->_getBaseConfig($product);
         }
-        $productConfigObject = json_decode($productConfig, true);
+
         $resultRaw = $this->resultRawFactory->create();
         $resultRaw->setHeader("Content-Type", 'application/json');
-        if (!$productConfigObject) {
-            $resultRaw->setHttpResponseCode(\Magento\Framework\Webapi\Exception::HTTP_INTERNAL_ERROR);
-            $resultRaw->setContents(json_encode([
-                'status' => 500,
-                'error' => 'ERROR PARSING PRODUCT CONFIG JSON',
-                'data' => $productConfig
-            ]));
-        } else {
-            // SPACE SAVING: removing available fonts since em already present in cpb-frontend
-            $productConfigObject['settings']['fonts']['available'] = [];
-            $resultRaw->setContents(json_encode($productConfigObject));
-        }
+        $resultRaw->setContents($productConfig);
         return $resultRaw;
     }
 

@@ -1,3 +1,6 @@
+## 1.1.13
+* Update JS initialization by config URL 
+
 ## 1.1.12
 * Fixed JSON update
 

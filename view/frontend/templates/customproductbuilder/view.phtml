@@ -51,8 +51,6 @@
     return;
 } ?>
 
-<script type="text/json" id="cpb-product-config"><?= $product->getData('json_configuration') ?></script>
-
 <div id="product-builder" engine="magento"
      shop-name="<?= $block->getBaseUrl() ?>"
      product-id="<?= $block->getProduct()->getId() ?>"
@@ -63,33 +61,11 @@
      language="<?= $block->getLanguage() ?>">
 </div>
 
-<?php if ($block->getCpbProductDistSource()) : ?>
-    <script type="application/javascript" id="cpb-product-dist" src="<?= $block->getCpbProductDistSource() ?>"></script>
-<?php else : ?>
-    <script type="text/x-magento-init">
-    {
-        "*": {
-            "cpb-product":{}
-        }
-    }
-
-
-    </script>
-<?php endif; ?>
-
-<?php if ($block->getCpbThemeDistSource()) : ?>
-    <script type="application/javascript" id="cpb-theme-dist" src="<?= $block->getCpbThemeDistSource() ?>"></script>
-<?php else : ?>
-    <script type="text/x-magento-init">
-    {
-        "*": {
-            "cpb-theme":{}
-        }
-    }
-
-
-    </script>
-<?php endif; ?>
+<script type="text/x-magento-init">
+{
+    "*": {"<?= $block->getCpbProductDistSource() ?>":{}, "<?= $block->getCpbThemeDistSource() ?>":{}}
+}
+</script>
 
 <script>
     require([

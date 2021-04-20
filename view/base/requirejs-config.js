@@ -37,8 +37,8 @@
  */
 
 var config = {
-    paths: {
-        'cpb-product': '//m2-stage.thecustomproductbuilder.com/dist/custom-product-builder',
-        'cpb-theme': '//m2-stage.thecustomproductbuilder.com/dist/customizer-theme-main'
-    }
+    // paths: {
+    //     'cpb-product': '//m2-stage.thecustomproductbuilder.com/dist/custom-product-builder',
+    //     'cpb-theme': '//m2-stage.thecustomproductbuilder.com/dist/customizer-theme-main'
+    // }
 };

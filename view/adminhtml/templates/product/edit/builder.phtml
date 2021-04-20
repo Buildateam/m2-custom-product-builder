@@ -60,21 +60,11 @@ $productId = (int)$block->getRequest()->getParam('product', 0);
                         "component": "Buildateam_CustomProductBuilder/js/action"
                     }
                 }
-            }
+            },
+            "<?= $block->getCpbProductDistSource() ?>": {}
         }
      }
 </script>
-<?php if ($block->getCpbProductDistSource()): ?>
-    <script type="application/javascript" id="cpb-product-dist" src="<?= $block->getCpbProductDistSource() ?>"></script>
-<?php else: ?>
-    <script type="text/x-magento-init">
-    {
-        "*": {
-            "cpb-product":{}
-        }
-    }
-    </script>
-<?php endif; ?>
 <script>
     require(['jquery'], function ($) {
         $('body').trigger('contentUpdated');

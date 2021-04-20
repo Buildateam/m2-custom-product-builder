@@ -51,12 +51,12 @@
                 <field id="cpb_js" translate="label comment" type="text" sortOrder="2" showInDefault="1" showInWebsite="0" showInStore="0">
                     <label>CPB JS</label>
                     <validate>required-entry</validate>
-                    <comment>By default: https://m2-stage.thecustomproductbuilder.com/dist/custom-product-builder.js</comment>
+                    <comment>By default: https://universal-magento-cdn.thecustomproductbuilder.com/dist/latest/custom-product-builder.js</comment>
                 </field>
                 <field id="theme_js" translate="label comment" type="text" sortOrder="2" showInDefault="1" showInWebsite="0" showInStore="0">
                     <label>Theme JS</label>
                     <validate>required-entry</validate>
-                    <comment>By default: https://m2-stage.thecustomproductbuilder.com/dist/customizer-theme-main.js</comment>
+                    <comment>By default: https://universal-magento-cdn.thecustomproductbuilder.com/dist/latest/customizer-theme-main.js</comment>
                 </field>
             </group>
         </section>

@@ -1,3 +1,7 @@
+## 1.2.1
+* Improved adding to cart
+* Added additional information in cart and order item
+
 ## 1.2.0
 * New magento frontend v3.12.9
   server - universal-magento.thecustomproductbuilder.com

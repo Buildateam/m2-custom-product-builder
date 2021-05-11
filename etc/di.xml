@@ -78,8 +78,8 @@
         <plugin name="cpb_customer_data_abstract_item" type="Buildateam\CustomProductBuilder\CustomerData\Plugin\AbstractItem" sortOrder="50"/>
     </type>
 
-    <type name="Magento\Checkout\Controller\Cart\Add">
-        <plugin name="cpb_checkout_cart_add" type="Buildateam\CustomProductBuilder\Controller\Plugin\Cart\Add" sortOrder="50"/>
+    <type name="Magento\Checkout\Model\Cart">
+        <plugin name="cpb_add_to_cart" type="Buildateam\CustomProductBuilder\Plugin\Checkout\Model\Cart" />
     </type>
 
     <type name="Magento\Sales\Model\Order\Item">
@@ -96,5 +96,9 @@
 
     <type name="Magento\Catalog\Model\ResourceModel\Product">
         <plugin name="cpb_json_config" type="Buildateam\CustomProductBuilder\Plugin\Catalog\Model\ResourceModel\Product"/>
+    </type>
+
+    <type name="Magento\Quote\Model\Quote\Item\ToOrderItem">
+        <plugin name="append_custom_data_to_order" type="Buildateam\CustomProductBuilder\Plugin\Quote\Model\Quote\Item\ToOrderItem"/>
     </type>
 </config>

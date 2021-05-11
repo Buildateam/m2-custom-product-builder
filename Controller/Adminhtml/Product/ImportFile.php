@@ -56,7 +56,7 @@ use Magento\Framework\App\ResponseInterface;
 use Magento\Framework\Controller\ResultFactory;
 use Magento\Framework\Controller\ResultInterface;
 use Magento\Framework\HTTP\Client\Curl;
-use \Magento\Framework\Logger\Monolog;
+use Magento\Framework\Logger\Monolog;
 use Exception;
 use Magento\Framework\View\Result\Layout;
 
@@ -66,17 +66,17 @@ use Magento\Framework\View\Result\Layout;
 class ImportFile extends Action
 {
 
-    protected $jsonProductContent;
+    private $jsonProductContent;
 
     /**
      * @var ResultFactory
      */
-    protected $_resultFactory;
+    protected $resultFactory;
 
     /**
      * @var Monolog
      */
-    protected $_logger;
+    private $logger;
 
     /**
      * @var FileUploader
@@ -94,20 +94,22 @@ class ImportFile extends Action
     private $helper;
 
     /**
-     * ImportFile constructor.
      * @param Context $context
+     * @param Monolog $logger
      * @param FileUploader $fileUploader
      * @param Curl $curl
      * @param Data $helper
      */
     public function __construct(
         Context $context,
+        Monolog $logger,
         FileUploader $fileUploader,
         Curl $curl,
         \Buildateam\CustomProductBuilder\Helper\Data $helper
     ) {
         parent::__construct($context);
-        $this->_resultFactory = $context->getResultFactory();
+        $this->resultFactory = $context->getResultFactory();
+        $this->logger = $logger;
         $this->fileUploader = $fileUploader;
         $this->curl = $curl;
         $this->helper = $helper;
@@ -129,7 +131,7 @@ class ImportFile extends Action
             ? file_get_contents($file['tmp_name'])
             : $product->getData('json_configuration');
 
-        $response = $this->_resultFactory->create(ResultFactory::TYPE_JSON);
+        $response = $this->resultFactory->create(ResultFactory::TYPE_JSON);
         if (!empty($jsonData)) {
             $this->jsonProductContent = $jsonData;
             $validate = $this->_objectManager->create(Data::class)
@@ -153,7 +155,7 @@ class ImportFile extends Action
             try {
                 $this->helper->saveJsonConfiguration($product->getId(), $this->jsonProductContent);
             } catch (Exception $e) {
-                $this->_logger->critical($e->getMessage());
+                $this->logger->critical($e->getMessage());
             }
 
             $result = [
@@ -210,7 +212,7 @@ class ImportFile extends Action
                 $url = $this->fileUploader->saveFile($imageData);
                 $config = str_replace($match, $url, $config);
             } catch (Exception $e) {
-                $this->_logger->error($e->getMessage());
+                $this->logger->error($e->getMessage());
             }
         }
 

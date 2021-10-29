@@ -123,6 +123,10 @@ class UpgradeData implements UpgradeDataInterface
             $this->removeEmptyConfig($setup);
         }
 
+        if (version_compare($context->getVersion(), '1.2.2', '<')) {
+            $this->updateTaxClassId($setup);
+        }
+
         $setup->endSetup();
     }
 
@@ -212,6 +216,18 @@ class UpgradeData implements UpgradeDataInterface
                     'entity_id = ' . $productId
                 );
             }
+        }
+    }
+
+    private function updateTaxClassId(ModuleDataSetupInterface $setup)
+    {
+        $eavSetup = $this->eavSetupFactory->create(['setup' => $setup]);
+        $productEntityTypeId = $eavSetup->getEntityTypeId(\Magento\Catalog\Model\Product::ENTITY);
+
+        $applyTo = explode(',', $eavSetup->getAttribute($productEntityTypeId, 'tax_class_id', 'apply_to'));
+        if (!in_array('custom', $applyTo)) {
+            $applyTo[] = 'custom';
+            $eavSetup->updateAttribute($productEntityTypeId, 'tax_class_id', 'apply_to', implode(',', $applyTo));
         }
     }
 

@@ -1,3 +1,7 @@
+## 1.2.2
+* Support Tax Class for Custom Product
+* Support Inventory
+
 ## 1.2.1
 * Improved adding to cart
 * Added additional information in cart and order item

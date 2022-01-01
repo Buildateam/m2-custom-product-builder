@@ -1,3 +1,6 @@
+## 1.2.5
+* Marketplace version compliance
+
 ## 1.2.3
 * Refactoring
 

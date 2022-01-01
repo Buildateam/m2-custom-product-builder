@@ -60,7 +60,7 @@ class UploadImage extends \Magento\Framework\App\Action\Action
     /**
      * @var ResultFactory
      */
-    private $resultFactory;
+    protected $resultFactory;
 
     /**
      * @var \Magento\Framework\App\RequestInterface

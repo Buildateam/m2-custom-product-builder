@@ -2,7 +2,7 @@
 namespace Buildateam\CustomProductBuilder\Controller\Adminhtml\Dummy;
 
 use Magento\Backend\App\Action;
-use Magento\Framework\App\Action\Context;
+use Magento\Backend\App\Action\Context;
 use Magento\Framework\Controller\ResultFactory;
 
 /** Dummy controller, for checking session */
@@ -11,7 +11,7 @@ class Index extends Action
     /**
      * @var ResultFactory
      */
-    private $resultFactory;
+    protected $resultFactory;
 
     /**
      * Index constructor.

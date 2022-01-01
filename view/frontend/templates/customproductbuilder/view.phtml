@@ -33,14 +33,20 @@
  * all use of the Buildateam Software and destroy all copies, full or partial, of the Buildateam
  * Software.
  *
- * THIS SOFTWARE IS PROVIDED BY COPYRIGHT HOLDER "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL COPYRIGHT HOLDER BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. THE SOFTWARE IS NOT INTENDED FOR USE IN WHICH THE FAILURE OF
+ * THIS SOFTWARE IS PROVIDED BY COPYRIGHT HOLDER "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING,
+ * BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+ * IN NO EVENT SHALL COPYRIGHT HOLDER BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
+ * OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
+ * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. THE SOFTWARE IS NOT INTENDED FOR USE IN WHICH THE FAILURE OF
  * THE SOFTWARE COULD LEAD TO DEATH, PERSONAL INJURY, OR SEVERE PHYSICAL OR ENVIRONMENTAL DAMAGE.
  */
 
 /** @var Buildateam\CustomProductBuilder\Block\Catalog\Product\View $block */
 /** @var Magento\Framework\View\TemplateEngine\Php $this */
 ?>
-<?php $product = $block->getProduct(); ?>
+<?php $product = $block->getProduct() ?>
 <?php if (!$product) {
     return;
 } ?>
@@ -52,18 +58,21 @@
 } ?>
 
 <div id="product-builder" engine="magento"
-     shop-name="<?= $block->getBaseUrl() ?>"
-     product-id="<?= $block->getProduct()->getId() ?>"
+     shop-name="<?= /* @noEscape */ $block->getBaseUrl() ?>"
+     product-id="<?= /* @noEscape */ $block->getProduct()->getId() ?>"
      product-sku="<?= $block->escapeHtml($product->getSku()) ?>"
      product-name="<?= $block->escapeHtml($product->getName()) ?>"
-     product-short-description="<?= (string)$product->getShortDescription() ?>"
-     currency="<?= $block->getCurrency() ?>"
-     language="<?= $block->getLanguage() ?>">
+     product-short-description="<?= /* @noEscape */ (string)$product->getShortDescription() ?>"
+     currency="<?= /* @noEscape */ $block->getCurrency() ?>"
+     language="<?= /* @noEscape */ $block->getLanguage() ?>">
 </div>
 
 <script type="text/x-magento-init">
 {
-    "*": {"<?= $block->getCpbProductDistSource() ?>":{}, "<?= $block->getCpbThemeDistSource() ?>":{}}
+    "*": {
+        "<?= /* @noEscape */ $block->getCpbProductDistSource() ?>":{},
+        "<?= /* @noEscape */ $block->getCpbThemeDistSource() ?>":{}
+    }
 }
 </script>
 

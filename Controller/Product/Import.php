@@ -49,10 +49,6 @@ namespace Buildateam\CustomProductBuilder\Controller\Product;
 use \Magento\Framework\Controller\ResultFactory;
 use \Magento\Backend\App as AdminApp;
 
-/**
- * Class Import
- * @package Buildateam\CustomProductBuilder\Controller\Product
- */
 class Import extends \Magento\Framework\App\Action\Action
 {
     /**
@@ -80,7 +76,6 @@ class Import extends \Magento\Framework\App\Action\Action
     protected $_auth;
 
     /**
-     * Import constructor.
      * @param \Magento\Framework\App\Action\Context $context
      * @param \Magento\Framework\Json\Helper\Data $jsonHelper
      * @param \Magento\Framework\View\Result\PageFactory $resultFactory
@@ -122,7 +117,7 @@ class Import extends \Magento\Framework\App\Action\Action
         }
 
         $product = $this->_productRepository->getById($productId);
-        $jsonData = file_get_contents('php://input');
+        $jsonData = $this->getRequest()->getContent();
 
         if (!empty($jsonData) && $this->_helper->validate($jsonData) == "") {
             $jsonData = json_decode($jsonData);
@@ -138,6 +133,10 @@ class Import extends \Magento\Framework\App\Action\Action
         return $response;
     }
 
+    /**
+     * @param $response
+     * @param $validate
+     */
     protected function setErrorResponse($response, $validate)
     {
         $response->setContents(
@@ -150,6 +149,9 @@ class Import extends \Magento\Framework\App\Action\Action
         );
     }
 
+    /**
+     * @param $response
+     */
     protected function setSuccessResponse($response)
     {
         $response->setContents(
@@ -162,6 +164,9 @@ class Import extends \Magento\Framework\App\Action\Action
         );
     }
 
+    /**
+     * @param $response
+     */
     protected function setSendValidProductidResponse($response)
     {
         $response->setStatusHeader(404);

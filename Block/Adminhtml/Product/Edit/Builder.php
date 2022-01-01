@@ -51,30 +51,17 @@ use Magento\Framework\View\Element\Template;
 use Magento\Framework\View\Element\Template\Context;
 use Magento\Store\Model\ScopeInterface;
 
-/**
- * Class Builder
- * @package Buildateam\CustomProductBuilder\Block\Adminhtml\Product\Edit
- */
 class Builder extends Template
 {
     /**
-     * @var Data
-     */
-    protected $_helper;
-
-    /**
-     * Builder constructor.
      * @param Context $context
-     * @param Data $helper
      * @param array $data
      */
     public function __construct(
         Context $context,
-        Data $helper,
         array $data = []
     ) {
         $this->setTemplate('product/edit/builder.phtml');
-        $this->_helper = $helper;
         parent::__construct($context, $data);
     }
 

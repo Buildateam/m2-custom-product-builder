@@ -1,5 +1,4 @@
 <?php
-
 declare(strict_types=1);
 
 namespace Buildateam\CustomProductBuilder\Controller\Config;
@@ -29,7 +28,6 @@ abstract class Action extends \Magento\Framework\App\Action\Action
     protected $jsonSerializer;
 
     /**
-     * Action constructor.
      * @param FlagManager $flagManager
      * @param LoggerInterface $logger
      * @param Json $jsonSerializer

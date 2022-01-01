@@ -57,9 +57,8 @@ class ProductPageHideBlock
     {
         $hasConfig = (bool)$subject->getProduct()->getData('json_configuration');
         if ($hasConfig) {
-            return "";
+            return '';
         }
-
         return $proceed();
     }
 }

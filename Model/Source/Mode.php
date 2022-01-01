@@ -46,13 +46,7 @@
 
 namespace Buildateam\CustomProductBuilder\Model\Source;
 
-use Magento\Framework\Option\ArrayInterface;
-
-/**
- * Class Mode
- * @package Buildateam\CustomProductBuilder\Model\Source
- */
-class Mode implements ArrayInterface
+class Mode implements \Magento\Framework\Data\OptionSourceInterface
 {
     const MODE_DEVELOP = 'develop';
     const MODE_PRODUCTION = 'production';

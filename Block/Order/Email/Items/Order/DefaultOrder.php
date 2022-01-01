@@ -1,15 +1,10 @@
 <?php
-
 namespace Buildateam\CustomProductBuilder\Block\Order\Email\Items\Order;
 
 use Magento\Framework\Registry;
 use Magento\Framework\View\Element\Template\Context;
 use Magento\Sales\Block\Order\Email\Items\Order\DefaultOrder as MagentoDefaultOrder;
 
-/**
- * Class DefaultOrder
- * @package Buildateam\CustomProductBuilder\Block\Order\Email\Items\Order
- */
 class DefaultOrder extends MagentoDefaultOrder
 {
     /**
@@ -18,8 +13,6 @@ class DefaultOrder extends MagentoDefaultOrder
     private $_registry;
 
     /**
-     * DefaultOrder constructor.
-     *
      * @param Context $context
      * @param Registry $registry
      * @param array $data

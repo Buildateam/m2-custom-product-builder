@@ -46,42 +46,20 @@
 
 namespace Buildateam\CustomProductBuilder\Model\Attribute\Backend;
 
-/**
- * Class JsonAttribute
- * @package Buildateam\CustomProductBuilder\Model\Attribute\Backend
- */
 class JsonAttribute extends \Magento\Eav\Model\Entity\Attribute\Backend\AbstractBackend
 {
     /**
-     * @bool int $_isValidJson
+     * @var \Buildateam\CustomProductBuilder\Helper\Data
      */
-    protected $_isValidJson = false;
+    private $helper;
 
     /**
-     * @var string $_jsonProductContent
+     * JsonAttribute constructor.
+     * @param \Buildateam\CustomProductBuilder\Helper\Data $helper
      */
-    protected $_jsonProductContent;
-
-    /**
-     * @var \Magento\Framework\ObjectManagerInterface
-     */
-    private $_objectManager;
-
-    /**
-     * @param \Magento\Framework\DataObject $object
-     * @return \Magento\Eav\Model\Entity\Attribute\Backend\AbstractBackend
-     */
-    public function afterLoad($object)
+    public function __construct(\Buildateam\CustomProductBuilder\Helper\Data $helper)
     {
-        // your after load logic
-
-        return parent::afterLoad($object);
-    }
-
-    public function __construct(
-        \Magento\Framework\ObjectManagerInterface $_objectManager
-    ) {
-        $this->_objectManager = $_objectManager;
+        $this->helper = $helper;
     }
 
     /**
@@ -92,7 +70,6 @@ class JsonAttribute extends \Magento\Eav\Model\Entity\Attribute\Backend\Abstract
     public function beforeSave($object)
     {
         $this->validateJson($object);
-
         return parent::beforeSave($object);
     }
 
@@ -106,7 +83,6 @@ class JsonAttribute extends \Magento\Eav\Model\Entity\Attribute\Backend\Abstract
      */
     public function validateJson($object)
     {
-
         /** @var  $attributeCode */
         $attributeCode = $this->getAttribute()->getAttributeCode();
         /** @var  $jsonData */
@@ -114,21 +90,12 @@ class JsonAttribute extends \Magento\Eav\Model\Entity\Attribute\Backend\Abstract
         if (!empty($jsonData)) {
             $this->_jsonProductContent = $jsonData;
 
-            $validate = $this->_getHelper()->validate($this->_jsonProductContent);
-            if (isset($this->_jsonProductContent) && !empty($this->_jsonProductContent) && $validate) {
+            $validate = $this->helper->validate($jsonData);
+            if (!empty($jsonData) && $validate) {
                 throw new \Magento\Framework\Exception\LocalizedException(__($validate));
             }
         }
 
         return true;
-    }
-
-    /**
-     * return helper object
-     * @return mixed
-     */
-    protected function _getHelper()
-    {
-        return $this->_objectManager->create(\Buildateam\CustomProductBuilder\Helper\Data::class);
     }
 }

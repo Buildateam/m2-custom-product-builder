@@ -48,10 +48,6 @@ namespace Buildateam\CustomProductBuilder\Model\ResourceModel;
 
 use Magento\Framework\Model\ResourceModel\Db\AbstractDb;
 
-/**
- * Class ShareableLinks
- * @package Buildateam\CustomProductBuilder\Model\ResourceModel
- */
 class ShareableLinks extends AbstractDb
 {
     public function _construct()

@@ -68,7 +68,6 @@ class Delete extends Action
     public $logger;
 
     /**
-     * Delete constructor.
      * @param FileUploader $fileUploader
      * @param LoggerInterface $logger
      * @param Context $context

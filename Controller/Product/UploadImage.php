@@ -46,83 +46,57 @@
 
 namespace Buildateam\CustomProductBuilder\Controller\Product;
 
-use \Buildateam\CustomProductBuilder\Helper\Data;
-use \Magento\Backend\App as AdminApp;
-use \Magento\Catalog\Model\ProductRepository;
-use \Magento\Framework\App\Action\Context;
-use \Magento\Framework\Filesystem;
-use \Magento\Framework\View\Result\PageFactory;
-use \Magento\Store\Model\StoreManagerInterface;
+use Magento\Framework\App\Action\Context;
+use Magento\Framework\Controller\ResultFactory;
+use Magento\Store\Model\StoreManagerInterface;
 
-/**
- * Class UploadImage
- * @package Buildateam\CustomProductBuilder\Controller\Product
- */
 class UploadImage extends \Magento\Framework\App\Action\Action
 {
-
-    /**
-     * @var PageFactory
-     */
-    protected $_resultPageFactory;
-
-    /**
-     * @var ProductRepository
-     */
-    protected $_productRepository;
-
-    /**
-     * @var \Magento\Backend\Model\UrlInterface
-     */
-    protected $_auth;
-
-    /**
-     * @var Filesystem
-     */
-    protected $_fileSystem;
-
     /**
      * @var StoreManagerInterface
      */
-    protected $_storeInterface;
+    private $storeManager;
 
     /**
-     * @var Data
+     * @var ResultFactory
      */
-    protected $_helper;
+    private $resultFactory;
 
     /**
-     * UploadImage constructor.
+     * @var \Magento\Framework\App\RequestInterface
+     */
+    private $request;
+
+    /**
+     * @var Data|\Buildateam\CustomProductBuilder\Helper\Data
+     */
+    private $helper;
+
+    /**
      * @param Context $context
-     * @param PageFactory $resultFactory
-     * @param ProductRepository $productRepository
-     * @param Filesystem $fileSystem
-     * @param AdminApp\Action\Context $adminContext
      * @param StoreManagerInterface $storeManager
-     * @param Data $helper
+     * @param ResultFactory $resultFactory
+     * @param \Magento\Framework\App\RequestInterface $request
+     * @param \Buildateam\CustomProductBuilder\Helper\Data $helper
      */
     public function __construct(
         Context $context,
-        PageFactory $resultFactory,
-        ProductRepository $productRepository,
-        Filesystem $fileSystem,
-        AdminApp\Action\Context $adminContext,
         StoreManagerInterface $storeManager,
-        Data $helper
+        ResultFactory $resultFactory,
+        \Magento\Framework\App\RequestInterface $request,
+        \Buildateam\CustomProductBuilder\Helper\Data $helper
     ) {
-        $this->_auth = $adminContext->getBackendUrl();
-        $this->_resultPageFactory = $resultFactory;
-        $this->_productRepository = $productRepository;
-        $this->_fileSystem = $fileSystem;
-        $this->_storeInterface = $storeManager;
-        $this->_helper = $helper;
+        $this->storeManager = $storeManager;
+        $this->resultFactory = $resultFactory;
+        $this->request = $request;
+        $this->helper = $helper;
         parent::__construct($context);
     }
 
     public function execute()
     {
-        $imagePath = $this->_helper->uploadImage(file_get_contents('php://input'));
-        $imageBaseUrl = $this->_storeInterface->getStore()->getBaseUrl('media') . $imagePath;
+        $imagePath = $this->helper->uploadImage($this->request->getContent());
+        $imageBaseUrl = $this->storeManager->getStore()->getBaseUrl('media') . $imagePath;
         $body = json_encode($imageBaseUrl);
         $result = $this->resultFactory->create('raw');
         $result->setHeader("Content-Type", 'application/json');

@@ -52,10 +52,6 @@ use \Magento\Catalog\Model\ProductRepository;
 use \Magento\Backend\App\Action\Context;
 use \Magento\Framework\View\Result\PageFactory;
 
-/**
- * Class ExportFile
- * @package Buildateam\CustomProductBuilder\Controller\Adminhtml\Product
- */
 class ExportFile extends \Magento\Backend\App\Action
 {
     /**
@@ -74,7 +70,6 @@ class ExportFile extends \Magento\Backend\App\Action
     protected $_resultPageFactory;
 
     /**
-     * ExportFile constructor.
      * @param Context $context
      * @param PageFactory $resultFactory
      * @param ProductRepository $productRepository
@@ -93,9 +88,7 @@ class ExportFile extends \Magento\Backend\App\Action
     }
 
     /**
-     * @return \Magento\Framework\App\ResponseInterface|\Magento\Framework\Controller\ResultInterface
-     * @throws \Exception
-     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     * @inheritdoc
      */
     public function execute()
     {

@@ -57,7 +57,6 @@ class General extends Template
     private $coreRegistry;
 
     /**
-     * General constructor.
      * @param Template\Context $context
      * @param Registry $registry
      * @param array $data

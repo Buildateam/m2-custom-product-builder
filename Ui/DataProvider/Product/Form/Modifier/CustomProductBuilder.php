@@ -53,10 +53,6 @@ use Magento\Framework\Exception\NoSuchEntityException;
 use \Magento\Framework\Stdlib\ArrayManager;
 use \Magento\Backend\App\Action\Context;
 
-/**
- * Data provider for Custom Product Bulder field of product page
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- */
 class CustomProductBuilder extends AbstractModifier
 {
     /**
@@ -90,8 +86,7 @@ class CustomProductBuilder extends AbstractModifier
         ArrayManager $arrayManager,
         Context $context,
         ProductRepository $productRepository
-    )
-    {
+    ) {
         $this->locator = $locator;
         $this->arrayManager = $arrayManager;
         $this->context = $context;
@@ -405,7 +400,9 @@ class CustomProductBuilder extends AbstractModifier
                         'data' => [
                             'config' => [
                                 'inputName' => 'newProductMessage',
-                                'value' => __('Please save the product for enable Custom Product Builder configuration'),
+                                'value' => __(
+                                    'Please save the product for enable Custom Product Builder configuration'
+                                ),
                                 'links' => null,
                                 'componentType' => 'text',
                                 'formElement' => 'text',

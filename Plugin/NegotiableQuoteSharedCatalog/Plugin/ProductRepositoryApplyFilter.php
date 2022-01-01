@@ -6,13 +6,13 @@ class ProductRepositoryApplyFilter
     /**
      * @var \Magento\Framework\App\Request\Http
      */
-    protected $request;
+    private $request;
 
     /**
-     * ProductRepositoryApplyFilter constructor.
      * @param \Magento\Framework\App\Request\Http $request
      */
-    public function __construct(\Magento\Framework\App\Request\Http $request) {
+    public function __construct(\Magento\Framework\App\Request\Http $request)
+    {
         $this->request = $request;
     }
 

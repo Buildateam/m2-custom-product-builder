@@ -47,13 +47,8 @@
 namespace Buildateam\CustomProductBuilder\Model\Product\Option\Type;
 
 use Magento\Catalog\Model\Product\Option\Type\DefaultType;
-use Magento\Catalog\Model\Product\Option\UrlBuilder;
 use Magento\Framework\Escaper;
 
-/**
- * Class Download
- * @package Buildateam\CustomProductBuilder\Model\Product\Option\Type
- */
 class Download extends DefaultType
 {
     /**
@@ -62,9 +57,6 @@ class Download extends DefaultType
     private $_escaper;
 
     /**
-     * Construct
-     *
-     * @param UrlBuilder $urlBuilder
      * @param Escaper $escaper
      * @param \Magento\Checkout\Model\Session $checkoutSession
      * @param \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig
@@ -105,7 +97,9 @@ class Download extends DefaultType
         return sprintf(
             '<a href="%s" target="_blank">%s</a>',
             $optionInfo['option_value']['link'],
-            $this->_escaper->escapeHtml(isset($optionInfo['option_value']['title']) ? $optionInfo['option_value']['title'] : __('Download'))
+            $this->_escaper->escapeHtml(
+                isset($optionInfo['option_value']['title']) ? $optionInfo['option_value']['title'] : __('Download')
+            )
         );
     }
 }

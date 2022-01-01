@@ -1,13 +1,8 @@
 <?php
-
 namespace Buildateam\CustomProductBuilder\Plugin;
 
 use Magento\Catalog\Controller\Adminhtml\Product\Save as Subject;
 
-/**
- * Class BeforeSave
- * @package Buildateam\CustomProductBuilder\Plugin
- */
 class BeforeSave
 {
     /**
@@ -16,12 +11,10 @@ class BeforeSave
     private $productRepository;
 
     /**
-     * BeforeSave constructor.
      * @param \Magento\Catalog\Model\ProductRepository $productRepository
      */
-    public function __construct(
-        \Magento\Catalog\Model\ProductRepository $productRepository
-    ) {
+    public function __construct(\Magento\Catalog\Model\ProductRepository $productRepository)
+    {
         $this->productRepository = $productRepository;
     }
 

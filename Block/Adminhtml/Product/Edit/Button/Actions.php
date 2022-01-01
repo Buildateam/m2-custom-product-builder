@@ -49,10 +49,6 @@ namespace Buildateam\CustomProductBuilder\Block\Adminhtml\Product\Edit\Button;
 
 use Magento\Ui\Component\Control\Container;
 
-/**
- * Class Actions
- * @package Buildateam\CustomProductBuilder\Block\Adminhtml\Product\Edit\Button
- */
 class Actions extends Save
 {
     /**

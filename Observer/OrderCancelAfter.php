@@ -1,5 +1,4 @@
 <?php
-
 namespace Buildateam\CustomProductBuilder\Observer;
 
 use Magento\Framework\Event\Observer;
@@ -8,11 +7,8 @@ use Buildateam\CustomProductBuilder\Helper\Json;
 use Buildateam\CustomProductBuilder\Helper\Data;
 use \Magento\Catalog\Model\ResourceModel\Product\Action;
 use \Magento\Store\Model\StoreManagerInterface;
+use function PHPUnit\Framework\containsIdentical;
 
-/**
- * Class OrderCancelAfter
- * @package Buildateam\CustomProductBuilder\Observer
- */
 class OrderCancelAfter implements ObserverInterface
 {
     /**
@@ -36,7 +32,6 @@ class OrderCancelAfter implements ObserverInterface
     private $helper;
 
     /**
-     * OrderCancelAfter constructor.
      * @param Json $json
      * @param Action $action
      * @param StoreManagerInterface $storeManager
@@ -74,25 +69,32 @@ class OrderCancelAfter implements ObserverInterface
                     } else {
                         $property = '';
                     }
-                    if ($property != '') {
-                        $parts = explode(' ', $property);
-                        $sku = trim(end($parts), '[]');
-                        $qtyCanceled = $item->getQtyCanceled();
-                        $jsonConfig = $this->serializer->unserialize($product->getJsonConfiguration());
-                        if (isset($jsonConfig['data']) && isset($jsonConfig['data']['inventory'])) {
-                            foreach ($jsonConfig['data']['inventory'] as $key => $value) {
-                                if ($sku == $value['sku']) {
-                                    $jsonConfig['data']['inventory'][$key]['qty'] += $qtyCanceled;
-                                    $this->productAction->updateAttributes(
-                                        [$product->getId()],
-                                        ['json_configuration' => $this->serializer->serialize($jsonConfig)],
-                                        $storeId
-                                    );
-                                    break;
-                                }
-                            }
+
+                    if ($property == '') {
+                        continue;
+                    }
+
+                    $jsonConfig = $this->serializer->unserialize($product->getJsonConfiguration());
+                    if (!isset($jsonConfig['data']) || !isset($jsonConfig['data']['inventory'])) {
+                        continue;
+                    }
+
+                    $parts = explode(' ', $property);
+                    $sku = trim(end($parts), '[]');
+                    $qtyCanceled = $item->getQtyCanceled();
+
+                    foreach ($jsonConfig['data']['inventory'] as $key => $value) {
+                        if ($sku == $value['sku']) {
+                            $jsonConfig['data']['inventory'][$key]['qty'] += $qtyCanceled;
+                            $this->productAction->updateAttributes(
+                                [$product->getId()],
+                                ['json_configuration' => $this->serializer->serialize($jsonConfig)],
+                                $storeId
+                            );
+                            break;
                         }
                     }
+
                 }
             }
         }

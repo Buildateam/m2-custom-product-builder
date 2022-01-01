@@ -47,34 +47,13 @@
 namespace Buildateam\CustomProductBuilder\Pricing\Plugin;
 
 use \Magento\Catalog\Model\Product\Configuration\Item\ItemInterface;
-use \Magento\Framework\Event\ManagerInterface;
 
-/**
- * Class ConfiguredPrice
- * @package Buildateam\CustomProductBuilder\Pricing\Plugin
- */
 class ConfiguredPrice
 {
     /**
      * @var null|ItemInterface
      */
-    protected $_item;
-
-    /**
-     * Core event manager proxy
-     *
-     * @var ManagerInterface
-     */
-    public $_eventManager;
-
-    /**
-     * ConfiguredPrice constructor.
-     * @param ManagerInterface $eventManager
-     */
-    public function __construct(ManagerInterface $eventManager)
-    {
-        $this->_eventManager = $eventManager;
-    }
+    private $item;
 
     /**
      * @param $subject
@@ -84,8 +63,7 @@ class ConfiguredPrice
      */
     public function aroundSetItem($subject, callable $proceed, ItemInterface $item)
     {
-        $this->_item = $item;
-
+        $this->item = $item;
         return $proceed($item);
     }
 
@@ -96,9 +74,8 @@ class ConfiguredPrice
      */
     public function aroundGetValue($subject, callable $proceed)
     {
-        $product = $this->_item->getProduct();
-        $qty = $this->_item->getQty();
-
+        $product = $this->item->getProduct();
+        $qty = $this->item->getQty();
         return $product->getFinalPrice($qty);
     }
 }

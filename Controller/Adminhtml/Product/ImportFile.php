@@ -46,23 +46,15 @@
 
 namespace Buildateam\CustomProductBuilder\Controller\Adminhtml\Product;
 
-use Buildateam\CustomProductBuilder\Helper\Data;
 use Buildateam\CustomProductBuilder\Model\FileUploader;
 use Magento\Backend\App\Action;
 use Magento\Backend\App\Action\Context;
 use Magento\Catalog\Model\Product;
 use Magento\Framework\App\ObjectManager;
-use Magento\Framework\App\ResponseInterface;
 use Magento\Framework\Controller\ResultFactory;
-use Magento\Framework\Controller\ResultInterface;
 use Magento\Framework\HTTP\Client\Curl;
 use Magento\Framework\Logger\Monolog;
-use Exception;
-use Magento\Framework\View\Result\Layout;
 
-/**
- * @SuppressWarnings(PHPMD.CamelCasePropertyName)
- */
 class ImportFile extends Action
 {
 
@@ -89,23 +81,30 @@ class ImportFile extends Action
     private $curl;
 
     /**
-     * @var Data
+     * @var Data|\Buildateam\CustomProductBuilder\Helper\Data
      */
     private $helper;
+
+    /**
+     * @var \Magento\Framework\Filesystem\DriverInterface
+     */
+    private $driver;
 
     /**
      * @param Context $context
      * @param Monolog $logger
      * @param FileUploader $fileUploader
      * @param Curl $curl
-     * @param Data $helper
+     * @param \Buildateam\CustomProductBuilder\Helper\Data $helper
+     * @param \Magento\Framework\Filesystem\DriverInterface $driver
      */
     public function __construct(
         Context $context,
         Monolog $logger,
         FileUploader $fileUploader,
         Curl $curl,
-        \Buildateam\CustomProductBuilder\Helper\Data $helper
+        \Buildateam\CustomProductBuilder\Helper\Data $helper,
+        \Magento\Framework\Filesystem\DriverInterface $driver
     ) {
         parent::__construct($context);
         $this->resultFactory = $context->getResultFactory();
@@ -113,12 +112,11 @@ class ImportFile extends Action
         $this->fileUploader = $fileUploader;
         $this->curl = $curl;
         $this->helper = $helper;
+        $this->driver = $driver;
     }
 
     /**
-     * @return ResponseInterface|ResultInterface|Layout
-     *
-     * //phpcs:disable Magento2.Functions.DiscouragedFunction.Discouraged
+     * @inheritdoc
      */
     public function execute()
     {
@@ -128,7 +126,7 @@ class ImportFile extends Action
 
         $file = $this->getRequest()->getFiles('product')['file'];
         $jsonData = !empty($file['tmp_name'])
-            ? file_get_contents($file['tmp_name'])
+            ? $this->driver->fileGetContents($file['tmp_name'])
             : $product->getData('json_configuration');
 
         $response = $this->resultFactory->create(ResultFactory::TYPE_JSON);
@@ -154,7 +152,7 @@ class ImportFile extends Action
 
             try {
                 $this->helper->saveJsonConfiguration($product->getId(), $this->jsonProductContent);
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
                 $this->logger->critical($e->getMessage());
             }
 
@@ -211,7 +209,7 @@ class ImportFile extends Action
                 $imageData ['name'] = basename($match);
                 $url = $this->fileUploader->saveFile($imageData);
                 $config = str_replace($match, $url, $config);
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
                 $this->logger->error($e->getMessage());
             }
         }

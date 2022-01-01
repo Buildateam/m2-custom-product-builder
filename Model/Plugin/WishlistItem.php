@@ -49,24 +49,19 @@ namespace Buildateam\CustomProductBuilder\Model\Plugin;
 use \Magento\Framework\App\ProductMetadataInterface;
 use \Magento\Framework\Serialize\SerializerInterface;
 
-/**
- * Class WishlistItem
- * @package Buildateam\CustomProductBuilder\Model\Plugin
- */
 class WishlistItem
 {
     /**
      * @var bool
      */
-    protected $_isJsonInfoByRequest = true;
+    private $isJsonInfoByRequest = true;
 
     /**
      * @var SerializerInterface
      */
-    protected $serializer;
+    private $serializer;
 
     /**
-     * WishlistItem constructor.
      * @param ProductMetadataInterface $productMetadata
      * @param SerializerInterface $serializer
      */
@@ -75,7 +70,7 @@ class WishlistItem
         SerializerInterface $serializer
     ) {
         if (version_compare($productMetadata->getVersion(), '2.2.0', '<')) {
-            $this->_isJsonInfoByRequest = false;
+            $this->isJsonInfoByRequest = false;
         }
         $this->serializer = $serializer;
     }
@@ -92,7 +87,7 @@ class WishlistItem
         foreach ($options1 as $option) {
             if ($option->getCode() == 'info_buyRequest') {
                 $code = $option->getCode();
-                if ($this->_isJsonInfoByRequest) {
+                if ($this->isJsonInfoByRequest) {
                     $value = json_decode($option->getValue(), true);
                 } else {
                     $value = $this->serializer->unserialize($option->getValue());
@@ -102,7 +97,7 @@ class WishlistItem
                     continue;
                 }
 
-                if ($this->_isJsonInfoByRequest) {
+                if ($this->isJsonInfoByRequest) {
                     $value2 = json_decode($options2[$code]->getValue(), true);
                 } else {
                     $value2 = $this->serializer->unserialize($options2[$code]->getValue());

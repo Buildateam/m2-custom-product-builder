@@ -55,10 +55,6 @@ use Magento\Framework\View\Element\Template;
 use Magento\Store\Model\ScopeInterface;
 use Magento\Store\Model\StoreManagerInterface;
 
-/**
- * Class View
- * @package Buildateam\CustomProductBuilder\Block\Catalog\Product
- */
 class View extends Template
 {
     /**
@@ -80,7 +76,6 @@ class View extends Template
     private $locale;
 
     /**
-     * View constructor.
      * @param Context $context
      * @param Data $helper
      * @param StoreManagerInterface $storeManager

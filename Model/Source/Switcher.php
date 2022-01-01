@@ -1,5 +1,4 @@
 <?php
-
 namespace Buildateam\CustomProductBuilder\Model\Source;
 
 use Magento\Eav\Model\Entity\Attribute\Source\AbstractSource;
@@ -15,14 +14,8 @@ class Switcher extends AbstractSource
     public function getAllOptions()
     {
         return [
-            [
-                'label' => __('Enabled'),
-                'value' => self::CPB_ENBALED
-            ],
-            [
-                'label' => __('Disabled'),
-                'value' => self::CPB_DISABLED
-            ]
+            ['label' => __('Enabled'), 'value' => self::CPB_ENBALED],
+            ['label' => __('Disabled'), 'value' => self::CPB_DISABLED]
         ];
     }
 }

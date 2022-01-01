@@ -51,24 +51,19 @@ use \Magento\Framework\App\ProductMetadataInterface;
 use \Magento\Framework\DataObject;
 use \Magento\Framework\Serialize\SerializerInterface;
 
-/**
- * Class CatalogProductTypeAll
- * @package Buildateam\CustomProductBuilder\Model\Plugin
- */
 class CatalogProductTypeAll
 {
     /**
      * @var bool
      */
-    protected $_isJsonInfoByRequest = true;
+    private $isJsonInfoByRequest = true;
 
     /**
      * @var SerializerInterface
      */
-    protected $serializer;
+    private $serializer;
 
     /**
-     * CatalogProductTypeAll constructor.
      * @param ProductMetadataInterface $productMetadata
      * @param SerializerInterface $serializer
      */
@@ -77,7 +72,7 @@ class CatalogProductTypeAll
         SerializerInterface $serializer
     ) {
         if (version_compare($productMetadata->getVersion(), '2.2.0', '<')) {
-            $this->_isJsonInfoByRequest = false;
+            $this->isJsonInfoByRequest = false;
         }
         $this->serializer = $serializer;
     }
@@ -104,13 +99,13 @@ class CatalogProductTypeAll
     {
         $optionArr = $proceed($product);
         if ($additionalOptions = $product->getCustomOption('additional_options')) {
-            $optionArr['additional_options'] = $this->_isJsonInfoByRequest ?
+            $optionArr['additional_options'] = $this->isJsonInfoByRequest ?
                 json_decode($additionalOptions->getValue(), true) :
                 $this->serializer->unserialize($additionalOptions->getValue());
         }
 
         if ($cpbOptions = $product->getCustomOption('options')) {
-            $optionArr['options'] = $this->_isJsonInfoByRequest ?
+            $optionArr['options'] = $this->isJsonInfoByRequest ?
                 json_decode($cpbOptions->getValue(), true) :
                 $this->serializer->unserialize($cpbOptions->getValue());
         }
@@ -148,7 +143,7 @@ class CatalogProductTypeAll
 
             /* Retrieve technical data of product that was added to cart */
             $buyRequest = $product->getCustomOption('info_buyRequest')->getData('value');
-            if ($this->_isJsonInfoByRequest) {
+            if ($this->isJsonInfoByRequest) {
                 $productInfo = json_decode($buyRequest, true);
             } else {
                 $productInfo = $this->serializer->unserialize($buyRequest);
@@ -172,7 +167,7 @@ class CatalogProductTypeAll
                     'custom_view' => false,
                 ];
             };
-            $product->addCustomOption('additional_options', $this->_isJsonInfoByRequest ?
+            $product->addCustomOption('additional_options', $this->isJsonInfoByRequest ?
                 json_encode($addOptions) : $this->serializer->serialize($addOptions));
 
             $cpbOptions = [];
@@ -219,7 +214,7 @@ class CatalogProductTypeAll
                 }
             }
             if (!empty($cpbOptions)) {
-                $product->addCustomOption('options', $this->_isJsonInfoByRequest ?
+                $product->addCustomOption('options', $this->isJsonInfoByRequest ?
                     json_encode($cpbOptions) : $this->serializer->serialize($cpbOptions));
             }
         }

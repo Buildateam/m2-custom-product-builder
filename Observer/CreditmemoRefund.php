@@ -1,18 +1,13 @@
 <?php
-
 namespace Buildateam\CustomProductBuilder\Observer;
 
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
 use Buildateam\CustomProductBuilder\Helper\Json;
-use \Magento\Catalog\Model\ResourceModel\Product\Action;
-use \Magento\Store\Model\StoreManagerInterface;
+use Magento\Catalog\Model\ResourceModel\Product\Action;
+use Magento\Store\Model\StoreManagerInterface;
 use Buildateam\CustomProductBuilder\Helper\Data;
 
-/**
- * Class CreditmemoRefund
- * @package Buildateam\CustomProductBuilder\Observer
- */
 class CreditmemoRefund implements ObserverInterface
 {
     /**
@@ -61,41 +56,49 @@ class CreditmemoRefund implements ObserverInterface
      */
     public function execute(Observer $observer)
     {
-        if (!$this->helper->getConfigValue('cataloginventory/item_options/manage_stock')) {
-            $storeId = $this->storeManager->getStore()->getId();
-            $creditmemo = $observer->getData('creditmemo');
-            $memoItems = $creditmemo->getItems();
-            foreach ($memoItems as $item) {
-                $orderItem = $item->getOrderItem();
-                if ($orderItem->getProduct() !== null && $orderItem->getProduct()->getJsonConfiguration()) {
-                    $product = $orderItem->getProduct();
-                    if ($infoBuyRequest = $orderItem->getProductOptionByCode('info_buyRequest')) {
-                        if (isset($infoBuyRequest['properties']['Item Customization - Colors'])) {
-                            $property = $infoBuyRequest['properties']['Item Customization - Colors'];
-                        } elseif (isset($infoBuyRequest['properties']['Colors'])) {
-                            $property = $infoBuyRequest['properties']['Colors'];
-                        } else {
-                            $property = '';
+        if ($this->helper->getConfigValue('cataloginventory/item_options/manage_stock')) {
+            return;
+        }
+
+        $storeId = $this->storeManager->getStore()->getId();
+        $creditmemo = $observer->getData('creditmemo');
+        $memoItems = $creditmemo->getItems();
+        foreach ($memoItems as $item) {
+            $orderItem = $item->getOrderItem();
+            if ($orderItem->getProduct() !== null && $orderItem->getProduct()->getJsonConfiguration()) {
+                $product = $orderItem->getProduct();
+                if ($infoBuyRequest = $orderItem->getProductOptionByCode('info_buyRequest')) {
+                    if (isset($infoBuyRequest['properties']['Item Customization - Colors'])) {
+                        $property = $infoBuyRequest['properties']['Item Customization - Colors'];
+                    } elseif (isset($infoBuyRequest['properties']['Colors'])) {
+                        $property = $infoBuyRequest['properties']['Colors'];
+                    } else {
+                        $property = '';
+                    }
+
+                    if ($property == '') {
+                        continue;
+                    }
+
+                    $jsonConfig = $this->serializer->unserialize($product->getJsonConfiguration());
+                    if (!isset($jsonConfig['data']['inventory'])) {
+                        continue;
+                    }
+
+                    $parts = explode(' ', $property);
+                    $sku = trim(end($parts), '[]');
+                    foreach ($jsonConfig['data']['inventory'] as $key => $value) {
+                        if ($value['sku'] != $sku) {
+                            continue;
                         }
 
-                        if ($property != '') {
-                            $parts = explode(' ', $property);
-                            $sku = trim(end($parts), '[]');
-                            $jsonConfig = $this->serializer->unserialize($product->getJsonConfiguration());
-                            if (isset($jsonConfig['data']['inventory'])) {
-                                foreach ($jsonConfig['data']['inventory'] as $key => $value) {
-                                    if ($value['sku'] == $sku) {
-                                        $jsonConfig['data']['inventory'][$key]['qty'] += $item->getQty();
-                                        $this->productAction->updateAttributes(
-                                            [$product->getId()],
-                                            ['json_configuration' => $this->serializer->serialize($jsonConfig)],
-                                            $storeId
-                                        );
-                                        break;
-                                    }
-                                }
-                            }
-                        }
+                        $jsonConfig['data']['inventory'][$key]['qty'] += $item->getQty();
+                        $this->productAction->updateAttributes(
+                            [$product->getId()],
+                            ['json_configuration' => $this->serializer->serialize($jsonConfig)],
+                            $storeId
+                        );
+                        break;
                     }
                 }
             }

@@ -49,10 +49,6 @@ use \Magento\Checkout\Block\Cart\Item\Renderer\Actions\Edit;
 use \Magento\Framework\App\ProductMetadataInterface;
 use \Magento\Framework\Serialize\SerializerInterface;
 
-/**
- * Class CartItemEdit
- * @package Buildateam\CustomProductBuilder\Block\Plugin
- */
 class CartItemEdit
 {
     /**
@@ -66,7 +62,6 @@ class CartItemEdit
     protected $serializer;
 
     /**
-     * CartItemEdit constructor.
      * @param ProductMetadataInterface $productMetadata
      * @param SerializerInterface $serializer
      */

@@ -51,60 +51,55 @@ use \Magento\Checkout\Model\Session;
 use Magento\Framework\Exception\LocalizedException;
 use \Magento\Framework\Math\Random;
 use \Magento\Framework\Logger\Monolog;
-use \Magento\Framework\Json\Helper\Data as JsonHelper;
+use \Magento\Framework\Serialize\Serializer\Json;
 use \Buildateam\CustomProductBuilder\Model\ShareableLinksFactory;
 use \Buildateam\CustomProductBuilder\Helper\Data;
 use \Magento\Store\Model\StoreManagerInterface;
 
-/**
- * Class AddToCartValidator
- * @package Buildateam\CustomProductBuilder\Plugin
- */
 class AddToCartValidator
 {
     /**
      * @var Session
      */
-    protected $_checkoutSession;
+    private $checkoutSession;
 
     /**
      * @var Random
      */
-    protected $_mathRandom;
+    private $mathRandom;
 
     /**
      * @var ShareableLinksFactory
      */
-    protected $_shareLinksFactory;
+    private $shareLinksFactory;
 
     /**
      * @var Data
      */
-    protected $_helper;
+    private $helper;
 
     /**
      * @var Monolog
      */
-    protected $_logger;
+    private $logger;
 
     /**
-     * @var JsonHelper
+     * @var Json
      */
-    protected $_jsonHelper;
+    private $json;
 
     /**
      * @var StoreManagerInterface
      */
-    protected $_storeManager;
+    private $storeManager;
 
     /**
-     * AddToCartValidator constructor.
      * @param Session $checkoutSession
      * @param ShareableLinksFactory $factory
      * @param Data $helper
      * @param Random $random
      * @param Monolog $logger
-     * @param JsonHelper $jsonHelper
+     * @param Json $json
      * @param StoreManagerInterface $storeManager
      */
     public function __construct(
@@ -113,28 +108,35 @@ class AddToCartValidator
         Data $helper,
         Random $random,
         Monolog $logger,
-        JsonHelper $jsonHelper,
+        Json $json,
         StoreManagerInterface $storeManager
     ) {
-        $this->_checkoutSession = $checkoutSession;
-        $this->_mathRandom = $random;
-        $this->_shareLinksFactory = $factory;
-        $this->_helper = $helper;
-        $this->_logger = $logger;
-        $this->_jsonHelper = $jsonHelper;
-        $this->_storeManager = $storeManager;
+        $this->checkoutSession = $checkoutSession;
+        $this->mathRandom = $random;
+        $this->shareLinksFactory = $factory;
+        $this->helper = $helper;
+        $this->logger = $logger;
+        $this->json = $json;
+        $this->storeManager = $storeManager;
     }
 
     /**
-     * @param $subject
+     * @param \Magento\Framework\Data\Form\FormKey\Validator $subject
      * @param callable $proceed
-     * @param $request
-     * @return string
+     * @param \Magento\Framework\App\RequestInterface $request
+     * @return bool
+     * @throws LocalizedException
+     * @throws \Magento\Framework\Exception\FileSystemException
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
-    public function aroundValidate($subject, callable $proceed, $request)
-    {
+    public function aroundValidate(
+        \Magento\Framework\Data\Form\FormKey\Validator $subject,
+        callable $proceed,
+        \Magento\Framework\App\RequestInterface $request
+    ) {
         if ($request->getHeader('X_CUSTOM_PRODUCT_BUILDER')) {
-            $payload = json_decode(file_get_contents('php://input'), true);
+            $payload = $this->json->unserialize($request->getContent());
+
             foreach (['quantity', 'technicalData', 'properties', 'configid', 'type'] as $paramKey) {
                 if (isset($payload[$paramKey])) {
                     if ($paramKey == 'properties') {
@@ -156,20 +158,20 @@ class AddToCartValidator
             if (isset($payload['buffer'])) {
                 if (!isset($payload['configid'])) {
                     try {
-                        $request->setParam('configid', $this->_mathRandom->getRandomString(18));
+                        $request->setParam('configid', $this->mathRandom->getRandomString(18));
                     } catch (LocalizedException $e) {
-                        $this->_logger->critical($e->getMessage());
+                        $this->logger->critical($e->getMessage());
                     }
                 }
                 if (!isset($payload['type'])) {
                     $request->setParam('type', 'png');
                 }
 
-                $imagePath = $this->_helper->uploadImage($payload['buffer'], true);
-                $configModel = $this->_shareLinksFactory->create();
+                $imagePath = $this->helper->uploadImage($payload['buffer'], true);
+                $configModel = $this->shareLinksFactory->create();
                 $configModel->setData([
                     'product_id' => $request->getParam('product'),
-                    'technical_data' => $this->_jsonHelper->jsonEncode($request->getParam('technicalData')),
+                    'technical_data' => $this->json->serialize($request->getParam('technicalData')),
                     'variation_id' => $request->getParam('configid'),
                     'image' => $imagePath
                 ]);
@@ -177,23 +179,23 @@ class AddToCartValidator
                 try {
                     $configModel->save();
                 } catch (Exception $e) {
-                    $this->_logger->critical($e->getMessage());
+                    $this->logger->critical($e->getMessage());
                 }
             }
             $refererUrl = $request->getServer('HTTP_REFERER');
-            $search = $this->_storeManager->getStore()->getBaseUrl() . 'checkout/cart/configure/id/';
+            $search = $this->storeManager->getStore()->getBaseUrl() . 'checkout/cart/configure/id/';
             if (strpos($refererUrl, $search) !== false) {
                 $parts = explode('/', str_replace($search, '', $refererUrl));
                 $quoteItemId = $parts[0];
-                $quote = $this->_checkoutSession->getQuote();
+                $quote = $this->checkoutSession->getQuote();
                 foreach ($quote->getItems() as $item) {
                     if ($item->getId() == $quoteItemId) {
                         $quote->deleteItem($item);
-                        $request->setParam('return_url', $this->_storeManager->getStore()->getUrl('checkout/cart'));
+                        $request->setParam('return_url', $this->storeManager->getStore()->getUrl('checkout/cart'));
                     }
                 }
             } else {
-                $this->_checkoutSession->setNoCartRedirect(true);
+                $this->checkoutSession->setNoCartRedirect(true);
             }
             return true;
         }

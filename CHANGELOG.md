@@ -1,3 +1,6 @@
+## 1.2.3
+* Refactoring
+
 ## 1.2.2
 * Support Tax Class for Custom Product
 * Support Inventory

@@ -75,7 +75,6 @@ class Upload extends Action
     private $filesystem;
 
     /**
-     * Save constructor.
      * @param Context $context
      * @param Filesystem $filesystem
      * @param FileUploader $fileUploader
@@ -99,7 +98,8 @@ class Upload extends Action
      */
     public function execute(): Json
     {
-        $requestData = json_decode(file_get_contents('php://input'), true);
+        $requestData = json_decode($this->getRequest()->getContent(), true);
+
         $result = [
             'error' => true
         ];

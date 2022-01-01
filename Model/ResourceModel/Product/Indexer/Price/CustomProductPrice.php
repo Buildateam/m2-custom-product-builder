@@ -12,17 +12,20 @@ class CustomProductPrice extends Price\SimpleProductPrice
      * @param IndexTableStructureFactory $indexTableStructureFactory
      * @param TableMaintainer $tableMaintainer
      * @param BasePriceModifier $basePriceModifier
-     * @param string $productType
      */
     public function __construct(
         BaseFinalPrice $baseFinalPrice,
         Price\IndexTableStructureFactory $indexTableStructureFactory,
         TableMaintainer $tableMaintainer,
-        Price\BasePriceModifier $basePriceModifier,
-        $productType = \Buildateam\CustomProductBuilder\Model\Product\Type::TYPE_CODE
+        Price\BasePriceModifier $basePriceModifier
     ) {
+        $productType = \Buildateam\CustomProductBuilder\Model\Product\Type::TYPE_CODE;
         parent::__construct(
-            $baseFinalPrice, $indexTableStructureFactory, $tableMaintainer, $basePriceModifier, $productType
+            $baseFinalPrice,
+            $indexTableStructureFactory,
+            $tableMaintainer,
+            $basePriceModifier,
+            $productType
         );
     }
 }

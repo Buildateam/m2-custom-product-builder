@@ -193,8 +193,10 @@ class FileUploader
 
         $this->tmpDirectory->writeFile(
             $this->tmpDirectory->getAbsolutePath() . $name,
+            // phpcs:ignore Magento2.Functions.DiscouragedFunction
             base64_decode($fileData['base64'])
         );
+
         $file = [
             'tmp_name' => $this->tmpDirectory->getAbsolutePath() . $name,
             'name' => $name

@@ -73,7 +73,7 @@ class ShareableLinks extends \Magento\Framework\Model\AbstractModel implements
     public function loadByVariationId($variationId)
     {
         try {
-            $this->_getResource()->loadByVariationId($this, $variationId);
+            $this->_resource->loadByVariationId($this, $variationId);
         } catch (LocalizedException $e) {
             $this->_logger->critical($e->getMessage());
         }

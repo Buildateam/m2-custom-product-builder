@@ -10,7 +10,7 @@ class Type extends \Magento\Catalog\Model\Product\Type\AbstractType
      */
     public function deleteTypeSpecificData(\Magento\Catalog\Model\Product $product)
     {
-
+        return null;
     }
 
     /**
@@ -25,7 +25,7 @@ class Type extends \Magento\Catalog\Model\Product\Type\AbstractType
         $additionalOptions = [];
         $properties = $buyRequest->getProperties();
         if ($properties && is_array($properties)) {
-            foreach($properties as $key => $value) {
+            foreach ($properties as $key => $value) {
                 if ($key == 'productUrl' || $key == 'SKU' || empty($value)) {
                     continue;
                 }

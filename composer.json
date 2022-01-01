@@ -1,15 +1,13 @@
 {
     "name": "buildateam/m2-custom-product-builder",
     "description": "Magento 2 Custom Product Builder Implementation",
-    "version": "1.2.2",
+    "version": "1.2.3",
     "require": {
-        "magento/framework": "101.0.*||102.0.*||103.0.*"
+        "php": ">=7.0.0"
     },
     "type": "magento2-module",
     "autoload": {
-        "files": [
-            "registration.php"
-        ],
+        "files": ["registration.php"],
         "psr-4": {
             "Buildateam\\CustomProductBuilder\\": ""
         }

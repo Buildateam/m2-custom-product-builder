@@ -47,16 +47,12 @@
 namespace Buildateam\CustomProductBuilder\Controller\Product;
 
 use Buildateam\CustomProductBuilder\Model\ResourceModel\ShareableLinks;
-use \Magento\Framework\App\Action\Action;
-use \Magento\Framework\App\Action\Context;
-use \Magento\Framework\Controller\ResultFactory;
-use \Buildateam\CustomProductBuilder\Model\ShareableLinksFactory;
-use \Magento\Framework\Data\Form\FormKey\Validator;
+use Magento\Framework\App\Action\Action;
+use Magento\Framework\App\Action\Context;
+use Magento\Framework\Controller\ResultFactory;
+use Buildateam\CustomProductBuilder\Model\ShareableLinksFactory;
+use Magento\Framework\Data\Form\FormKey\Validator;
 
-/**
- * Class Share
- * @package Buildateam\CustomProductBuilder\Controller\Product
- */
 class Share extends Action
 {
     /**
@@ -79,8 +75,6 @@ class Share extends Action
     private $sharableResource;
 
     /**
-     * Share constructor.
-     *
      * @param Context $context
      * @param ShareableLinksFactory $factory
      * @param ShareableLinks $sharableResource
@@ -134,7 +128,7 @@ class Share extends Action
     }
 
     /**
-     * @return mixed
+     * @return bool
      */
     protected function _validateRequest()
     {

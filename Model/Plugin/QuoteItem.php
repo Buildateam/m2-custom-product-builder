@@ -51,10 +51,6 @@ use \Magento\Quote\Model\Quote\Item;
 use \Buildateam\CustomProductBuilder\Model\ShareableLinksFactory;
 use \Magento\Framework\Serialize\SerializerInterface;
 
-/**
- * Class QuoteItem
- * @package Buildateam\CustomProductBuilder\Model\Plugin
- */
 class QuoteItem
 {
     /**

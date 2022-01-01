@@ -52,10 +52,6 @@ use \Buildateam\CustomProductBuilder\Model\ShareableLinksFactory;
 use \Magento\Framework\Controller\ResultFactory;
 use \Magento\Framework\Json\Helper\Data as JsonHelper;
 
-/**
- * Class Get
- * @package Buildateam\CustomProductBuilder\Controller\Product
- */
 class Get extends Action
 {
     /**
@@ -74,7 +70,6 @@ class Get extends Action
     protected $_jsonHelper;
 
     /**
-     * Get constructor.
      * @param Context $context
      * @param ShareableLinksFactory $factory
      * @param JsonHelper $jsonHelper

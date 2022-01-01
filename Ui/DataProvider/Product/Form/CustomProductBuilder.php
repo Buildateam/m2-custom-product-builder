@@ -50,9 +50,6 @@ use \Magento\Ui\DataProvider\AbstractDataProvider;
 use \Magento\Catalog\Model\ResourceModel\Product\CollectionFactory;
 use \Magento\Framework\UrlInterface;
 
-/**
- * DataProvider for product builder form
- */
 class CustomProductBuilder extends AbstractDataProvider
 {
     /**

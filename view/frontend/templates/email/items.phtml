@@ -1,28 +1,30 @@
 <?php
-// @codingStandardsIgnoreFile
+/** @var $block \Magento\Sales\Block\Order\Email\Items */
+$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+$giftMessageHelper = $objectManager->get(\Magento\GiftMessage\Helper\Message::class);
 ?>
-<?php $_order = $block->getOrder() ?>
-<?php if ($_order): ?>
-    <?php $_items = $_order->getAllItems(); ?>
+<?php $order = $block->getOrder() ?>
+<?php if ($order): ?>
+    <?php $_items = $order->getAllItems(); ?>
     <table class="email-items">
         <thead>
         <tr>
             <th class="item-image">
-                <?= /* @escapeNotVerified */  __('Image') ?>
+                <?= /* @noEscape */ __('Image') ?>
             </th>
             <th class="item-info">
-                <?= /* @escapeNotVerified */  __('Items') ?>
+                <?= /* @noEscape */  __('Items') ?>
             </th>
             <th class="item-qty">
-                <?= /* @escapeNotVerified */  __('Qty') ?>
+                <?= /* @noEscape */  __('Qty') ?>
             </th>
             <th class="item-price">
-                <?= /* @escapeNotVerified */  __('Price') ?>
+                <?= /* @noEscape */  __('Price') ?>
             </th>
         </tr>
         </thead>
         <?php foreach ($_items as $_item): ?>
-            <?php if (!$_item->getParentItem()) : ?>
+            <?php if (!$_item->getParentItem()): ?>
                 <tbody>
                 <?= $block->getItemHtml($_item) ?>
                 </tbody>
@@ -32,18 +34,21 @@
         <?= $block->getChildHtml('order_totals') ?>
         </tfoot>
     </table>
-    <?php if ($this->helper('Magento\GiftMessage\Helper\Message')->isMessagesAllowed('order', $_order, $_order->getStore()) && $_order->getGiftMessageId()) : ?>
-        <?php $_giftMessage = $this->helper('Magento\GiftMessage\Helper\Message')->getGiftMessage($_order->getGiftMessageId()); ?>
-        <?php if ($_giftMessage): ?>
+    <?php if ($giftMessageHelper->isMessagesAllowed('order', $order, $order->getStore())
+        && $order->getGiftMessageId()): ?>
+        <?php $giftMessage = $giftMessageHelper->getGiftMessage($order->getGiftMessageId()) ?>
+        <?php if ($giftMessage): ?>
             <br />
             <table class="message-gift">
                 <tr>
                     <td>
-                        <h3><?= /* @escapeNotVerified */  __('Gift Message for this Order') ?></h3>
-                        <strong><?= /* @escapeNotVerified */  __('From:') ?></strong> <?= $block->escapeHtml($_giftMessage->getSender()) ?>
-                        <br /><strong><?= /* @escapeNotVerified */  __('To:') ?></strong> <?= $block->escapeHtml($_giftMessage->getRecipient()) ?>
-                        <br /><strong><?= /* @escapeNotVerified */  __('Message:') ?></strong>
-                        <br /><?= $block->escapeHtml($_giftMessage->getMessage()) ?>
+                        <h3><?= /* @noEscape */ __('Gift Message for this Order') ?></h3>
+                        <strong><?= /* @noEscape */ __('From:') ?></strong>
+                        <?= $block->escapeHtml($giftMessage->getSender()) ?>
+                        <br /><strong><?= /* @noEscape */ __('To:') ?></strong>
+                        <?= $block->escapeHtml($giftMessage->getRecipient()) ?>
+                        <br /><strong><?= /* @noEscape */ __('Message:') ?></strong>
+                        <br /><?= $block->escapeHtml($giftMessage->getMessage()) ?>
                     </td>
                 </tr>
             </table>

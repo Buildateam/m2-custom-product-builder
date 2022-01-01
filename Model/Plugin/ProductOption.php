@@ -50,18 +50,19 @@ use Magento\Catalog\Model\Product\Option;
 use Magento\Catalog\Model\Product\Option\Type\Factory;
 use Magento\Framework\Exception\LocalizedException;
 
-/**
- * Class ProductOption
- * @package Buildateam\CustomProductBuilder\Model\Plugin
- */
 class ProductOption
 {
-    private $_optionTypeFactory;
+    /**
+     * @var Factory
+     */
+    private $optionTypeFactory;
 
-    public function __construct(
-        Factory $optionFactory
-    ) {
-        $this->_optionTypeFactory = $optionFactory;
+    /**
+     * @param Factory $optionFactory
+     */
+    public function __construct(Factory $optionFactory)
+    {
+        $this->optionTypeFactory = $optionFactory;
     }
 
     /**
@@ -76,7 +77,7 @@ class ProductOption
         if ($type !== 'cpb_download') {
             return $proceed($type);
         }
-        return $this->_optionTypeFactory->create(
+        return $this->optionTypeFactory->create(
             \Buildateam\CustomProductBuilder\Model\Product\Option\Type\Download::class
         );
     }

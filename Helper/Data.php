@@ -53,13 +53,8 @@ use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Filesystem;
 use Magento\Framework\Math\Random;
 use Magento\Store\Model\ScopeInterface;
-use Magento\Store\Model\StoreManagerInterface;
 use Magento\Framework\App\ResourceConnection;
 
-/**
- * Class Data
- * @package Buildateam\CustomProductBuilder\Helper
- */
 class Data extends AbstractHelper
 {
     const JSON_ATTRIBUTE = 'json_configuration';
@@ -70,17 +65,12 @@ class Data extends AbstractHelper
     /**
      * @var \Magento\Framework\Filesystem
      */
-    protected $_fileSystem;
-
-    /**
-     * @var StoreManagerInterface
-     */
-    protected $_storeManager;
+    private $fileSystem;
 
     /**
      * @var Random
      */
-    protected $_mathRandom;
+    private $mathRandom;
 
     /**
      * @var ResourceConnection
@@ -88,24 +78,28 @@ class Data extends AbstractHelper
     private $resource;
 
     /**
-     * Data constructor.
+     * @var Filesystem\DriverInterface
+     */
+    private $fileDriver;
+
+    /**
      * @param Context $context
      * @param Filesystem $fileSystem
-     * @param StoreManagerInterface $storeManager
      * @param Random $random
      * @param ResourceConnection $resource
+     * @param Filesystem\DriverInterface $fileDriver
      */
     public function __construct(
         Context $context,
         Filesystem $fileSystem,
-        StoreManagerInterface $storeManager,
         Random $random,
-        ResourceConnection $resource
+        ResourceConnection $resource,
+        \Magento\Framework\Filesystem\DriverInterface $fileDriver
     ) {
-        $this->_fileSystem = $fileSystem;
-        $this->_storeManager = $storeManager;
-        $this->_mathRandom = $random;
+        $this->fileSystem = $fileSystem;
+        $this->mathRandom = $random;
         $this->resource = $resource;
+        $this->fileDriver = $fileDriver;
         parent::__construct($context);
     }
 
@@ -182,22 +176,22 @@ class Data extends AbstractHelper
      */
     public function uploadImage($base64Image, $frontImage = false)
     {
-        $media = $this->_fileSystem
-            ->getDirectoryWrite(DirectoryList::MEDIA);
+        $media = $this->fileSystem->getDirectoryWrite(DirectoryList::MEDIA);
         $mediaPath = $media->getAbsolutePath('catalog/product/customproductbuilder/' .
             ($frontImage ? 'variation' : 'configuration'));
 
-        if (!file_exists($mediaPath) && !mkdir($mediaPath, 0777, true) && !is_dir($mediaPath)) {
+        if (!$this->fileDriver->isDirectory($mediaPath) && !$this->fileDriver->createDirectory($mediaPath, 0777)) {
             throw new \RuntimeException(sprintf('Directory "%s" was not created', $mediaPath));
         }
         try {
-            $variationId = $this->_request->getParam('configid') ?: $this->_mathRandom->getRandomString(18);
+            $variationId = $this->_request->getParam('configid') ?: $this->mathRandom->getRandomString(18);
         } catch (LocalizedException $e) {
             $this->_logger->critical($e->getMessage());
             return false;
         }
 
         $fileName = $variationId . '.' . $this->_request->getParam('type');
+        // phpcs:ignore Magento2.Functions.DiscouragedFunction
         $media->writeFile("$mediaPath/$fileName", base64_decode($base64Image));
 
         return ($frontImage ? '' : 'catalog/product/') . 'customproductbuilder/' .

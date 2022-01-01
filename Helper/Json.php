@@ -1,28 +1,22 @@
 <?php
-
 namespace Buildateam\CustomProductBuilder\Helper;
 
 use \Magento\Framework\App\ProductMetadataInterface;
 use \Magento\Framework\Serialize\SerializerInterface;
 
-/**
- * Class Json
- * @package Buildateam\CustomProductBuilder\Helper
- */
 class Json
 {
     /**
      * @var bool
      */
-    protected $_isJsonInfoByRequest = true;
+    private $_isJsonInfoByRequest = true;
 
     /**
      * @var SerializerInterface
      */
-    protected $serializer;
+    private $serializer;
 
     /**
-     * Json constructor.
      * @param ProductMetadataInterface $productMetadata
      * @param SerializerInterface $serializer
      */

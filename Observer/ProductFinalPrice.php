@@ -46,51 +46,46 @@
 
 namespace Buildateam\CustomProductBuilder\Observer;
 
-use Magento\Checkout\Exception;
-use \Magento\Framework\Message\ManagerInterface;
-use \Buildateam\CustomProductBuilder\Helper\Data as Helper;
-use \Magento\Catalog\Model\ProductRepository;
-use \Magento\Framework\App\ProductMetadataInterface;
-use \Magento\Framework\Event\ObserverInterface;
-use \Magento\Framework\Event\Observer as EventObserver;
-use \Magento\Framework\Serialize\SerializerInterface;
+use Magento\Framework\Message\ManagerInterface;
+use Buildateam\CustomProductBuilder\Helper\Data as Helper;
+use Magento\Catalog\Model\ProductRepository;
+use Magento\Framework\App\ProductMetadataInterface;
+use Magento\Framework\Event\ObserverInterface;
+use Magento\Framework\Event\Observer as EventObserver;
+use Magento\Framework\Serialize\SerializerInterface;
 
-/**
- * Class ProductFinalPrice
- * @package Buildateam\CustomProductBuilder\Observer
- */
 class ProductFinalPrice implements ObserverInterface
 {
     /**
      * @var ProductRepository
      */
-    protected $_productRepository;
+    private $productRepository;
 
     /**
      * @var array
      */
-    protected $_jsonConfig = [];
+    private $jsonConfig = [];
 
     /**
      * @var bool
      */
-    protected $_isJsonInfoByRequest = true;
+    private $isJsonInfoByRequest = true;
 
     /**
      * @var ManagerInterface
      */
-    protected $_messageManager;
+    private $messageManager;
 
     /**
      * @var SerializerInterface
      */
-    protected $serializer;
+    private $serializer;
 
     /**
-     * ProductFinalPrice constructor.
      * @param ProductRepository $productRepository
      * @param ProductMetadataInterface $productMetadata
      * @param ManagerInterface $massageManager
+     * @param SerializerInterface $serializer
      */
     public function __construct(
         ProductRepository $productRepository,
@@ -98,17 +93,17 @@ class ProductFinalPrice implements ObserverInterface
         ManagerInterface $massageManager,
         SerializerInterface $serializer
     ) {
-        $this->_productRepository = $productRepository;
+        $this->productRepository = $productRepository;
         if (version_compare($productMetadata->getVersion(), '2.2.0', '<')) {
-            $this->_isJsonInfoByRequest = false;
+            $this->isJsonInfoByRequest = false;
         }
-        $this->_messageManager = $massageManager;
+        $this->messageManager = $massageManager;
         $this->serializer = $serializer;
     }
 
     /**
      * @param EventObserver $observer
-     * @throws Exception
+     * @throws \Magento\Checkout\Exception
      * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
     public function execute(EventObserver $observer)
@@ -118,24 +113,21 @@ class ProductFinalPrice implements ObserverInterface
         if (null === $product->getCustomOption('info_buyRequest')) {
             return;
         }
+        
         /* Retrieve technical data of product that was added to cart */
         $buyRequest = $product->getCustomOption('info_buyRequest')->getData('value');
-        if ($this->_isJsonInfoByRequest) {
-            $productInfo = json_decode($buyRequest, true);
-        } else {
-            $productInfo = $this->serializer->unserialize($buyRequest);
-        }
+        $productInfo = $this->serializer->unserialize($buyRequest);
 
         if (!isset($productInfo['technicalData'])) {
             return;
         }
         $technicalData = $productInfo['technicalData']['layers'];
 
-        if (!isset($this->_jsonConfig[$product->getId()])) {
-            $productRepo = $this->_productRepository->getById($product->getId());
-            $this->_jsonConfig[$product->getId()] = json_decode($productRepo->getData(Helper::JSON_ATTRIBUTE), true);
+        if (!isset($this->jsonConfig[$product->getId()])) {
+            $productRepo = $this->productRepository->getById($product->getId());
+            $this->jsonConfig[$product->getId()] = json_decode($productRepo->getData(Helper::JSON_ATTRIBUTE), true);
         }
-        $jsonConfig = $this->_jsonConfig[$product->getId()];
+        $jsonConfig = $this->jsonConfig[$product->getId()];
         if (null === $jsonConfig) {
             return;
         }
@@ -193,7 +185,7 @@ class ProductFinalPrice implements ObserverInterface
                 }
 
                 if ($printMethod == 'sample' && $observer->getQty() > 1) {
-                    throw new Exception(__('Requested quantity is not available'));
+                    throw new \Magento\Checkout\Exception(__('Requested quantity is not available'));
                 }
 
                 if ($observer->getQty() <= $maxQty) {
@@ -202,43 +194,60 @@ class ProductFinalPrice implements ObserverInterface
                             $finalPrice = $value['price'];
                             break;
                         }
-                        if ($observer->getQty() < $value['minQty']) {
-                            if (isset($availablePrices[$key - 1])) {
-                                $finalPrice = $availablePrices[$key - 1]['price'];
-                                break;
-                            } else {
-                                throw new Exception(__('Requested quantity is not available'));
-                            }
+                        if ($observer->getQty() >= $value['minQty']) {
+                            continue;
+                        }
+
+                        if (isset($availablePrices[$key - 1])) {
+                            $finalPrice = $availablePrices[$key - 1]['price'];
+                            break;
+                        } else {
+                            throw new \Magento\Checkout\Exception(__('Requested quantity is not available'));
                         }
                     }
                     if (!isset($finalPrice) && $observer->getQty() > end($availablePrices)['minQty']) {
                         $finalPrice = end($availablePrices)['price'];
                     }
                 } else {
-                    throw new Exception(__('Requested quantity is not available'));
+                    throw new \Magento\Checkout\Exception(__('Requested quantity is not available'));
                 }
             }
         }
         if (empty($finalPrice)) {
             $finalPrice = $jsonConfig['data']['price'];
         }
+
+        $finalPrice = floatval($finalPrice);
+
         foreach ($jsonConfig['data']['panels'] as $panel) {
             foreach ($technicalData as $techData) {
                 if ($panel['id'] == $techData['panel']) {
-                    foreach ($panel['categories'] as $category) {
-                        if ($category['id'] == $techData['category']) {
-                            foreach ($category['options'] as $option) {
-                                if ($option['id'] == $techData['option']) {
-                                    $finalPrice += $option['price'];
-                                }
-                            }
-                        }
-                    }
+                    $finalPrice = $this->calculateFinalPrice($panel, $techData, $finalPrice);
                 }
             }
         }
         if (isset($finalPrice)) {
             $product->setFinalPrice($finalPrice);
         }
+    }
+
+    /**
+     * @param array $panel
+     * @param array $techData
+     * @param float $finalPrice
+     * @return float
+     */
+    private function calculateFinalPrice(array $panel, array $techData, float $finalPrice)
+    {
+        foreach ($panel['categories'] as $category) {
+            if ($category['id'] == $techData['category']) {
+                foreach ($category['options'] as $option) {
+                    if ($option['id'] == $techData['option']) {
+                        $finalPrice += $option['price'];
+                    }
+                }
+            }
+        }
+        return $finalPrice;
     }
 }

@@ -48,10 +48,6 @@
 
 namespace Buildateam\CustomProductBuilder\Controller\Product;
 
-/**
- * Class Export
- * @package Buildateam\CustomProductBuilder\Controller\Product
- */
 class Export extends \Magento\Framework\App\Action\Action
 {
     /**
@@ -75,7 +71,6 @@ class Export extends \Magento\Framework\App\Action\Action
     protected $resultRawFactory;
 
     /**
-     * Export constructor.
      * @param \Magento\Framework\App\Action\Context $context
      * @param \Magento\Framework\Json\Helper\Data $jsonHelper
      * @param \Magento\Framework\View\Result\PageFactory $resultFactory

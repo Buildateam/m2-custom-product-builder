@@ -209,10 +209,10 @@ class UpgradeData implements UpgradeDataInterface
 
         $productIds = $connection->fetchCol($select);
         if ($productIds && is_array($productIds)) {
-            foreach($productIds as $productId) {
+            foreach ($productIds as $productId) {
                 $connection->update(
                     $setup->getTable('catalog_product_entity'),
-                    array('type_id' => \Buildateam\CustomProductBuilder\Model\Product\Type::TYPE_CODE),
+                    ['type_id' => \Buildateam\CustomProductBuilder\Model\Product\Type::TYPE_CODE],
                     'entity_id = ' . $productId
                 );
             }

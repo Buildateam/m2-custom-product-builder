@@ -1,14 +1,14 @@
 <?php
 namespace Buildateam\CustomProductBuilder\Model\Plugin\Order;
 
-use \Buildateam\CustomProductBuilder\Model\ShareableLinksFactory;
+use Buildateam\CustomProductBuilder\Model\ShareableLinksFactory;
 
 class Item
 {
     /**
      * @var ShareableLinksFactory
      */
-    protected $shareLinksFactory;
+    private $shareLinksFactory;
 
     /**
      * Item constructor.
@@ -28,7 +28,7 @@ class Item
     {
         $buyRequest = $subject->getProductOptionByCode('info_buyRequest');
         if (isset($buyRequest['configid'])) {
-            $configModel = $this->_shareLinksFactory->create()->loadByVariationId($buyRequest['configid']);
+            $configModel = $this->shareLinksFactory->create()->loadByVariationId($buyRequest['configid']);
             if ($configModel->getId()) {
                 $result->setImage($configModel->getImage())
                     ->setSmallImage($configModel->getImage())

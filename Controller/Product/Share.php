@@ -58,17 +58,17 @@ class Share extends Action
     /**
      * @var ShareableLinksFactory
      */
-    protected $_shareLinksFactory;
+    private $shareLinksFactory;
 
     /**
      * @var Validator
      */
-    protected $_formKeyValidator;
+    private $formKeyValidator;
 
     /**
      * @var ResultFactory
      */
-    protected $_resultFactory;
+    protected $resultFactory;
     /**
      * @var ShareableLinks
      */
@@ -86,9 +86,9 @@ class Share extends Action
         ShareableLinks $sharableResource,
         Validator $validator
     ) {
-        $this->_formKeyValidator = $validator;
-        $this->_shareLinksFactory = $factory;
-        $this->_resultFactory = $context->getResultFactory();
+        $this->formKeyValidator = $validator;
+        $this->shareLinksFactory = $factory;
+        $this->resultFactory = $context->getResultFactory();
         parent::__construct($context);
         $this->sharableResource = $sharableResource;
     }
@@ -102,7 +102,7 @@ class Share extends Action
             return $this->resultRedirectFactory->create()->setPath('*/*/');
         }
         $request = $this->getRequest()->getParams();
-        $configModel = $this->_shareLinksFactory->create();
+        $configModel = $this->shareLinksFactory->create();
 
         $configModel->setData([
             'technical_data' => json_encode($request['technicalData']),
@@ -121,7 +121,7 @@ class Share extends Action
                 'message' => __('Config didn\'t save. Please, try again later.'),
             ];
         }
-        $response = $this->_resultFactory->create(ResultFactory::TYPE_JSON);
+        $response = $this->resultFactory->create(ResultFactory::TYPE_JSON);
         $response->setData($result);
 
         return $response;
@@ -132,7 +132,7 @@ class Share extends Action
      */
     protected function _validateRequest()
     {
-        if (!$this->_formKeyValidator->validate($this->getRequest())) {
+        if (!$this->formKeyValidator->validate($this->getRequest())) {
             return false;
         }
 

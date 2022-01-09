@@ -46,27 +46,27 @@
 
 namespace Buildateam\CustomProductBuilder\Model\Plugin;
 
-use \Magento\Framework\App\ProductMetadataInterface;
-use \Magento\Quote\Model\Quote\Item;
-use \Buildateam\CustomProductBuilder\Model\ShareableLinksFactory;
-use \Magento\Framework\Serialize\SerializerInterface;
+use Magento\Framework\App\ProductMetadataInterface;
+use Magento\Quote\Model\Quote\Item;
+use Buildateam\CustomProductBuilder\Model\ShareableLinksFactory;
+use Magento\Framework\Serialize\SerializerInterface;
 
 class QuoteItem
 {
     /**
      * @var ShareableLinksFactory
      */
-    protected $_shareLinksFactory;
+    private $shareLinksFactory;
 
     /**
      * @var bool
      */
-    protected $_isJsonInfoByRequest = true;
+    private $isJsonInfoByRequest = true;
 
     /**
      * @var SerializerInterface
      */
-    protected $serializer;
+    private $serializer;
 
     /**
      * QuoteItem constructor.
@@ -80,9 +80,9 @@ class QuoteItem
         SerializerInterface $serializer
     ) {
         $this->serializer = $serializer;
-        $this->_shareLinksFactory = $factory;
+        $this->shareLinksFactory = $factory;
         if (version_compare($productMetadata->getVersion(), '2.2.0', '<')) {
-            $this->_isJsonInfoByRequest = false;
+            $this->isJsonInfoByRequest = false;
         }
     }
 
@@ -105,7 +105,7 @@ class QuoteItem
         foreach ($options1 as $option) {
             if ($option->getCode() == 'info_buyRequest') {
                 $code = $option->getCode();
-                if ($this->_isJsonInfoByRequest) {
+                if ($this->isJsonInfoByRequest) {
                     $value = json_decode($option->getValue(), true);
                 } else {
                     $value = $this->serializer->unserialize($option->getValue());
@@ -115,7 +115,7 @@ class QuoteItem
                     continue;
                 }
 
-                if ($this->_isJsonInfoByRequest) {
+                if ($this->isJsonInfoByRequest) {
                     $value2 = json_decode($options2[$code]->getValue(), true);
                 } else {
                     $value2 = $this->serializer->unserialize($options2[$code]->getValue());
@@ -142,14 +142,14 @@ class QuoteItem
             $buyRequest = $subject->getProduct()->getCustomOption('info_buyRequest')->getValue();
         }
 
-        if ($this->_isJsonInfoByRequest) {
+        if ($this->isJsonInfoByRequest) {
             $productInfo = json_decode($buyRequest, true);
         } else {
             $productInfo = $this->serializer->unserialize($buyRequest);
         }
 
         if (isset($productInfo['configid'])) {
-            $configModel = $this->_shareLinksFactory->create()->loadByVariationId($productInfo['configid']);
+            $configModel = $this->shareLinksFactory->create()->loadByVariationId($productInfo['configid']);
             if ($configModel->getId()) {
                 $product = clone $result->getProduct();
                 $product->setImage($configModel->getImage())

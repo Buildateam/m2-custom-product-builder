@@ -78,7 +78,7 @@ class Data extends AbstractHelper
     private $resource;
 
     /**
-     * @var Filesystem\DriverInterface
+     * @var Filesystem\Driver\File
      */
     private $fileDriver;
 
@@ -87,14 +87,14 @@ class Data extends AbstractHelper
      * @param Filesystem $fileSystem
      * @param Random $random
      * @param ResourceConnection $resource
-     * @param Filesystem\DriverInterface $fileDriver
+     * @param Filesystem\Driver\File $fileDriver
      */
     public function __construct(
         Context $context,
         Filesystem $fileSystem,
         Random $random,
         ResourceConnection $resource,
-        \Magento\Framework\Filesystem\DriverInterface $fileDriver
+        \Magento\Framework\Filesystem\Driver\File $fileDriver
     ) {
         $this->fileSystem = $fileSystem;
         $this->mathRandom = $random;

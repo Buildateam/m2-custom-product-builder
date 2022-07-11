@@ -1,3 +1,6 @@
+## 1.3.0
+* Support Magento v2.4.4
+
 ## 1.2.5
 * Marketplace version compliance
 

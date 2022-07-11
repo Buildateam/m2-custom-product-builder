@@ -3,4 +3,8 @@
     <type name="Magento\NegotiableQuoteSharedCatalog\Plugin\Catalog\Api\ProductRepositoryApplyFilter">
         <plugin name="exception_for_cpb" type="Buildateam\CustomProductBuilder\Plugin\NegotiableQuoteSharedCatalog\Plugin\ProductRepositoryApplyFilter" sortOrder="50"/>
     </type>
+
+    <type name="Magento\Framework\Data\Form\FormKey\Validator">
+        <plugin name="cpb_form_key" type="Buildateam\CustomProductBuilder\Plugin\AddToCartValidator" sortOrder="50"/>
+    </type>
 </config>

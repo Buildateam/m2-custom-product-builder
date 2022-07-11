@@ -51,7 +51,7 @@ use \Magento\Framework\App\ProductMetadataInterface;
 use \Magento\Framework\DataObject;
 use \Magento\Framework\Serialize\SerializerInterface;
 
-class CatalogProductTypeAll
+class CatalogProductTypeCustom
 {
     /**
      * @var bool

@@ -1,0 +1,25 @@
+{
+    "cpb_product_config": {
+        "column": {
+            "entity_id": true,
+            "variation_id": true,
+            "technical_data": true,
+            "image": true
+        },
+        "constraint": {
+            "PRIMARY": true
+        }
+    },
+    "cpb_product_configuration": {
+        "column": {
+            "config_id": true,
+            "product_id": true,
+            "configuration": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "CPB_PRODUCT_CONFIGURATION_PRODUCT_ID": true,
+            "CPB_PRD_CONFIGURATION_PRD_ID_CAT_PRD_ENTT_ENTT_ID": true
+        }
+    }
+}

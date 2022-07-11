@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
+    <table name="cpb_product_config" resource="default" engine="innodb" comment="Custom Product Builder Product Config Table">
+        <column name="entity_id" xsi:type="int" unsigned="true" nullable="false" identity="true" comment="Entity ID"/>
+        <column name="variation_id" xsi:type="varchar" nullable="false" length="255" default="" comment="Config ID"/>
+        <column name="technical_data" xsi:type="mediumtext" nullable="true" comment="Technical data"/>
+        <column name="image" xsi:type="text" nullable="true" comment="Image path"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="entity_id"/>
+        </constraint>
+    </table>
+    <table name="cpb_product_configuration" resource="default" engine="innodb" comment="Custom Product Builder Product Configuration Table">
+        <column name="config_id" xsi:type="int" unsigned="true" nullable="false" identity="true" comment="Config ID"/>
+        <column name="product_id" xsi:type="int" unsigned="true" nullable="false" comment="Product ID"/>
+        <column name="configuration" xsi:type="mediumtext" nullable="true" comment="Product Configuration"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="config_id"/>
+        </constraint>
+        <constraint xsi:type="unique" referenceId="CPB_PRODUCT_CONFIGURATION_PRODUCT_ID">
+            <column name="product_id" />
+        </constraint>
+        <constraint xsi:type="foreign" referenceId="CPB_PRD_CONFIGURATION_PRD_ID_CAT_PRD_ENTT_ENTT_ID" table="cpb_product_configuration" column="product_id" referenceTable="catalog_product_entity" referenceColumn="entity_id" onDelete="CASCADE"/>
+    </table>
+</schema>

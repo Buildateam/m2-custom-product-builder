@@ -132,9 +132,9 @@ class ImportFile extends Action
         $response = $this->resultFactory->create(ResultFactory::TYPE_JSON);
         if (!empty($jsonData)) {
             $this->jsonProductContent = $jsonData;
-            $validate = $this->_objectManager->create(Data::class)
-                ->validate($this->jsonProductContent);
-
+            
+            $validate = $this->helper->validate($this->jsonProductContent);
+            
             if (isset($this->jsonProductContent) && !empty($this->jsonProductContent) && $validate) {
                 $result = [
                     'status' => 'error',

@@ -105,6 +105,13 @@ class Export extends \Magento\Framework\App\Action\Action
         $productConfig = $product->getData('json_configuration');
         if (!$productConfig) {
             $productConfig = $this->_getBaseConfig($product);
+        } else {
+            $config = json_decode($productConfig, true);
+            $price = (float)$product->getFinalPrice();
+            if (isset($config['data']['base']['price']) && $config['data']['base']['price'] != $price) {
+                $config['data']['base']['price'] = $price;
+                $productConfig = json_encode($config);
+            }
         }
 
         $resultRaw = $this->resultRawFactory->create();
@@ -119,13 +126,13 @@ class Export extends \Magento\Framework\App\Action\Action
         $price = json_encode((float)$product->getPrice());
 
         return <<<JSON
-{ 
+{
   "settings": {
     "isAdmin": true,
     "theme": {
       "id": "alpine-white"
     },
-    "views": { 
+    "views": {
       "front": true,
       "back": false,
       "left": false,

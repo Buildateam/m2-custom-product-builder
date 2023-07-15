@@ -2,6 +2,7 @@
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Catalog:etc/product_types.xsd">
     <type name="custom" label="Custom Product" modelInstance="Buildateam\CustomProductBuilder\Model\Product\Type" isQty="true" canUseQtyDecimals="false" sortOrder="70">
         <indexerModel instance="Buildateam\CustomProductBuilder\Model\ResourceModel\Product\Indexer\Price\CustomProductPrice" />
+        <priceModel instance="Buildateam\CustomProductBuilder\Model\Product\Type\Price" />
         <customAttributes>
             <attribute name="refundable" value="true"/>
             <attribute name="is_real_product" value="true"/>

@@ -110,6 +110,7 @@ class Export extends \Magento\Framework\App\Action\Action
             $price = (float)$product->getFinalPrice();
             if (isset($config['data']['base']['price']) && $config['data']['base']['price'] != $price) {
                 $config['data']['base']['price'] = $price;
+                //$config['data']['price'] = $price;
                 $productConfig = json_encode($config);
             }
         }

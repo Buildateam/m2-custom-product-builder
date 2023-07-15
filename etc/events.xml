@@ -38,9 +38,6 @@
   -->
 
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
-    <event name="catalog_product_get_final_price">
-        <observer name="catalog_product_get_final_price" instance="Buildateam\CustomProductBuilder\Observer\ProductFinalPrice" shared="true"/>
-    </event>
     <event name="layout_render_before_catalog_product_view">
         <observer name="layout_render_before_catalog_product_view" instance="Buildateam\CustomProductBuilder\Observer\BeforeProductView"/>
     </event>

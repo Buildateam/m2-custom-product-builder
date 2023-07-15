@@ -1,4 +1,7 @@
 ## 1.3.1
+* Improved price calculation
+
+## 1.3.1
 * Support Catalog Price Rules
 
 ## 1.3.0

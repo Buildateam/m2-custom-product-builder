@@ -1,3 +1,6 @@
+## 1.3.3
+* Code refactoring
+
 ## 1.3.1
 * Improved price calculation
 

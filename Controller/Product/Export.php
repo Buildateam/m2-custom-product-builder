@@ -76,21 +76,18 @@ class Export extends \Magento\Framework\App\Action\Action
      * @param \Magento\Framework\View\Result\PageFactory $resultFactory
      * @param \Magento\Catalog\Model\ProductRepository $productRepository
      * @param \Magento\Framework\Controller\Result\RawFactory $resultRawFactory
-     * @param \Magento\Framework\App\Response\Http\FileFactory $fileFactory
      */
     public function __construct(
         \Magento\Framework\App\Action\Context $context,
         \Magento\Framework\Json\Helper\Data $jsonHelper,
         \Magento\Framework\View\Result\PageFactory $resultFactory,
         \Magento\Catalog\Model\ProductRepository $productRepository,
-        \Magento\Framework\Controller\Result\RawFactory $resultRawFactory,
-        \Magento\Framework\App\Response\Http\FileFactory $fileFactory
+        \Magento\Framework\Controller\Result\RawFactory $resultRawFactory
     ) {
         $this->_jsonHelper = $jsonHelper;
         $this->_resultPageFactory = $resultFactory;
         $this->_productRepository = $productRepository;
         $this->resultRawFactory = $resultRawFactory;
-        $this->fileFactory = $fileFactory;
         parent::__construct($context);
     }
 

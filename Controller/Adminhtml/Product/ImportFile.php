@@ -86,7 +86,7 @@ class ImportFile extends Action
     private $helper;
 
     /**
-     * @var \Magento\Framework\Filesystem\DriverInterface
+     * @var \Magento\Framework\Filesystem\Driver\File
      */
     private $driver;
 
@@ -96,7 +96,7 @@ class ImportFile extends Action
      * @param FileUploader $fileUploader
      * @param Curl $curl
      * @param \Buildateam\CustomProductBuilder\Helper\Data $helper
-     * @param \Magento\Framework\Filesystem\DriverInterface $driver
+     * @param \Magento\Framework\Filesystem\Driver\File $driver
      */
     public function __construct(
         Context $context,
@@ -104,7 +104,7 @@ class ImportFile extends Action
         FileUploader $fileUploader,
         Curl $curl,
         \Buildateam\CustomProductBuilder\Helper\Data $helper,
-        \Magento\Framework\Filesystem\DriverInterface $driver
+        \Magento\Framework\Filesystem\Driver\File $driver
     ) {
         parent::__construct($context);
         $this->resultFactory = $context->getResultFactory();

@@ -1,7 +1,7 @@
 {
     "name": "buildateam/m2-custom-product-builder",
     "description": "Magento 2 Custom Product Builder Implementation",
-    "version": "1.3.3",
+    "version": "1.3.4",
     "require": {
         "php": ">=7.0.0"
     },

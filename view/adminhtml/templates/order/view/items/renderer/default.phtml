@@ -11,7 +11,7 @@
 
         <?php $imageHelper = $objectManager->get('\Magento\Catalog\Helper\Image'); ?>
         <?php $imageUrl = $imageHelper->init($product, 'small_image')->setImageFile($product->getSmallImage())->resize(200, 200)->getUrl(); ?>
-        <img src="<?= $imageUrl; ?>" style="min-width: 100px"/>
+        <img src="<?= $block->escapeUrl($imageUrl); ?>" style="min-width: 100px"/>
     </td>
     <?php $i = 0;
     $columns = $block->getColumns();

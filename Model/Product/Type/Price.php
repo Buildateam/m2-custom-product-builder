@@ -48,7 +48,7 @@ class Price extends \Magento\Catalog\Model\Product\Type\Price
      * @param GroupManagementInterface $groupManagement
      * @param \Magento\Catalog\Api\Data\ProductTierPriceInterfaceFactory $tierPriceFactory
      * @param \Magento\Framework\App\Config\ScopeConfigInterface $config
-     * @param ProductTierPriceExtensionFactory|null $tierPriceExtensionFactory
+     * @param ProductTierPriceExtensionFactory $tierPriceExtensionFactory
      * @param ProductRepository $productRepository
      * @param ProductMetadataInterface $productMetadata
      * @param ManagerInterface $massageManager
@@ -64,7 +64,7 @@ class Price extends \Magento\Catalog\Model\Product\Type\Price
         GroupManagementInterface $groupManagement,
         \Magento\Catalog\Api\Data\ProductTierPriceInterfaceFactory $tierPriceFactory,
         \Magento\Framework\App\Config\ScopeConfigInterface $config,
-        ProductTierPriceExtensionFactory $tierPriceExtensionFactory = null,
+        ProductTierPriceExtensionFactory $tierPriceExtensionFactory,
         ProductRepository $productRepository,
         ProductMetadataInterface $productMetadata,
         ManagerInterface $massageManager,

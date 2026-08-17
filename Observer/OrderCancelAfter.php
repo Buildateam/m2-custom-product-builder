@@ -7,7 +7,6 @@ use Buildateam\CustomProductBuilder\Helper\Json;
 use Buildateam\CustomProductBuilder\Helper\Data;
 use \Magento\Catalog\Model\ResourceModel\Product\Action;
 use \Magento\Store\Model\StoreManagerInterface;
-use function PHPUnit\Framework\containsIdentical;
 
 class OrderCancelAfter implements ObserverInterface
 {
@@ -50,8 +49,7 @@ class OrderCancelAfter implements ObserverInterface
     }
 
     /**
-     * @param Observer $observer
-     * @throws \Exception
+     * @inheritdoc
      */
     public function execute(Observer $observer)
     {

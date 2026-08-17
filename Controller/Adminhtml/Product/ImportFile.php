@@ -46,18 +46,20 @@
 
 namespace Buildateam\CustomProductBuilder\Controller\Adminhtml\Product;
 
+use Buildateam\CustomProductBuilder\Helper\Data as DataHelper;
 use Buildateam\CustomProductBuilder\Model\FileUploader;
 use Magento\Backend\App\Action;
 use Magento\Backend\App\Action\Context;
-use Magento\Catalog\Model\Product;
-use Magento\Framework\App\ObjectManager;
+use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\Framework\Controller\ResultFactory;
 use Magento\Framework\HTTP\Client\Curl;
-use Magento\Framework\Logger\Monolog;
+use Psr\Log\LoggerInterface;
 
 class ImportFile extends Action
 {
-
+    /**
+     * @var string|null
+     */
     private $jsonProductContent;
 
     /**
@@ -66,7 +68,7 @@ class ImportFile extends Action
     protected $resultFactory;
 
     /**
-     * @var Monolog
+     * @var LoggerInterface
      */
     private $logger;
 
@@ -81,9 +83,14 @@ class ImportFile extends Action
     private $curl;
 
     /**
-     * @var Data|\Buildateam\CustomProductBuilder\Helper\Data
+     * @var DataHelper
      */
     private $helper;
+
+    /**
+     * @var ProductRepositoryInterface
+     */
+    private $productRepository;
 
     /**
      * @var \Magento\Framework\Filesystem\Driver\File
@@ -92,18 +99,20 @@ class ImportFile extends Action
 
     /**
      * @param Context $context
-     * @param Monolog $logger
+     * @param LoggerInterface $logger
      * @param FileUploader $fileUploader
      * @param Curl $curl
-     * @param \Buildateam\CustomProductBuilder\Helper\Data $helper
+     * @param DataHelper $helper
+     * @param ProductRepositoryInterface $productRepository
      * @param \Magento\Framework\Filesystem\Driver\File $driver
      */
     public function __construct(
         Context $context,
-        Monolog $logger,
+        LoggerInterface $logger,
         FileUploader $fileUploader,
         Curl $curl,
-        \Buildateam\CustomProductBuilder\Helper\Data $helper,
+        DataHelper $helper,
+        ProductRepositoryInterface $productRepository,
         \Magento\Framework\Filesystem\Driver\File $driver
     ) {
         parent::__construct($context);
@@ -112,6 +121,7 @@ class ImportFile extends Action
         $this->fileUploader = $fileUploader;
         $this->curl = $curl;
         $this->helper = $helper;
+        $this->productRepository = $productRepository;
         $this->driver = $driver;
     }
 
@@ -120,11 +130,11 @@ class ImportFile extends Action
      */
     public function execute()
     {
-        $objectManager = ObjectManager::getInstance();
-        $productId = $this->getRequest()->getParam('id');
-        $product = $objectManager->create(Product::class)->load($productId);
+        $productId = (int)$this->getRequest()->getParam('id');
+        $product = $this->productRepository->getById($productId);
 
-        $file = $this->getRequest()->getFiles('product')['file'];
+        $productFiles = (array)$this->getRequest()->getFiles('product');
+        $file = $productFiles['file'] ?? [];
         $jsonData = !empty($file['tmp_name'])
             ? $this->driver->fileGetContents($file['tmp_name'])
             : $product->getData('json_configuration');
@@ -132,8 +142,7 @@ class ImportFile extends Action
         $response = $this->resultFactory->create(ResultFactory::TYPE_JSON);
         if (!empty($jsonData)) {
             $this->jsonProductContent = $jsonData;
-            $validate = $this->_objectManager->create(\Buildateam\CustomProductBuilder\Helper\Data::class)
-                ->validate($this->jsonProductContent);
+            $validate = $this->helper->validate($this->jsonProductContent);
 
             if (isset($this->jsonProductContent) && !empty($this->jsonProductContent) && $validate) {
                 $result = [
@@ -193,6 +202,8 @@ class ImportFile extends Action
     //phpcs:enable
 
     /**
+     * Save images referenced by the imported configuration.
+     *
      * @param array $matches
      * @param string $config
      * @return string

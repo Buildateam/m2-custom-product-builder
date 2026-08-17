@@ -1,3 +1,15 @@
+## 1.3.7
+* Updated compatibility for Adobe Commerce and Magento Open Source 2.4.9
+* Removed service locator usage from the admin product configuration importer
+* Removed an invalid admin product form modifier declaration
+* Removed an accidental runtime reference to PHPUnit
+
+## 1.3.6
+* Refactoring compatibility
+
+## 1.3.5
+* Performance improvements
+
 ## 1.3.4
 * Refactoring Filesystem\Driver\File
 
